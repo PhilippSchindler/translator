@@ -1,37 +1,43 @@
 os:
-  - linux
+- linux
 services:
-  - docker
+- docker
 language: java
 node_js:
-  - "6.9.1"
+- 6.9.1
 jdk:
-  - oraclejdk8
+- oraclejdk8
 sudo: false
 cache:
   directories:
-    - node
-    - node_modules
-    - $HOME/.m2
+  - node
+  - node_modules
+  - "$HOME/.m2"
 env:
-  - NODE_VERSION=6.9.1
+- NODE_VERSION=6.9.1
 before_install:
-  - nvm install $NODE_VERSION
-  - npm install -g npm
-  - npm install -g bower gulp-cli
-  - node -v
-  - npm -v
-  - bower -v
-  - gulp -v
-  - java -version
+- nvm install $NODE_VERSION
+- npm install -g npm
+- npm install -g bower gulp-cli
+- node -v
+- npm -v
+- bower -v
+- gulp -v
+- java -version
 install: npm install
 script:
-  - ./mvnw clean
-  - ./mvnw test
-  - gulp test
-  - ./mvnw package -Pprod -DskipTests
+- "./mvnw clean"
+- "./mvnw test"
+- gulp test
+- "./mvnw package -Pprod -DskipTests"
 notifications:
   webhooks:
-    on_success: change  # options: [always|never|change] default: always
-    on_failure: always  # options: [always|never|change] default: always
-    on_start: false     # default: false
+    on_success: change
+    on_failure: always
+    on_start: false
+deploy:
+  provider: heroku
+  api_key:
+    secure: 2nGLNZ3PfCULfniSi/L6hoU4xt5+3ccZvlJ/ySCVfbCt5zL5phITlD76JYJWlUeOMy+1mQH5O0PHH4cS+bPYSvS5BvrFhRC8sX7E+JWgGMIPCeDihfPYUYAb69P/QBJUTFo9Zjble8nfCP30J1PWDzEIFg1uqXcvzzLngRh7TD3URxvmJa/7dqry0g2bc2UOISCLxa4Sd3QvfYkmaawsLRvI/zbolpyWF53isji8ElRjv6gIvX7Qwg9/MJT2Us4G3L3bEgyT1zx+Uj5AMd6nvQSH+dgdrSxtumq1lLFMKoT2k+KC5FrusKIV3ewQMverXLbtwSVEheK1MRiIAHU1OY+5GCbKpxax9kQXrYNYyzIhKLu2GzGEH+1meo1vWETow+ZLpx72fhByXpE7oIWLoFbzLgQXIepMfT7HoBSdhtH5AwMW4eabpWDH0/PkpHpZ4odc0puJhglIzrlqy5EuQl/RD3k/LrcoH+iEV3TJz5iQzdLWJkOQ/Ste0PwX8TM5O45+huXaAxYdAEseMIZVtAIuYz96N3XR7C5WJ8jVcU+1+EeY0fcIw0Fc1QtgR77t0Jyf01P8Wqy5Qq0HftdyB00jgNxHXh1/UlixGWal/uit7ImwP0BH0NxKJwrOaCVUI7B+HNGaw1lmwK+19soY4DcOIa/8ot3DzO5qJIup7PQ=
+  app: sese-translator
+  on: testContinuousDeployment
