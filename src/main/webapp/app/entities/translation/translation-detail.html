@@ -1,0 +1,41 @@
+
+<div>
+    <h2><span data-translate="translatorApp.translation.detail.title">Translation</span> {{vm.translation.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="dl-horizontal jh-entity-details">
+        <dt><span data-translate="translatorApp.translation.text">Text</span></dt>
+        <dd>
+            <span>{{vm.translation.text}}</span>
+        </dd>
+        <dt><span data-translate="translatorApp.translation.deleted">Deleted</span></dt>
+        <dd>
+            <span>{{vm.translation.deleted}}</span>
+        </dd>
+        <dt><span data-translate="translatorApp.translation.updatedAt">Updated At</span></dt>
+        <dd>
+            <span>{{vm.translation.updatedAt | date:'medium'}}</span>
+        </dd>
+        <dt><span data-translate="translatorApp.translation.language">Language</span></dt>
+        <dd>
+            <span ng-repeat="language in vm.translation.languages">
+                <a ui-sref="language-detail({id: language.id})">{{language.name}}</a>{{$last ? '' : ', '}}
+            </span>
+        </dd>
+        <dt><span data-translate="translatorApp.translation.definition">Definition</span></dt>
+        <dd>
+            <a ui-sref="definition-detail({id:vm.translation.definition.id})">{{vm.translation.definition.label}}</a>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            ui-sref="{{ vm.previousState }}"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span data-translate="entity.action.back"> Back</span>
+    </button>
+
+    <button type="button" ui-sref="translation-detail.edit({id:vm.translation.id})" class="btn btn-primary">
+        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"> Edit</span>
+    </button>
+</div>

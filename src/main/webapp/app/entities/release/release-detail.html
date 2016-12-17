@@ -1,0 +1,37 @@
+
+<div>
+    <h2><span data-translate="translatorApp.release.detail.title">Release</span> {{vm.release.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="dl-horizontal jh-entity-details">
+        <dt><span data-translate="translatorApp.release.name">Name</span></dt>
+        <dd>
+            <span>{{vm.release.name}}</span>
+        </dd>
+        <dt><span data-translate="translatorApp.release.deadline">Deadline</span></dt>
+        <dd>
+            <span>{{vm.release.deadline | date:'mediumDate'}}</span>
+        </dd>
+        <dt><span data-translate="translatorApp.release.definition">Definition</span></dt>
+        <dd>
+            <span ng-repeat="definition in vm.release.definitions">
+                <a ui-sref="definition-detail({id: definition.id})">{{definition.label}}</a>{{$last ? '' : ', '}}
+            </span>
+        </dd>
+        <dt><span data-translate="translatorApp.release.project">Project</span></dt>
+        <dd>
+            <a ui-sref="project-detail({id:vm.release.project.id})">{{vm.release.project.name}}</a>
+        </dd>
+    </dl>
+
+    <button type="submit"
+            ui-sref="{{ vm.previousState }}"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span data-translate="entity.action.back"> Back</span>
+    </button>
+
+    <button type="button" ui-sref="release-detail.edit({id:vm.release.id})" class="btn btn-primary">
+        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"> Edit</span>
+    </button>
+</div>

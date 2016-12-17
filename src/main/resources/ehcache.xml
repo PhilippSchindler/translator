@@ -20,5 +20,35 @@
 
     <cache alias="at.ac.tuwien.translator.domain.User.persistentTokens" uses-template="simple"/>
 
+    <cache alias="at.ac.tuwien.translator.domain.Language" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Definition" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Definition.translations" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Translation" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Translation.languages" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Release" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Release.definitions" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.LogEntry" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Platform" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Project" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Project.definitions" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Project.releases" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Project.users" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Project.platforms" uses-template="simple"/>
+
+    <cache alias="at.ac.tuwien.translator.domain.Project.languages" uses-template="simple"/>
+
     <!-- jhipster-needle-ehcache-add-entry -->
 </config>
