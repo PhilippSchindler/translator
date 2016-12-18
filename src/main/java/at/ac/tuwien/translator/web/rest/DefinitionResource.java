@@ -40,7 +40,7 @@ public class DefinitionResource {
      */
     @PostMapping("/definitions")
     @Timed
-    public ResponseEntity<Definition> createDefinition(@RequestBody Definition definition) throws URISyntaxException {
+    public ResponseEntity<Definition> createDefinition(@Valid @RequestBody Definition definition) throws URISyntaxException {
         log.debug("REST request to save Definition : {}", definition);
         if (definition.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("definition", "idexists", "A new definition cannot already have an ID")).body(null);
@@ -51,10 +51,6 @@ public class DefinitionResource {
         definition.setUpdatedAt(now);
         definition.setVersion(INITIAL_VERSION);
 
-        return createValidDefinition(definition);
-    }
-
-    private ResponseEntity<Definition> createValidDefinition(@Valid Definition definition) throws URISyntaxException {
         Definition result = definitionRepository.save(definition);
         return ResponseEntity.created(new URI("/api/definitions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("definition", result.getId().toString()))
@@ -72,15 +68,12 @@ public class DefinitionResource {
      */
     @PutMapping("/definitions")
     @Timed
-    public ResponseEntity<Definition> updateDefinition(@RequestBody Definition definition) throws URISyntaxException {
+    public ResponseEntity<Definition> updateDefinition(@Valid @RequestBody Definition definition) throws URISyntaxException {
         log.debug("REST request to update Definition : {}", definition);
         if (definition.getId() == null) {
             return createDefinition(definition);
         }
-        return updateValidDefinition(definition);
-    }
 
-    private ResponseEntity<Definition> updateValidDefinition(@Valid Definition definition) throws URISyntaxException {
         Definition newVersion = new Definition();
         newVersion.setLabel(definition.getLabel());
         newVersion.setText(definition.getText());
@@ -89,7 +82,10 @@ public class DefinitionResource {
         newVersion.setUpdatedAt(ZonedDateTime.now());
         newVersion.setProject(definition.getProject());
 
-        return createValidDefinition(newVersion);
+        Definition result = definitionRepository.save(definition);
+        return ResponseEntity.created(new URI("/api/definitions/" + result.getId()))
+            .headers(HeaderUtil.createEntityUpdateAlert("definition", result.getId().toString()))
+            .body(result);
     }
 
     /**

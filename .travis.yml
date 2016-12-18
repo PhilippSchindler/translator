@@ -31,7 +31,7 @@ script:
 - gulp test
 - "./mvnw package -Pprod -DskipTests"
 notifications:
-  webhooks:
+  slack: seminarsoftware:L0BdD3ERgwmXCGneZ7gxc5YC
     on_success: change
     on_failure: always
     on_start: false
