@@ -12,4 +12,5 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface DefinitionRepository extends JpaRepository<Definition,Long> {
 
+    List<Definition> findByProject_id(Long projectId);
 }

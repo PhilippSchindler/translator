@@ -194,6 +194,7 @@ public class Definition implements Serializable {
             ", version='" + version + "'" +
             ", createdAt='" + createdAt + "'" +
             ", updatedAt='" + updatedAt + "'" +
+            ", projectId='" + (project == null ? "null" : project.getId()) + "'" +
             '}';
     }
 }

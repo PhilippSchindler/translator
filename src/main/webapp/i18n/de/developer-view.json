@@ -1,0 +1,11 @@
+{
+    "translatorApp": {
+        "developerView" : {
+            "home": {
+                "title": "Projekt"
+            },
+            "newDefinition": "Neue Definition",
+            "definitionsOverview": "Übersicht Definitionen"
+        }
+    }
+}
