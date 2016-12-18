@@ -12,13 +12,7 @@
             <label class="control-label" data-translate="translatorApp.definition.label" for="field_label">Label</label>
             <input type="text" class="form-control" name="label" id="field_label"
                     ng-model="vm.definition.label"
-                    required />
-            <div ng-show="editForm.label.$invalid">
-                <p class="help-block"
-                    ng-show="editForm.label.$error.required" data-translate="entity.validation.required">
-                    This field is required.
-                </p>
-            </div>
+                    readonly />
         </div>
         <div class="form-group">
             <label class="control-label" data-translate="translatorApp.definition.text" for="field_text">Text</label>

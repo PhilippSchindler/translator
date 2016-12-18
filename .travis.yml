@@ -28,10 +28,10 @@ install: npm install
 script:
 - "./mvnw clean"
 - "./mvnw test"
-- gulp test
 - "./mvnw package -Pprod -DskipTests"
 notifications:
   slack: seminarsoftware:L0BdD3ERgwmXCGneZ7gxc5YC
+  email: false
 deploy:
   provider: heroku
   api_key:

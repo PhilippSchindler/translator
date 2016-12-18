@@ -25,7 +25,7 @@ import java.util.Optional;
 @RequestMapping("/api")
 public class DefinitionResource {
 
-    public static final int INITIAL_VERSION = 0;
+    private static final int INITIAL_VERSION = 0;
     private final Logger log = LoggerFactory.getLogger(DefinitionResource.class);
 
     @Inject
@@ -44,6 +44,11 @@ public class DefinitionResource {
         log.debug("REST request to save Definition : {}", definition);
         if (definition.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("definition", "idexists", "A new definition cannot already have an ID")).body(null);
+        }
+
+        List<Definition> foundDefinitions = definitionRepository.findByLabel(definition.getLabel());
+        if (foundDefinitions != null && foundDefinitions.size() > 0) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("definition", "labelexists", "A definition with this label exists already")).body(null);
         }
 
         ZonedDateTime now = ZonedDateTime.now();
@@ -74,15 +79,13 @@ public class DefinitionResource {
             return createDefinition(definition);
         }
 
-        Definition newVersion = new Definition();
-        newVersion.setLabel(definition.getLabel());
+        Definition newVersion = definitionRepository.findOne(definition.getId());
+        newVersion.setId(null);
         newVersion.setText(definition.getText());
-        newVersion.setVersion(definition.getVersion() + 1);
-        newVersion.setCreatedAt(definition.getCreatedAt());
+        newVersion.setVersion(newVersion.getVersion() + 1);
         newVersion.setUpdatedAt(ZonedDateTime.now());
-        newVersion.setProject(definition.getProject());
 
-        Definition result = definitionRepository.save(definition);
+        Definition result = definitionRepository.save(newVersion);
         return ResponseEntity.created(new URI("/api/definitions/" + result.getId()))
             .headers(HeaderUtil.createEntityUpdateAlert("definition", result.getId().toString()))
             .body(result);
@@ -97,8 +100,7 @@ public class DefinitionResource {
     @Timed
     public List<Definition> getAllDefinitions() {
         log.debug("REST request to get all Definitions");
-        List<Definition> definitions = definitionRepository.findAll();
-        return definitions;
+        return definitionRepository.findAll();
     }
 
     /**
@@ -137,7 +139,7 @@ public class DefinitionResource {
     @Timed
     public List<Definition> getDefinitionsForProject(@PathVariable Long projectId) {
         log.debug("REST request to get all Definitions for project: {]", projectId);
-        return definitionRepository.findByProject_id(projectId);
+        return definitionRepository.findForProject(projectId);
     }
 
 }

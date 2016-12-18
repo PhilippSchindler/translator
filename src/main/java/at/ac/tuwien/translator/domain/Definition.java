@@ -27,7 +27,7 @@ public class Definition implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "label", nullable = false)
+    @Column(name = "label", nullable = false, unique = true)
     private String label;
 
     @NotNull
