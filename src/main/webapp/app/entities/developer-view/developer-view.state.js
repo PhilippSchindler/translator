@@ -13,7 +13,7 @@
                 parent: 'entity',
                 url: '/project/{projectId}/developer-view',
                 data: {
-                    authorities: ['ROLE_USER'],
+                    authorities: ['ROLE_DEVELOPER'],
                     pageTitle: 'translatorApp.developerView.home.title'
                 },
                 views: {
@@ -43,7 +43,7 @@
                 parent: 'developer-view',
                 url: '/{id}/edit',
                 data: {
-                    authorities: ['ROLE_USER']
+                    authorities: ['ROLE_DEVELOPER']
                 },
                 onEnter: ['$stateParams', '$state', '$uibModal', function ($stateParams, $state, $uibModal) {
                     $uibModal.open({
@@ -68,7 +68,7 @@
                 parent: 'developer-view',
                 url: '/{id}/delete',
                 data: {
-                    authorities: ['ROLE_USER']
+                    authorities: ['ROLE_DEVELOPER']
                 },
                 onEnter: ['$stateParams', '$state', '$uibModal', function ($stateParams, $state, $uibModal) {
                     $uibModal.open({
