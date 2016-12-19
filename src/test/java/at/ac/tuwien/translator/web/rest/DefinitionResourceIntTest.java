@@ -238,8 +238,42 @@ public class DefinitionResourceIntTest {
         List<Definition> definitionList = definitionRepository.findAll();
         assertThat(definitionList).hasSize(databaseSizeBeforeUpdate + 1);
         Definition testDefinition = definitionList.stream().sorted((o1, o2) -> o1.getUpdatedAt().isAfter(o2.getUpdatedAt()) ? 1 : -1).collect(Collectors.toList()).get(definitionList.size() - 1);
+        assertThat(testDefinition.getLabel()).isEqualTo(DEFAULT_LABEL);
         assertThat(testDefinition.getText()).isEqualTo(UPDATED_TEXT);
         assertThat(testDefinition.getVersion()).isEqualTo(UPDATED_VERSION);
+    }
+
+    @Test
+    @Transactional
+    public void updateDefinitionWithoutChange() throws Exception {
+        // Initialize the database
+        definitionRepository.saveAndFlush(definition);
+        int databaseSizeBeforeUpdate = definitionRepository.findAll().size();
+
+        // Update the definition
+        Definition updatedDefinition = definitionRepository.findOne(definition.getId());
+
+        Definition newVersion = new Definition()
+            .createdAt(updatedDefinition.getCreatedAt())
+            .label("ignoredLabel")
+            .project(updatedDefinition.getProject())
+            .version(513513)
+            .updatedAt(ZonedDateTime.now())
+            .text(updatedDefinition.getText());
+        newVersion.setId(updatedDefinition.getId());
+
+        restDefinitionMockMvc.perform(put("/api/definitions")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(newVersion)))
+            .andExpect(status().isOk());
+
+        // Validate the Definition in the database
+        List<Definition> definitionList = definitionRepository.findAll();
+        assertThat(definitionList).hasSize(databaseSizeBeforeUpdate);
+        Definition testDefinition = definitionList.get(definitionList.size() - 1);
+        assertThat(testDefinition.getLabel()).isEqualTo(DEFAULT_LABEL);
+        assertThat(testDefinition.getText()).isEqualTo(DEFAULT_TEXT);
+        assertThat(testDefinition.getVersion()).isEqualTo(DEFAULT_VERSION);
     }
 
     @Test

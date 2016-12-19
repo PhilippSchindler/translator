@@ -81,6 +81,10 @@ public class DefinitionResource {
 
         Definition original = definitionRepository.findOne(definition.getId());
 
+        if (original.getText().equals(definition.getText())) {
+            return ResponseEntity.ok(original);
+        }
+
         Definition newVersion = new Definition()
             .createdAt(original.getCreatedAt())
             .label(original.getLabel())
