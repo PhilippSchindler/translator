@@ -79,11 +79,15 @@ public class DefinitionResource {
             return createDefinition(definition);
         }
 
-        Definition newVersion = definitionRepository.findOne(definition.getId());
-        newVersion.setId(null);
-        newVersion.setText(definition.getText());
-        newVersion.setVersion(newVersion.getVersion() + 1);
-        newVersion.setUpdatedAt(ZonedDateTime.now());
+        Definition original = definitionRepository.findOne(definition.getId());
+
+        Definition newVersion = new Definition()
+            .createdAt(original.getCreatedAt())
+            .label(original.getLabel())
+            .project(original.getProject())
+            .version(original.getVersion() + 1)
+            .updatedAt(ZonedDateTime.now())
+            .text(definition.getText());
 
         Definition result = definitionRepository.save(newVersion);
         return ResponseEntity.created(new URI("/api/definitions/" + result.getId()))

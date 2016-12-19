@@ -21,6 +21,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
@@ -37,7 +38,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DefinitionResourceIntTest {
 
     private static final String DEFAULT_LABEL = "AAAAAAAAAA";
-    private static final String UPDATED_LABEL = "BBBBBBBBBB";
 
     private static final String DEFAULT_TEXT = "AAAAAAAAAA";
     private static final String UPDATED_TEXT = "BBBBBBBBBB";
@@ -219,21 +219,25 @@ public class DefinitionResourceIntTest {
 
         // Update the definition
         Definition updatedDefinition = definitionRepository.findOne(definition.getId());
-        updatedDefinition
-                .label(UPDATED_LABEL)
-                .text(UPDATED_TEXT)
-                .version(UPDATED_VERSION);
+
+        Definition newVersion = new Definition()
+            .createdAt(updatedDefinition.getCreatedAt())
+            .label("ignoredLabel")
+            .project(updatedDefinition.getProject())
+            .version(513513)
+            .updatedAt(ZonedDateTime.now())
+            .text(UPDATED_TEXT);
+        newVersion.setId(updatedDefinition.getId());
 
         restDefinitionMockMvc.perform(put("/api/definitions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(updatedDefinition)))
+            .content(TestUtil.convertObjectToJsonBytes(newVersion)))
             .andExpect(status().isCreated());
 
         // Validate the Definition in the database
         List<Definition> definitionList = definitionRepository.findAll();
-        assertThat(definitionList).hasSize(databaseSizeBeforeUpdate);
-        Definition testDefinition = definitionList.get(definitionList.size() - 1);
-        assertThat(testDefinition.getLabel()).isEqualTo(UPDATED_LABEL);
+        assertThat(definitionList).hasSize(databaseSizeBeforeUpdate + 1);
+        Definition testDefinition = definitionList.stream().sorted((o1, o2) -> o1.getUpdatedAt().isAfter(o2.getUpdatedAt()) ? 1 : -1).collect(Collectors.toList()).get(definitionList.size() - 1);
         assertThat(testDefinition.getText()).isEqualTo(UPDATED_TEXT);
         assertThat(testDefinition.getVersion()).isEqualTo(UPDATED_VERSION);
     }
