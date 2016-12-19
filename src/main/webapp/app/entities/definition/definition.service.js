@@ -22,6 +22,19 @@
                     return data;
                 }
             },
+            'getForProject': {
+                url: 'api/project/:projectId/definitions',
+                method: 'GET',
+                isArray: true,
+                transformResponse: function (data) {
+                    if (data) {
+                        data = angular.fromJson(data);
+                        data.createdAt = DateUtils.convertDateTimeFromServer(data.createdAt);
+                        data.updatedAt = DateUtils.convertDateTimeFromServer(data.updatedAt);
+                    }
+                    return data;
+                }
+            },
             'update': { method:'PUT' }
         });
     }
