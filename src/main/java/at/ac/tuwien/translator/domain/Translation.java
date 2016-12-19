@@ -1,5 +1,6 @@
 package at.ac.tuwien.translator.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -45,6 +46,7 @@ public class Translation implements Serializable {
     private Set<Language> languages = new HashSet<>();
 
     @ManyToOne
+    @JsonIgnore
     private Definition definition;
 
     public Long getId() {

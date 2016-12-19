@@ -28,7 +28,7 @@ import java.util.Optional;
 public class DefinitionResource {
 
     private final Logger log = LoggerFactory.getLogger(DefinitionResource.class);
-        
+
     @Inject
     private DefinitionRepository definitionRepository;
 
@@ -84,6 +84,12 @@ public class DefinitionResource {
     public List<Definition> getAllDefinitions() {
         log.debug("REST request to get all Definitions");
         List<Definition> definitions = definitionRepository.findAll();
+        return definitions;
+    }
+
+    @GetMapping("/projects/{projectId}/definitions/latest")
+    public List<Definition> getDefinitionsByProject(@PathVariable Long projectId) {
+        List<Definition> definitions = definitionRepository.findLatestByProject(projectId);
         return definitions;
     }
 

@@ -28,7 +28,7 @@ import java.util.Optional;
 public class ProjectResource {
 
     private final Logger log = LoggerFactory.getLogger(ProjectResource.class);
-        
+
     @Inject
     private ProjectRepository projectRepository;
 
@@ -85,6 +85,19 @@ public class ProjectResource {
         log.debug("REST request to get all Projects");
         List<Project> projects = projectRepository.findAllWithEagerRelationships();
         return projects;
+    }
+
+    /**
+     * GET  /projects : get all the projects.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of projects in body
+     */
+    @GetMapping("users/{userId}/singleproject")
+    @Timed
+    public Project getSingleProjectByUser(@PathVariable Long userId) {
+        log.debug("REST request to get all Projects");
+        Project project = projectRepository.findSingleProjectByUserId(userId);
+        return project;
     }
 
     /**

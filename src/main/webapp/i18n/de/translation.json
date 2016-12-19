@@ -7,6 +7,9 @@
                 "createOrEditLabel": "Translation erstellen oder bearbeiten",
                 "search": "Suche nach Translation"
             },
+            "translations": "Übersetzungen",
+            "translation": "Übersetzung",
+            "english": "Englisch",
             "created": "Translation erstellt mit ID {{ param }}",
             "updated": "Translation aktualisiert mit ID {{ param }}",
             "deleted": "Translation gelöscht mit ID {{ param }}",

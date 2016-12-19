@@ -22,7 +22,8 @@
                     return data;
                 }
             },
-            'update': { method:'PUT' }
+            'update': { method:'PUT' },
+            'queryLatestByProject': { method:'GET', url:'api/projects/:projectId/definitions/latest', isArray:true}
         });
     }
 })();
