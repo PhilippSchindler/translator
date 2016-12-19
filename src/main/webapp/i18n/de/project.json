@@ -23,7 +23,8 @@
             "user": "User",
             "platform": "Plattform",
             "language": "Sprache",
-            "developerView": "Entwickler-Ansicht"
+            "developerView": "Entwickler-Ansicht",
+            "statistics": "Statistiken"
         }
     }
 }

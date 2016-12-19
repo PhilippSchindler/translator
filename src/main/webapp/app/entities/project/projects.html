@@ -62,6 +62,12 @@
                                 <span class="hidden-xs hidden-sm" data-translate="translatorApp.project.developerView"></span>
                             </button>
                             <button type="submit"
+                                    ui-sref="statistics({projectId:project.id})"
+                                    class="btn btn-success btn-sm">
+                                <span class="glyphicon glyphicon-stats"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="translatorApp.project.statistics"></span>
+                            </button>
+                            <button type="submit"
                                     ui-sref="project.edit({id:project.id})"
                                     class="btn btn-primary btn-sm">
                                 <span class="glyphicon glyphicon-pencil"></span>
