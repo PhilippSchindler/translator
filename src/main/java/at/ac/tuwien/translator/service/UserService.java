@@ -81,10 +81,14 @@ public class UserService {
 
     public User createUser(String login, String password, String firstName, String lastName, String email,
         String langKey) {
+        return createUser(login, password, firstName, lastName, email, langKey, true);
+    }
 
+    public User createUser(String login, String password, String firstName, String lastName, String email,
+                           String langKey, boolean activated)
+    {
         User newUser = new User();
-        Authority authority = authorityRepository.findOne(AuthoritiesConstants.USER);
-        Set<Authority> authorities = new HashSet<>();
+
         String encryptedPassword = passwordEncoder.encode(password);
         newUser.setLogin(login);
         // new user gets initially a generated password
@@ -93,11 +97,21 @@ public class UserService {
         newUser.setLastName(lastName);
         newUser.setEmail(email);
         newUser.setLangKey(langKey);
-        // new user is not active
-        newUser.setActivated(false);
-        // new user gets registration key
-        newUser.setActivationKey(RandomUtil.generateActivationKey());
-        authorities.add(authority);
+
+
+        newUser.setActivated(activated);
+        if (!activated) {
+            // new user gets registration key
+            // only required for e-mail confirmation
+            newUser.setActivationKey(RandomUtil.generateActivationKey());
+        }
+
+        Authority authorityCustomer = authorityRepository.findOne(AuthoritiesConstants.CUSTOMER);
+        Authority authorityUser = authorityRepository.findOne(AuthoritiesConstants.USER);
+        Set<Authority> authorities = new HashSet<>();
+        authorities.add(authorityCustomer);
+        authorities.add(authorityUser);
+
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
         log.debug("Created Information for User: {}", newUser);
