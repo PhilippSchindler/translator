@@ -145,7 +145,11 @@ public class DefinitionResource {
     @Timed
     public ResponseEntity<Void> deleteDefinition(@PathVariable Long id) {
         log.debug("REST request to delete Definition : {}", id);
-        definitionRepository.delete(id);
+        Definition definition = definitionRepository.findOne(id);
+        List<Definition> definitions = definitionRepository.findByLabel(definition.getLabel());
+        for (Definition def : definitions) {
+            definitionRepository.delete(def);
+        }
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("definition", id.toString())).build();
     }
 

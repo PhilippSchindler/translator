@@ -4,9 +4,11 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A Language.
@@ -32,6 +34,9 @@ public class Language implements Serializable {
 
     @ManyToOne
     private User user;
+
+    @ManyToMany(mappedBy = "languages")
+    private Set<Project> projects = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -107,5 +112,13 @@ public class Language implements Serializable {
             ", name='" + name + "'" +
             ", shortName='" + shortName + "'" +
             '}';
+    }
+
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
     }
 }
