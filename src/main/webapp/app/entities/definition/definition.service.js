@@ -22,6 +22,8 @@
                     return data;
                 }
             },
+            'update': { method:'PUT' },
+            'queryLatestByProject': { method:'GET', url:'api/projects/:projectId/definitions/latest', isArray:true},
             'getForProject': {
                 url: 'api/project/:projectId/definitions',
                 method: 'GET',
@@ -34,8 +36,7 @@
                     }
                     return data;
                 }
-            },
-            'update': { method:'PUT' }
+            }
         });
     }
 })();

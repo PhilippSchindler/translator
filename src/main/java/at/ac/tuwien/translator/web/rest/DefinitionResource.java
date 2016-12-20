@@ -111,6 +111,12 @@ public class DefinitionResource {
         return definitionRepository.findAll();
     }
 
+    @GetMapping("/projects/{projectId}/definitions/latest")
+    public List<Definition> getDefinitionsByProject(@PathVariable Long projectId) {
+        List<Definition> definitions = definitionRepository.findLatestByProject(projectId);
+        return definitions;
+    }
+
     /**
      * GET  /definitions/:id : get the "id" definition.
      *

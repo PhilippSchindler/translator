@@ -20,7 +20,8 @@
                     return data;
                 }
             },
-            'update': { method:'PUT' }
+            'update': { method:'PUT' },
+            'getByUser': {method: 'GET', url: 'api/users/:userId/singleproject'}
         });
     }
 })();

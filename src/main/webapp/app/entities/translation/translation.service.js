@@ -21,7 +21,8 @@
                     return data;
                 }
             },
-            'update': { method:'PUT' }
+            'update': { method:'PUT' },
+            'updateChangedTranslations': { method: 'PUT', url: 'api/translations/updateChangedTranslations'}
         });
     }
 })();

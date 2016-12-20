@@ -1,14 +1,13 @@
 package at.ac.tuwien.translator.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -37,14 +36,11 @@ public class Translation implements Serializable {
     @Column(name = "updated_at", nullable = false)
     private ZonedDateTime updatedAt;
 
-    @ManyToMany
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @JoinTable(name = "translation_language",
-               joinColumns = @JoinColumn(name="translations_id", referencedColumnName="ID"),
-               inverseJoinColumns = @JoinColumn(name="languages_id", referencedColumnName="ID"))
-    private Set<Language> languages = new HashSet<>();
+    @ManyToOne
+    private Language language;
 
     @ManyToOne
+    @JsonIgnore
     private Definition definition;
 
     public Long getId() {
@@ -94,27 +90,12 @@ public class Translation implements Serializable {
         this.updatedAt = updatedAt;
     }
 
-    public Set<Language> getLanguages() {
-        return languages;
+    public Language getLanguage() {
+        return language;
     }
 
-    public Translation languages(Set<Language> languages) {
-        this.languages = languages;
-        return this;
-    }
-
-    public Translation addLanguage(Language language) {
-        languages.add(language);
-        return this;
-    }
-
-    public Translation removeLanguage(Language language) {
-        languages.remove(language);
-        return this;
-    }
-
-    public void setLanguages(Set<Language> languages) {
-        this.languages = languages;
+    public void setLanguage(Language language) {
+        this.language = language;
     }
 
     public Definition getDefinition() {

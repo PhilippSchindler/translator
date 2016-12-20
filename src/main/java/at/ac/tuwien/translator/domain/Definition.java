@@ -44,7 +44,6 @@ public class Definition implements Serializable {
     private ZonedDateTime updatedAt;
 
     @OneToMany(mappedBy = "definition")
-    @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Translation> translations = new HashSet<>();
 
