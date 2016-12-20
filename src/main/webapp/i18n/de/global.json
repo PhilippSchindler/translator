@@ -7,13 +7,13 @@
             "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
             "entities": {
                 "main": "Entitäten",
-                "language": "Language",
-                "definition": "Definition",
-                "translation": "Translation",
-                "release": "Release",
-                "logEntry": "Log Entry",
-                "platform": "Platform",
-                "project": "Project",
+                "language": "Sprachen",
+                "definition": "Definitionen",
+                "translation": "Übersetzungen",
+                "release": "Releases",
+                "logEntry": "Log-Einträge",
+                "platform": "Plattformen",
+                "project": "Projekte",
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {
