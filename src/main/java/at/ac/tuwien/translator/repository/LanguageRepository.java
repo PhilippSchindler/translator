@@ -15,4 +15,5 @@ public interface LanguageRepository extends JpaRepository<Language,Long> {
     @Query("select language from Language language where language.user.login = ?#{principal.username}")
     List<Language> findByUserIsCurrentUser();
 
+    List<Language> findByProjects_id(Long projectId);
 }
