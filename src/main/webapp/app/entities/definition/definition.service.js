@@ -23,7 +23,20 @@
                 }
             },
             'update': { method:'PUT' },
-            'queryLatestByProject': { method:'GET', url:'api/projects/:projectId/definitions/latest', isArray:true}
+            'queryLatestByProject': { method:'GET', url:'api/projects/:projectId/definitions/latest', isArray:true},
+            'getForProject': {
+                url: 'api/project/:projectId/definitions',
+                method: 'GET',
+                isArray: true,
+                transformResponse: function (data) {
+                    if (data) {
+                        data = angular.fromJson(data);
+                        data.createdAt = DateUtils.convertDateTimeFromServer(data.createdAt);
+                        data.updatedAt = DateUtils.convertDateTimeFromServer(data.updatedAt);
+                    }
+                    return data;
+                }
+            }
         });
     }
 })();

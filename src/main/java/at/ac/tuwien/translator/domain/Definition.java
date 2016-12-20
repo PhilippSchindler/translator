@@ -34,15 +34,12 @@ public class Definition implements Serializable {
     @Column(name = "text", nullable = false)
     private String text;
 
-    @NotNull
     @Column(name = "version", nullable = false)
     private Integer version;
 
-    @NotNull
     @Column(name = "created_at", nullable = false)
     private ZonedDateTime createdAt;
 
-    @NotNull
     @Column(name = "updated_at", nullable = false)
     private ZonedDateTime updatedAt;
 
@@ -193,6 +190,7 @@ public class Definition implements Serializable {
             ", version='" + version + "'" +
             ", createdAt='" + createdAt + "'" +
             ", updatedAt='" + updatedAt + "'" +
+            ", projectId='" + (project == null ? "null" : project.getId()) + "'" +
             '}';
     }
 }

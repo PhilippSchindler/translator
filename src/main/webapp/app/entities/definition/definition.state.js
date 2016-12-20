@@ -119,55 +119,55 @@
                     $state.go('definition');
                 });
             }]
-        })
-        .state('definition.edit', {
-            parent: 'definition',
-            url: '/{id}/edit',
-            data: {
-                authorities: ['ROLE_USER']
-            },
-            onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-                $uibModal.open({
-                    templateUrl: 'app/entities/definition/definition-dialog.html',
-                    controller: 'DefinitionDialogController',
-                    controllerAs: 'vm',
-                    backdrop: 'static',
-                    size: 'lg',
-                    resolve: {
-                        entity: ['Definition', function(Definition) {
-                            return Definition.get({id : $stateParams.id}).$promise;
-                        }]
-                    }
-                }).result.then(function() {
-                    $state.go('definition', null, { reload: 'definition' });
-                }, function() {
-                    $state.go('^');
-                });
-            }]
-        })
-        .state('definition.delete', {
-            parent: 'definition',
-            url: '/{id}/delete',
-            data: {
-                authorities: ['ROLE_USER']
-            },
-            onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-                $uibModal.open({
-                    templateUrl: 'app/entities/definition/definition-delete-dialog.html',
-                    controller: 'DefinitionDeleteController',
-                    controllerAs: 'vm',
-                    size: 'md',
-                    resolve: {
-                        entity: ['Definition', function(Definition) {
-                            return Definition.get({id : $stateParams.id}).$promise;
-                        }]
-                    }
-                }).result.then(function() {
-                    $state.go('definition', null, { reload: 'definition' });
-                }, function() {
-                    $state.go('^');
-                });
-            }]
+        // })
+        // .state('definition.edit', {
+        //     parent: 'definition',
+        //     url: '/{id}/edit',
+        //     data: {
+        //         authorities: ['ROLE_USER']
+        //     },
+        //     onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+        //         $uibModal.open({
+        //             templateUrl: 'app/entities/definition/definition-dialog.html',
+        //             controller: 'DefinitionDialogController',
+        //             controllerAs: 'vm',
+        //             backdrop: 'static',
+        //             size: 'lg',
+        //             resolve: {
+        //                 entity: ['Definition', function(Definition) {
+        //                     return Definition.get({id : $stateParams.id}).$promise;
+        //                 }]
+        //             }
+        //         }).result.then(function() {
+        //             $state.go('definition', null, { reload: 'definition' });
+        //         }, function() {
+        //             $state.go('^');
+        //         });
+        //     }]
+        // })
+        // .state('definition.delete', {
+        //     parent: 'definition',
+        //     url: '/{id}/delete',
+        //     data: {
+        //         authorities: ['ROLE_USER']
+        //     },
+        //     onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+        //         $uibModal.open({
+        //             templateUrl: 'app/entities/definition/definition-delete-dialog.html',
+        //             controller: 'DefinitionDeleteController',
+        //             controllerAs: 'vm',
+        //             size: 'md',
+        //             resolve: {
+        //                 entity: ['Definition', function(Definition) {
+        //                     return Definition.get({id : $stateParams.id}).$promise;
+        //                 }]
+        //             }
+        //         }).result.then(function() {
+        //             $state.go('definition', null, { reload: 'definition' });
+        //         }, function() {
+        //             $state.go('^');
+        //         });
+        //     }]
         });
     }
 
