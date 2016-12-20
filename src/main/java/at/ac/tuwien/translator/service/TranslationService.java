@@ -56,7 +56,7 @@ public class TranslationService {
         newDefinition.setLabel(oldDefinition.getLabel());
         newDefinition.setProject(oldDefinition.getProject());
         newDefinition.setText(oldDefinition.getText());
-        newDefinition.setCreatedAt(ZonedDateTime.now());
+        newDefinition.setCreatedAt(oldDefinition.getCreatedAt());
         newDefinition.setUpdatedAt(ZonedDateTime.now());
         newDefinition.setVersion(oldDefinition.getVersion() + 1);
         return newDefinition;
