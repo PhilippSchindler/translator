@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +42,7 @@ public class TranslationService {
                 newTranslation.setText(translationToUpdate.getText());
 
                 Language language = languageRepository.findOne(translationToUpdate.getLangId());
-                newTranslation.setLanguages(Collections.singleton(language));
+                newTranslation.setLanguage(language);
                 translations.add(newTranslation);
             }
             translationRepository.save(translations);
