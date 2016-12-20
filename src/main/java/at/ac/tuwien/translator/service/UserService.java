@@ -81,7 +81,12 @@ public class UserService {
 
     public User createUser(String login, String password, String firstName, String lastName, String email,
         String langKey) {
+        return createUser(login, password, firstName, lastName, email, langKey, true);
+    }
 
+    public User createUser(String login, String password, String firstName, String lastName, String email,
+                           String langKey, boolean activated)
+    {
         User newUser = new User();
 
         String encryptedPassword = passwordEncoder.encode(password);
@@ -92,12 +97,14 @@ public class UserService {
         newUser.setLastName(lastName);
         newUser.setEmail(email);
         newUser.setLangKey(langKey);
-        newUser.setActivated(true);
 
-        // new user gets registration key
-        // newUser.setActivationKey(RandomUtil.generateActivationKey());
-        // only required for e-mail confirmation
 
+        newUser.setActivated(activated);
+        if (!activated) {
+            // new user gets registration key
+            // only required for e-mail confirmation
+            newUser.setActivationKey(RandomUtil.generateActivationKey());
+        }
 
         Authority authorityCustomer = authorityRepository.findOne(AuthoritiesConstants.CUSTOMER);
         Authority authorityUser = authorityRepository.findOne(AuthoritiesConstants.USER);
