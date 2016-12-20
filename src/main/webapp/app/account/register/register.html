@@ -3,8 +3,9 @@
         <div class="col-md-8 col-md-offset-2">
             <h1 data-translate="register.title">Registration</h1>
 
-            <div class="alert alert-success" ng-show="vm.success" data-translate="register.messages.success">
-                <strong>Registration saved!</strong> Please check your email for confirmation.
+            <div class="alert alert-success" ng-show="vm.success">
+                <strong>Registrierung gespeichert!</strong> -
+                Sie können Sie sich nun anmelden.
             </div>
 
             <div class="alert alert-danger" ng-show="vm.error" data-translate="register.messages.error.fail">
@@ -115,8 +116,15 @@
                 <button type="submit" ng-disabled="form.$invalid" class="btn btn-primary" data-translate="register.form.button">Register</button>
             </form>
             <p></p>
-            <div class="alert alert-warning" data-translate="global.messages.info.authenticated" translate-compile>
-                If you want to <a class="alert-link" href="" ng-click="vm.login()">sign in</a>, you can try the default accounts:<br/>- Administrator (login="admin" and password="admin") <br/>- User (login="user" and password="user").
+            <div class="alert alert-warning">
+                Sie haben bereits einen Account? -
+                <a class="alert-link" href="" ng-click="vm.login()">
+                Hier können Sie sich anmelden. </a>
+
+                <br/><br/>
+                Für eine Registierung als Entwickler, Übersetzer oder Release Manager kontaktieren Sie bitte den Projektverantwortlichen.
+                Dieser erstellt einen Account für Sie.
+
             </div>
         </div>
     </div>
