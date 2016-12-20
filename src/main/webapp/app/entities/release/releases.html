@@ -1,0 +1,68 @@
+<div>
+    <h2 data-translate="translatorApp.release.home.title">Releases</h2>
+    <jhi-alert></jhi-alert>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4 no-padding-left">
+                <button class="btn btn-primary" ui-sref="release.new" >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <span  data-translate="translatorApp.release.home.createLabel">
+                        Create new Release
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+                <tr>
+                    <th><span data-translate="global.field.id">ID</span></th>
+                    <th><span data-translate="translatorApp.release.name">Name</span></th>
+                    <th><span data-translate="translatorApp.release.deadline">Deadline</span></th>
+                    <th><span data-translate="translatorApp.release.definition">Definition</span></th>
+                    <th><span data-translate="translatorApp.release.project">Project</span></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="release in vm.releases track by release.id">
+                    <td><a ui-sref="release-detail({id:release.id})">{{release.id}}</a></td>
+                    <td>{{release.name}}</td>
+                        <td>{{release.deadline | date:'mediumDate'}}</td>
+                    <td>
+                        <span ng-repeat="definition in release.definitions">
+                            <a class="form-control-static" ui-sref="definition-detail({id: definition.id})">{{definition.label}}</a>{{$last ? '' : ', '}}
+                        </span>
+                    </td>
+                    <td>
+                        <a ui-sref="project-detail({id:release.project.id})">{{release.project.name}}</a>
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button type="submit"
+                                    ui-sref="release-detail({id:release.id})"
+                                    class="btn btn-info btn-sm">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.view"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="release.edit({id:release.id})"
+                                    class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="release.delete({id:release.id})"
+                                    class="btn btn-danger btn-sm">
+                                <span class="glyphicon glyphicon-remove-circle"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.delete"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

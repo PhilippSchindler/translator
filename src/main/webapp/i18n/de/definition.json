@@ -1,0 +1,28 @@
+{
+    "translatorApp": {
+        "definition" : {
+            "home": {
+                "title": "Definitions",
+                "createLabel": "Definition erstellen",
+                "createOrEditLabel": "Definition erstellen oder bearbeiten",
+                "search": "Suche nach Definition"
+            },
+            "created": "Definition erstellt mit ID {{ param }}",
+            "updated": "Definition aktualisiert mit ID {{ param }}",
+            "deleted": "Definition gelöscht mit ID {{ param }}",
+            "delete": {
+                "question": "Soll Definition {{ id }} wirklich dauerhaft gelöscht werden?"
+            },
+            "detail": {
+                "title": "Definition"
+            },
+            "label": "Label",
+            "text": "Text",
+            "version": "Version",
+            "createdAt": "Created At",
+            "updatedAt": "Updated At",
+            "translation": "Translation",
+            "project": "Project"
+        }
+    }
+}

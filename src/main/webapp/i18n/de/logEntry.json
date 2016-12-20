@@ -1,0 +1,25 @@
+{
+    "translatorApp": {
+        "logEntry" : {
+            "home": {
+                "title": "Log Entries",
+                "createLabel": "Log Entry erstellen",
+                "createOrEditLabel": "Log Entry erstellen oder bearbeiten",
+                "search": "Suche nach Log Entry"
+            },
+            "created": "Log Entry erstellt mit ID {{ param }}",
+            "updated": "Log Entry aktualisiert mit ID {{ param }}",
+            "deleted": "Log Entry gelöscht mit ID {{ param }}",
+            "delete": {
+                "question": "Soll Log Entry {{ id }} wirklich dauerhaft gelöscht werden?"
+            },
+            "detail": {
+                "title": "Log Entry"
+            },
+            "timestamp": "Timestamp",
+            "message": "Message",
+            "result": "Result",
+            "user": "User"
+        }
+    }
+}

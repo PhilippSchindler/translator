@@ -1,0 +1,35 @@
+
+<div>
+    <h2><span data-translate="translatorApp.logEntry.detail.title">Log Entry</span> {{vm.logEntry.id}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+    <dl class="dl-horizontal jh-entity-details">
+        <dt><span data-translate="translatorApp.logEntry.timestamp">Timestamp</span></dt>
+        <dd>
+            <span>{{vm.logEntry.timestamp | date:'medium'}}</span>
+        </dd>
+        <dt><span data-translate="translatorApp.logEntry.message">Message</span></dt>
+        <dd>
+            <span>{{vm.logEntry.message}}</span>
+        </dd>
+        <dt><span data-translate="translatorApp.logEntry.result">Result</span></dt>
+        <dd>
+            <span>{{vm.logEntry.result}}</span>
+        </dd>
+        <dt><span data-translate="translatorApp.logEntry.user">User</span></dt>
+        <dd>
+            {{vm.logEntry.user.login}}
+        </dd>
+    </dl>
+
+    <button type="submit"
+            ui-sref="{{ vm.previousState }}"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span data-translate="entity.action.back"> Back</span>
+    </button>
+
+    <button type="button" ui-sref="log-entry-detail.edit({id:vm.logEntry.id})" class="btn btn-primary">
+        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"> Edit</span>
+    </button>
+</div>
