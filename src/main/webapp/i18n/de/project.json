@@ -4,7 +4,7 @@
             "home": {
                 "title": "Projekte",
                 "createLabel": "Projekt erstellen",
-                "createOrEditLabel": "Projekt erstellen oder bearbeiten",
+                "projectDetails": "Projekt Details",
                 "search": "Suche nach Projekt"
             },
             "created": "Projekt erstellt mit ID {{ param }}",
@@ -14,7 +14,9 @@
                 "question": "Soll Projekt {{ id }} wirklich dauerhaft gelöscht werden?"
             },
             "detail": {
-                "title": "Projekt"
+                "details": "Details",
+                "title": "Projekt",
+                "actions": "Aktionen"
             },
             "name": "Name",
             "description": "Beschreibung",

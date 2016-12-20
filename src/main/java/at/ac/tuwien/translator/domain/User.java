@@ -86,6 +86,13 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Authority> authorities = new HashSet<>();
 
+    @ManyToMany
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @JoinTable(name = "project_user",
+        joinColumns = @JoinColumn(name="users_id", referencedColumnName="ID"),
+        inverseJoinColumns = @JoinColumn(name="projects_id", referencedColumnName="ID"))
+    private Set<Project> projects = new HashSet<>();
+
     public Long getId() {
         return id;
     }
@@ -189,6 +196,15 @@ public class User extends AbstractAuditingEntity implements Serializable {
                 return true;
         return false;
     }
+  
+    public Set<Project> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
+    }
+  
 
     @Override
     public boolean equals(Object o) {

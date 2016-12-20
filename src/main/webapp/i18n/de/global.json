@@ -17,7 +17,7 @@
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {
-                "main": "Account",
+                "main": "Zugang",
                 "settings": "Einstellungen",
                 "password": "Passwort",
                 "sessions": "Sitzungen",
@@ -127,5 +127,13 @@
         "idexists": "Ein neuer {{entityName}} kann noch keine ID haben",
         "labelexists": "Es existiert bereits eine Definition mit diesem Label!"
     },
-    "footer": ""
+    "footer": "",
+    "multiselect": {
+        "filterPlaceHolder": "Filter...",
+        "labelAll": "Alle",
+        "labelSelected": "Ausgewählte",
+        "selectAll": "Alle selektieren",
+        "deselectAll": "Alle deselektieren",
+        "helpMessage": "Auf Einträge klicken um sie zu verschieben"
+    }
 }

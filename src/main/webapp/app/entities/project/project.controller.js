@@ -20,5 +20,9 @@
                 vm.searchQuery = null;
             });
         }
+
+        vm.replaceNewLineWithBR = function (str) {
+            return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+        }
     }
 })();

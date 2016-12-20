@@ -2,12 +2,10 @@
     "fluentMethods": true,
     "relationships": [
         {
-            "relationshipType": "many-to-many",
-            "otherEntityRelationshipName": "",
+            "relationshipType": "many-to-one",
             "relationshipName": "language",
             "otherEntityName": "language",
-            "otherEntityField": "name",
-            "ownerSide": true
+            "otherEntityField": "name"
         },
         {
             "relationshipType": "many-to-one",

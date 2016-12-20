@@ -15,4 +15,5 @@ public interface LanguageRepository extends JpaRepository<Language,Long> {
     @Query("select language from Language language where language.user.id = ?1")
     List<Language> findByUser(Long userId);
 
+    List<Language> findByProjects_id(Long projectId);
 }
