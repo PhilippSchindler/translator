@@ -18,7 +18,7 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr>
-                    <th><span data-translate="global.field.id">ID</span></th>
+                    <!--<th><span data-translate="global.field.id">ID</span></th>-->
                     <th><span data-translate="translatorApp.project.name">Name</span></th>
                     <th><span data-translate="translatorApp.project.description">Description</span></th>
                     <th><span data-translate="translatorApp.project.user">User</span></th>
@@ -29,8 +29,8 @@
             </thead>
             <tbody>
                 <tr ng-repeat="project in vm.projects track by project.id">
-                    <td><a ui-sref="project-detail({id:project.id})">{{project.id}}</a></td>
-                    <td>{{project.name}}</td>
+                    <!--<td><a ui-sref="project-detail({id:project.id})">{{project.id}}</a></td>-->
+                    <td><a ui-sref="project-detail({id:project.id})">{{project.name}}</a></td>
                     <td>{{project.description}}</td>
                     <td>
                         <span ng-repeat="user in project.users">
