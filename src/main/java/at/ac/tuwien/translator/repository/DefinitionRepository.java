@@ -18,8 +18,8 @@ public interface DefinitionRepository extends JpaRepository<Definition,Long> {
         "FROM Definition d " +
         "LEFT JOIN Definition d2 " +
         "ON d.label = d2.label AND d.version < d2.version " +
-        "JOIN FETCH d.translations t " +
-        "JOIN FETCH t.languages " +
+        "LEFT JOIN FETCH d.translations t " +
+        "LEFT JOIN FETCH t.languages " +
         "WHERE d2.version IS NULL AND d.project.id = (:projectId)")
     public List<Definition> findLatestByProject(@Param("projectId") Long projectId);
 

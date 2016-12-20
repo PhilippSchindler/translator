@@ -23,6 +23,24 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr>
+                            <td><input ng-keyup="vm.searchChanged()"
+                                       ng-model="vm.searches['Label']"
+                                       placeholder="{{'translatorApp.translatorView.filter' | translate}} Label...">
+                                <i class="glyphicon glyphicon-search"/>
+                            </td>
+                            <td><input ng-keyup="vm.searchChanged()"
+                                       ng-model="vm.searches['English']"
+                                       placeholder="{{'translatorApp.translatorView.filter' | translate}} {{'translatorApp.translatorView.english' | translate}}...">
+                                <i class="glyphicon glyphicon-search"/>
+                            </td>
+                            <td ng-repeat="lang in vm.project.languages">
+                                <input ng-keyup="vm.searchChanged()"
+                                       ng-model="vm.searches[lang.name]"
+                                       placeholder="{{'translatorApp.translatorView.filter' | translate}} {{lang.name}}...">
+                                <i class="glyphicon glyphicon-search"/>
+                            </td>
+                        </tr>
                         <tr ng-repeat="definition in vm.definitions" ng-hide="vm.isRowToHide(definition)">
                             <td>{{definition.label}}</td>
                             <td>{{definition.text}}</td>

@@ -14,7 +14,9 @@
         vm.project = project;
         vm.changedDefinitionIds = new Set();
         vm.onlyShowNotTranslated = false;
-        vm.definitionIdsToHide = new Set();
+        vm.definitionIdsFullyTranslatedToHide = new Set();
+        vm.definitionIdsSearchToHide = new Set();
+        vm.searches = {};
 
         loadAll();
 
@@ -54,15 +56,50 @@
                         }
                     }
                     if(!foundEmptyCell)
-                        vm.definitionIdsToHide.add(definition.id);
+                        vm.definitionIdsFullyTranslatedToHide.add(definition.id);
                 }
             } else {
-                vm.definitionIdsToHide.clear();
+                vm.definitionIdsFullyTranslatedToHide.clear();
+            }
+        }
+
+        vm.searchChanged = function(){
+            vm.definitionIdsSearchToHide.clear();
+            for(var j=0; j<vm.definitions.length; j++){
+                let definition = vm.definitions[j];
+                let labelSearch = vm.searches['Label'];
+                if(definition.label.toLowerCase().search(labelSearch == undefined ? "" : labelSearch.toLowerCase()) < 0){
+                    vm.definitionIdsSearchToHide.add(definition.id);
+                    continue;
+                }
+                let englishSearch = vm.searches['English'];
+                if(definition.text.toLowerCase().search(englishSearch == undefined ? "" : englishSearch.toLowerCase()) < 0){
+                    vm.definitionIdsSearchToHide.add(definition.id);
+                    continue;
+                }
+                let foundWrongCell = false;
+                for(var i=0; i<vm.project.languages.length; i++){
+                    let lang = vm.project.languages[i];
+                    let inputValue = $('#' + definition.id + lang.name).val();
+                    let searchLang = vm.searches[lang.name];
+                    if(inputValue.toLowerCase().search(searchLang == undefined ? "" : searchLang.toLowerCase()) < 0){
+                        foundWrongCell = true;
+                        break;
+                    }
+                }
+                if(foundWrongCell)
+                    vm.definitionIdsSearchToHide.add(definition.id);
             }
         }
 
         vm.isRowToHide = function(definition){
-            return vm.definitionIdsToHide.has(definition.id);
+            if(vm.definitionIdsFullyTranslatedToHide.has(definition.id))
+                return true;
+
+            if(vm.definitionIdsSearchToHide.has(definition.id))
+                return true;
+
+            return false;
         }
 
         vm.save = function(){
