@@ -3,17 +3,15 @@
 
     angular
         .module('translatorApp')
-        .controller('TranslationController', TranslationController);
+        .controller('TranslatorViewController', TranslatorViewController);
 
-    TranslationController.$inject = ['$scope', '$state', '$filter', 'Translation', 'Project', 'Definition'];
+    TranslatorViewController.$inject = ['$scope', '$state', '$filter', 'project', 'Translation', 'Project', 'Definition'];
 
-    function TranslationController ($scope, $state, $filter, Translation, Project, Definition) {
+    function TranslatorViewController ($scope, $state, $filter, project, Translation, Project, Definition) {
         var vm = this;
 
-        vm.userId = 5; //TODO replace with real logged in user id
-
         vm.definitions = [];
-        vm.project = null;
+        vm.project = project;
         vm.changedDefinitionIds = new Set();
         vm.onlyShowNotTranslated = false;
         vm.definitionIdsToHide = new Set();
@@ -22,12 +20,8 @@
 
         function loadAll() {
             vm.changedDefinitionIds.clear();
-            Project.getByUser({userId: vm.userId}, function(result){
-                vm.project = result;
-
-                Definition.queryLatestByProject({projectId: vm.project.id}, function(resultDefinition) {
-                    vm.definitions = $filter('orderBy')(resultDefinition, 'label');
-                });
+            Definition.queryLatestByProject({projectId: vm.project.id}, function(resultDefinition) {
+                vm.definitions = $filter('orderBy')(resultDefinition, 'label');
             });
         }
 
@@ -72,17 +66,17 @@
         }
 
         vm.save = function(){
-//            let definitionsToUpdate = [];
-//            for(let definitionId of vm.changedDefinitionIds){
-//                let translations = [];
-//                for(var i=0; i<vm.project.languages.length; i++){
-//                    let lang = vm.project.languages[i];
-//                    translations.push({langId: lang.id, text: $('#' + definitionId + lang.name).val()});
-//                }
-//                definitionsToUpdate.push({definitionId: definitionId, translations: translations});
-//            }
-//            Translation.updateChangedTranslations(definitionsToUpdate,
-//                function(){loadAll();});
+            let definitionsToUpdate = [];
+            for(let definitionId of vm.changedDefinitionIds){
+                let translations = [];
+                for(var i=0; i<vm.project.languages.length; i++){
+                    let lang = vm.project.languages[i];
+                    translations.push({langId: lang.id, text: $('#' + definitionId + lang.name).val()});
+                }
+                definitionsToUpdate.push({definitionId: definitionId, translations: translations});
+            }
+            Translation.updateChangedTranslations(definitionsToUpdate,
+                function(){loadAll();});
         }
     }
 })();

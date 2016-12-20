@@ -1,0 +1,12 @@
+{
+    "translatorApp": {
+        "translatorView" : {
+            "home": {
+                "title": "Übersetzungen"
+            },
+            "translations": "Übersetzungen",
+            "english": "Englisch",
+            "filter": "Filter"
+        }
+    }
+}
