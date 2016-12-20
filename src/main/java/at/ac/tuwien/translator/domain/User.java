@@ -2,6 +2,7 @@ package at.ac.tuwien.translator.domain;
 
 import at.ac.tuwien.translator.config.Constants;
 
+import at.ac.tuwien.translator.security.AuthoritiesConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -77,7 +78,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private ZonedDateTime resetDate = null;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "jhi_user_authority",
         joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
@@ -180,6 +181,13 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public boolean isAdmin() {
+        for (Authority a : authorities)
+            if (a.getName().equals(AuthoritiesConstants.ADMIN))
+                return true;
+        return false;
     }
 
     @Override

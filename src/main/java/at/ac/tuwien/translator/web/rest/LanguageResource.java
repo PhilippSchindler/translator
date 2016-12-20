@@ -1,9 +1,11 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.Authority;
 import at.ac.tuwien.translator.domain.Language;
 import at.ac.tuwien.translator.domain.User;
 import at.ac.tuwien.translator.repository.LanguageRepository;
 import at.ac.tuwien.translator.repository.UserRepository;
+import at.ac.tuwien.translator.security.AuthoritiesConstants;
 import at.ac.tuwien.translator.service.UserService;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
 import com.codahale.metrics.annotation.Timed;
@@ -11,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -53,7 +57,6 @@ public class LanguageResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("language", "idexists", "A new language cannot already have an ID")).body(null);
         }
 
-
         User loggedInUser = userService.getUserWithAuthorities();
         if (loggedInUser != null)
             language.setUser(loggedInUser);
@@ -95,7 +98,15 @@ public class LanguageResource {
     @Timed
     public List<Language> getAllLanguages() {
         log.debug("REST request to get all Languages");
-        List<Language> languages = languageRepository.findAll();
+        List<Language> languages;
+
+        User loggedInUser = userService.getUserWithAuthorities();
+
+        if (loggedInUser == null || loggedInUser.isAdmin()) // loggedInUser == null for integration tests
+            languages = languageRepository.findAll();
+        else
+            languages = languageRepository.findByUser(loggedInUser.getId());
+
         return languages;
     }
 
