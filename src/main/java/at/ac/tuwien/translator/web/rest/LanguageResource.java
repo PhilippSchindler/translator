@@ -1,18 +1,14 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.Language;
 import at.ac.tuwien.translator.domain.User;
+import at.ac.tuwien.translator.repository.LanguageRepository;
 import at.ac.tuwien.translator.repository.UserRepository;
 import at.ac.tuwien.translator.service.UserService;
-import com.codahale.metrics.annotation.Timed;
-import at.ac.tuwien.translator.domain.Language;
-
-import at.ac.tuwien.translator.repository.LanguageRepository;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
-
+import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +36,6 @@ public class LanguageResource {
     private UserRepository userRepository;
 
     @Inject
-//    @Autowired
     private UserService userService;
 
     /**
