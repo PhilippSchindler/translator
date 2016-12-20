@@ -18,6 +18,22 @@
         vm.definitionIdsSearchToHide = new Set();
         vm.searches = {};
 
+        $scope.languageSelectOptions = {
+            title: $filter('translate')('translatorApp.translatorView.languages'),
+            filterPlaceHolder: $filter('translate')('multiselect.filterPlaceHolder'),
+            labelAll: $filter('translate')('multiselect.labelAll'),
+            labelSelected: $filter('translate')('multiselect.labelSelected'),
+            selectAll: $filter('translate')('multiselect.selectAll'),
+            deselectAll: $filter('translate')('multiselect.deselectAll'),
+            helpMessage: $filter('translate')('multiselect.helpMessage'),
+            /* angular will use this to filter your lists */
+            orderProperty: 'name',
+            /* this contains the initial list of all items (i.e. the left side) */
+            items: vm.project.languages.slice(),
+            /* this list should be initialized as empty or with any pre-selected items */
+            selectedItems: []
+        };
+
         loadAll();
 
         function loadAll() {
@@ -48,8 +64,8 @@
                 for(var j=0; j<vm.definitions.length; j++){
                     let definition = vm.definitions[j];
                     let foundEmptyCell = false;
-                    for(var i=0; i<vm.project.languages.length; i++){
-                        let lang = vm.project.languages[i];
+                    for(var i=0; i<$scope.languageSelectOptions.selectedItems.length; i++){
+                        let lang = $scope.languageSelectOptions.selectedItems[i];
                         if($('#' + definition.id + lang.name).val() === ""){
                             foundEmptyCell = true;
                             break;
@@ -78,8 +94,8 @@
                     continue;
                 }
                 let foundWrongCell = false;
-                for(var i=0; i<vm.project.languages.length; i++){
-                    let lang = vm.project.languages[i];
+                for(var i=0; i<$scope.languageSelectOptions.selectedItems.length; i++){
+                    let lang = $scope.languageSelectOptions.selectedItems[i];
                     let inputValue = $('#' + definition.id + lang.name).val();
                     let searchLang = vm.searches[lang.name];
                     if(inputValue.toLowerCase().search(searchLang == undefined ? "" : searchLang.toLowerCase()) < 0){
@@ -100,6 +116,15 @@
                 return true;
 
             return false;
+        }
+
+        vm.isLangToHide = function(lang){
+            for(var i=0; i<$scope.languageSelectOptions.selectedItems.length; i++){
+                let selectedLang = $scope.languageSelectOptions.selectedItems[i];
+                if(selectedLang.name == lang.name)
+                    return false;
+            }
+            return true;
         }
 
         vm.save = function(){

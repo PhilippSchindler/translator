@@ -6,7 +6,8 @@
             },
             "translations": "Übersetzungen",
             "english": "Englisch",
-            "filter": "Filter"
+            "filter": "Filter",
+            "languages": "Sprachen"
         }
     }
 }

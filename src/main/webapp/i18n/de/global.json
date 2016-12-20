@@ -127,5 +127,13 @@
         "idexists": "Ein neuer {{entityName}} kann noch keine ID haben",
         "labelexists": "Es existiert bereits eine Definition mit diesem Label!"
     },
-    "footer": "Dies ist Ihre Fußzeile"
+    "footer": "Dies ist Ihre Fußzeile",
+    "multiselect": {
+        "filterPlaceHolder": "Filter...",
+        "labelAll": "Alle",
+        "labelSelected": "Ausgewählte",
+        "selectAll": "Alle selektieren",
+        "deselectAll": "Alle deselektieren",
+        "helpMessage": "Auf Einträge klicken um sie zu verschieben"
+    }
 }
