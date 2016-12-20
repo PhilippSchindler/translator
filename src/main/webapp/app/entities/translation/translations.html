@@ -3,6 +3,14 @@
     <jhi-alert></jhi-alert>
     <br/>
     <div class="panel panel-default">
+        <div class="panel-heading" data-translate="translatorApp.translation.filter">Filter</div>
+        <div class="panel-body">
+            <input type="checkbox"
+                   ng-model="vm.onlyShowNotTranslated"
+                   ng-change="vm.onlyShowNotTranslatedChanged()"> Only show not translated entries
+        </div>
+    </div>
+    <div class="panel panel-default">
         <div class="panel-heading" data-translate="translatorApp.translation.translations">Translations</div>
         <div class="panel-body">
             <div class="table-responsive">
@@ -15,7 +23,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="definition in vm.definitions">
+                        <tr ng-repeat="definition in vm.definitions" ng-hide="vm.isRowToHide(definition)">
                             <td>{{definition.label}}</td>
                             <td>{{definition.text}}</td>
                             <td ng-repeat="lang in vm.project.languages">

@@ -23,7 +23,8 @@
             "deleted": "Deleted",
             "updatedAt": "Updated At",
             "language": "Language",
-            "definition": "Definition"
+            "definition": "Definition",
+            "filter": "Filter"
         }
     }
 }

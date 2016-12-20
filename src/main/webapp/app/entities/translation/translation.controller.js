@@ -15,6 +15,8 @@
         vm.definitions = [];
         vm.project = null;
         vm.changedDefinitionIds = new Set();
+        vm.onlyShowNotTranslated = false;
+        vm.definitionIdsToHide = new Set();
 
         loadAll();
 
@@ -43,6 +45,30 @@
 
         vm.markDefinitionAsChanged = function(definition){
             vm.changedDefinitionIds.add(definition.id);
+        }
+
+        vm.onlyShowNotTranslatedChanged = function(){
+            if(vm.onlyShowNotTranslated){
+                for(var j=0; j<vm.definitions.length; j++){
+                    let definition = vm.definitions[j];
+                    let foundEmptyCell = false;
+                    for(var i=0; i<vm.project.languages.length; i++){
+                        let lang = vm.project.languages[i];
+                        if($('#' + definition.id + lang.name).val() === ""){
+                            foundEmptyCell = true;
+                            break;
+                        }
+                    }
+                    if(!foundEmptyCell)
+                        vm.definitionIdsToHide.add(definition.id);
+                }
+            } else {
+                vm.definitionIdsToHide.clear();
+            }
+        }
+
+        vm.isRowToHide = function(definition){
+            return vm.definitionIdsToHide.has(definition.id);
         }
 
         vm.save = function(){
