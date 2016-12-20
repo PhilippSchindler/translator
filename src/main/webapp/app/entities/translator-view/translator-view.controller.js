@@ -46,11 +46,8 @@
         vm.getTranslation = function(translations, language){
             for(var i=0; i < translations.length; i++){
                 var t = translations[i];
-                for(var j=0; j< t.languages.length; j++){
-                    var l = t.languages[j];
-                    if(l.id === language.id)
-                        return t;
-                }
+                if(t.language.id === language.id)
+                    return t;
             }
             return "";
         }
