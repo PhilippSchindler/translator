@@ -17,5 +17,9 @@
             vm.project = result;
         });
         $scope.$on('$destroy', unsubscribe);
+
+        vm.replaceNewLineWithBR = function (str) {
+            return str.replace(/(?:\r\n|\r|\n)/g, '<br />');
+        }
     }
 })();

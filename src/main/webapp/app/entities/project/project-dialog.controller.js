@@ -5,19 +5,14 @@
         .module('translatorApp')
         .controller('ProjectDialogController', ProjectDialogController);
 
-    ProjectDialogController.$inject = ['$timeout', '$scope', '$stateParams', '$uibModalInstance', 'entity', 'Project', 'Definition', 'Release', 'User', 'Platform', 'Language'];
+    ProjectDialogController.$inject = ['$timeout', '$scope', '$stateParams', '$uibModalInstance', 'entity', 'Project'];
 
-    function ProjectDialogController ($timeout, $scope, $stateParams, $uibModalInstance, entity, Project, Definition, Release, User, Platform, Language) {
+    function ProjectDialogController ($timeout, $scope, $stateParams, $uibModalInstance, entity, Project) {
         var vm = this;
 
         vm.project = entity;
         vm.clear = clear;
         vm.save = save;
-        vm.definitions = Definition.query();
-        vm.releases = Release.query();
-        vm.users = User.query();
-        vm.platforms = Platform.query();
-        vm.languages = Language.query();
 
         $timeout(function (){
             angular.element('.form-group:eq(1)>input').focus();
