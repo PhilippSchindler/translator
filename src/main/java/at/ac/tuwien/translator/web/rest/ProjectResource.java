@@ -1,5 +1,6 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.User;
 import at.ac.tuwien.translator.repository.UserRepository;
 import at.ac.tuwien.translator.security.SecurityUtils;
 import com.codahale.metrics.annotation.Timed;
@@ -50,8 +51,12 @@ public class ProjectResource {
         if (project.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("project", "idexists", "A new project cannot already have an ID")).body(null);
         }
-        project.addUser(userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin()).get());
+        Optional<User> userOptional = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+        if(userOptional.isPresent()) {
+            project.addUser(userOptional.get());
+        }
         Project result = projectRepository.save(project);
+
         return ResponseEntity.created(new URI("/api/projects/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("project", result.getId().toString()))
             .body(result);
