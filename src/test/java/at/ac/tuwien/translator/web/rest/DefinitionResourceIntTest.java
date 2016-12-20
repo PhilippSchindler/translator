@@ -1,10 +1,8 @@
 package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.TranslatorApp;
-
 import at.ac.tuwien.translator.domain.Definition;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,13 +19,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
-import java.time.ZoneId;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static at.ac.tuwien.translator.web.rest.TestUtil.sameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasItem;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -43,19 +38,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class DefinitionResourceIntTest {
 
     private static final String DEFAULT_LABEL = "AAAAAAAAAA";
-    private static final String UPDATED_LABEL = "BBBBBBBBBB";
 
     private static final String DEFAULT_TEXT = "AAAAAAAAAA";
     private static final String UPDATED_TEXT = "BBBBBBBBBB";
 
-    private static final Integer DEFAULT_VERSION = 1;
-    private static final Integer UPDATED_VERSION = 2;
-
-    private static final ZonedDateTime DEFAULT_CREATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_CREATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
-    private static final ZonedDateTime DEFAULT_UPDATED_AT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_UPDATED_AT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+    private static final Integer DEFAULT_VERSION = 0;
+    private static final Integer UPDATED_VERSION = 1;
 
     @Inject
     private DefinitionRepository definitionRepository;
@@ -90,13 +78,12 @@ public class DefinitionResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static Definition createEntity(EntityManager em) {
-        Definition definition = new Definition()
+        return new Definition()
                 .label(DEFAULT_LABEL)
                 .text(DEFAULT_TEXT)
-                .version(DEFAULT_VERSION)
-                .createdAt(DEFAULT_CREATED_AT)
-                .updatedAt(DEFAULT_UPDATED_AT);
-        return definition;
+            .version(DEFAULT_VERSION)
+            .createdAt(ZonedDateTime.now())
+            .updatedAt(ZonedDateTime.now());
     }
 
     @Before
@@ -123,8 +110,8 @@ public class DefinitionResourceIntTest {
         assertThat(testDefinition.getLabel()).isEqualTo(DEFAULT_LABEL);
         assertThat(testDefinition.getText()).isEqualTo(DEFAULT_TEXT);
         assertThat(testDefinition.getVersion()).isEqualTo(DEFAULT_VERSION);
-        assertThat(testDefinition.getCreatedAt()).isEqualTo(DEFAULT_CREATED_AT);
-        assertThat(testDefinition.getUpdatedAt()).isEqualTo(DEFAULT_UPDATED_AT);
+        assertThat(testDefinition.getCreatedAt()).isBefore(ZonedDateTime.now());
+        assertThat(testDefinition.getUpdatedAt()).isBefore(ZonedDateTime.now());
     }
 
     @Test
@@ -185,60 +172,6 @@ public class DefinitionResourceIntTest {
 
     @Test
     @Transactional
-    public void checkVersionIsRequired() throws Exception {
-        int databaseSizeBeforeTest = definitionRepository.findAll().size();
-        // set the field null
-        definition.setVersion(null);
-
-        // Create the Definition, which fails.
-
-        restDefinitionMockMvc.perform(post("/api/definitions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(definition)))
-            .andExpect(status().isBadRequest());
-
-        List<Definition> definitionList = definitionRepository.findAll();
-        assertThat(definitionList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void checkCreatedAtIsRequired() throws Exception {
-        int databaseSizeBeforeTest = definitionRepository.findAll().size();
-        // set the field null
-        definition.setCreatedAt(null);
-
-        // Create the Definition, which fails.
-
-        restDefinitionMockMvc.perform(post("/api/definitions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(definition)))
-            .andExpect(status().isBadRequest());
-
-        List<Definition> definitionList = definitionRepository.findAll();
-        assertThat(definitionList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void checkUpdatedAtIsRequired() throws Exception {
-        int databaseSizeBeforeTest = definitionRepository.findAll().size();
-        // set the field null
-        definition.setUpdatedAt(null);
-
-        // Create the Definition, which fails.
-
-        restDefinitionMockMvc.perform(post("/api/definitions")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(definition)))
-            .andExpect(status().isBadRequest());
-
-        List<Definition> definitionList = definitionRepository.findAll();
-        assertThat(definitionList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     public void getAllDefinitions() throws Exception {
         // Initialize the database
         definitionRepository.saveAndFlush(definition);
@@ -250,9 +183,7 @@ public class DefinitionResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(definition.getId().intValue())))
             .andExpect(jsonPath("$.[*].label").value(hasItem(DEFAULT_LABEL.toString())))
             .andExpect(jsonPath("$.[*].text").value(hasItem(DEFAULT_TEXT.toString())))
-            .andExpect(jsonPath("$.[*].version").value(hasItem(DEFAULT_VERSION)))
-            .andExpect(jsonPath("$.[*].createdAt").value(hasItem(sameInstant(DEFAULT_CREATED_AT))))
-            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(sameInstant(DEFAULT_UPDATED_AT))));
+            .andExpect(jsonPath("$.[*].version").value(hasItem(DEFAULT_VERSION)));
     }
 
     @Test
@@ -268,9 +199,7 @@ public class DefinitionResourceIntTest {
             .andExpect(jsonPath("$.id").value(definition.getId().intValue()))
             .andExpect(jsonPath("$.label").value(DEFAULT_LABEL.toString()))
             .andExpect(jsonPath("$.text").value(DEFAULT_TEXT.toString()))
-            .andExpect(jsonPath("$.version").value(DEFAULT_VERSION))
-            .andExpect(jsonPath("$.createdAt").value(sameInstant(DEFAULT_CREATED_AT)))
-            .andExpect(jsonPath("$.updatedAt").value(sameInstant(DEFAULT_UPDATED_AT)));
+            .andExpect(jsonPath("$.version").value(DEFAULT_VERSION));
     }
 
     @Test
@@ -290,27 +219,61 @@ public class DefinitionResourceIntTest {
 
         // Update the definition
         Definition updatedDefinition = definitionRepository.findOne(definition.getId());
-        updatedDefinition
-                .label(UPDATED_LABEL)
-                .text(UPDATED_TEXT)
-                .version(UPDATED_VERSION)
-                .createdAt(UPDATED_CREATED_AT)
-                .updatedAt(UPDATED_UPDATED_AT);
+
+        Definition newVersion = new Definition()
+            .createdAt(updatedDefinition.getCreatedAt())
+            .label("ignoredLabel")
+            .project(updatedDefinition.getProject())
+            .version(513513)
+            .updatedAt(ZonedDateTime.now())
+            .text(UPDATED_TEXT);
+        newVersion.setId(updatedDefinition.getId());
 
         restDefinitionMockMvc.perform(put("/api/definitions")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(updatedDefinition)))
+            .content(TestUtil.convertObjectToJsonBytes(newVersion)))
+            .andExpect(status().isCreated());
+
+        // Validate the Definition in the database
+        List<Definition> definitionList = definitionRepository.findAll();
+        assertThat(definitionList).hasSize(databaseSizeBeforeUpdate + 1);
+        Definition testDefinition = definitionList.stream().sorted((o1, o2) -> o1.getUpdatedAt().isAfter(o2.getUpdatedAt()) ? 1 : -1).collect(Collectors.toList()).get(definitionList.size() - 1);
+        assertThat(testDefinition.getLabel()).isEqualTo(DEFAULT_LABEL);
+        assertThat(testDefinition.getText()).isEqualTo(UPDATED_TEXT);
+        assertThat(testDefinition.getVersion()).isEqualTo(UPDATED_VERSION);
+    }
+
+    @Test
+    @Transactional
+    public void updateDefinitionWithoutChange() throws Exception {
+        // Initialize the database
+        definitionRepository.saveAndFlush(definition);
+        int databaseSizeBeforeUpdate = definitionRepository.findAll().size();
+
+        // Update the definition
+        Definition updatedDefinition = definitionRepository.findOne(definition.getId());
+
+        Definition newVersion = new Definition()
+            .createdAt(updatedDefinition.getCreatedAt())
+            .label("ignoredLabel")
+            .project(updatedDefinition.getProject())
+            .version(513513)
+            .updatedAt(ZonedDateTime.now())
+            .text(updatedDefinition.getText());
+        newVersion.setId(updatedDefinition.getId());
+
+        restDefinitionMockMvc.perform(put("/api/definitions")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(newVersion)))
             .andExpect(status().isOk());
 
         // Validate the Definition in the database
         List<Definition> definitionList = definitionRepository.findAll();
         assertThat(definitionList).hasSize(databaseSizeBeforeUpdate);
         Definition testDefinition = definitionList.get(definitionList.size() - 1);
-        assertThat(testDefinition.getLabel()).isEqualTo(UPDATED_LABEL);
-        assertThat(testDefinition.getText()).isEqualTo(UPDATED_TEXT);
-        assertThat(testDefinition.getVersion()).isEqualTo(UPDATED_VERSION);
-        assertThat(testDefinition.getCreatedAt()).isEqualTo(UPDATED_CREATED_AT);
-        assertThat(testDefinition.getUpdatedAt()).isEqualTo(UPDATED_UPDATED_AT);
+        assertThat(testDefinition.getLabel()).isEqualTo(DEFAULT_LABEL);
+        assertThat(testDefinition.getText()).isEqualTo(DEFAULT_TEXT);
+        assertThat(testDefinition.getVersion()).isEqualTo(DEFAULT_VERSION);
     }
 
     @Test

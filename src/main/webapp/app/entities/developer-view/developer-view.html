@@ -1,0 +1,115 @@
+<div>
+    <h2><span data-translate="translatorApp.project.detail.title">Project</span> {{vm.project.name}}</h2>
+    <hr>
+    <dl class="dl-horizontal jh-entity-details">
+        <dt><span data-translate="translatorApp.project.description">Description</span></dt>
+        <dd>
+            <span>{{vm.project.description}}</span>
+        </dd>
+    </dl>
+
+    <jhi-alert-error></jhi-alert-error>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title" data-translate="translatorApp.developerView.newDefinition">Neue Definition</h3>
+        </div>
+        <div class="panel-body">
+            <form name="createDefinitionForm" ng-submit="vm.createDefinition()">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="control-label" data-translate="translatorApp.definition.label" for="field_label">Label</label>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="control-label" data-translate="translatorApp.definition.text" for="field_text">Text</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="label" id="field_label"
+                               ng-model="vm.newDefinition.label"
+                               required/>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="text" id="field_text"
+                               ng-model="vm.newDefinition.text"
+                               required/>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" ng-disabled="createDefinitionForm.$invalid || vm.isSaving"
+                                class="btn btn-primary">
+                            <span class="glyphicon glyphicon-save"></span>&nbsp;<span
+                            data-translate="entity.action.save">Save</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div ng-show="createDefinitionForm.label.$invalid">
+                            <p class="help-block"
+                               ng-show="createDefinitionForm.label.$error.required"
+                               data-translate="entity.validation.required">
+                                This field is required.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div ng-show="createDefinitionForm.text.$invalid">
+                            <p class="help-block"
+                               ng-show="createDefinitionForm.text.$error.required"
+                               data-translate="entity.validation.required">
+                                This field is required.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title" data-translate="translatorApp.developerView.definitionsOverview">Definitionen</h3>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="jh-table table table-striped">
+                    <thead>
+                    <tr>
+                        <th><span data-translate="translatorApp.definition.label">Label</span></th>
+                        <th><span data-translate="translatorApp.definition.text">Text</span></th>
+                        <th><span data-translate="translatorApp.definition.version">Version</span></th>
+                        <th><span data-translate="translatorApp.definition.createdAt">Created At</span></th>
+                        <th><span data-translate="translatorApp.definition.updatedAt">Updated At</span></th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="definition in vm.definitions track by definition.id">
+                        <td>{{definition.label}}</td>
+                        <td>{{definition.text}}</td>
+                        <td>{{definition.version}}</td>
+                        <td>{{definition.createdAt | date:'medium'}}</td>
+                        <td>{{definition.updatedAt | date:'medium'}}</td>
+                        <td class="text-right">
+                            <div class="btn-group flex-btn-group-container">
+                                <button type="submit"
+                                        ui-sref="definition.edit({id:definition.id})"
+                                        class="btn btn-primary btn-sm">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                    <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"></span>
+                                </button>
+                                <button type="submit"
+                                        ui-sref="definition.delete({id:definition.id})"
+                                        class="btn btn-danger btn-sm">
+                                    <span class="glyphicon glyphicon-remove-circle"></span>
+                                    <span class="hidden-xs hidden-sm" data-translate="entity.action.delete"></span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

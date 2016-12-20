@@ -124,7 +124,8 @@
         "Size": "Feld {{fieldName}} erfüllt nicht die minimalen/maximalen Voraussetzungen!",
         "userexists": "Benutzername bereits vergeben!",
         "emailexists": "E-mail wird bereits verwendet!",
-        "idexists": "Ein neuer {{entityName}} kann noch keine ID haben"
+        "idexists": "Ein neuer {{entityName}} kann noch keine ID haben",
+        "labelexists": "Es existiert bereits eine Definition mit diesem Label!"
     },
     "footer": "Dies ist Ihre Fußzeile"
 }
