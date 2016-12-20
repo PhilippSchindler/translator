@@ -1,5 +1,8 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.User;
+import at.ac.tuwien.translator.repository.UserRepository;
+import at.ac.tuwien.translator.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Language;
 
@@ -8,6 +11,7 @@ import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +32,16 @@ import java.util.Optional;
 public class LanguageResource {
 
     private final Logger log = LoggerFactory.getLogger(LanguageResource.class);
-        
+
     @Inject
     private LanguageRepository languageRepository;
+
+    @Inject
+    private UserRepository userRepository;
+
+    @Inject
+//    @Autowired
+    private UserService userService;
 
     /**
      * POST  /languages : Create a new language.
@@ -46,6 +57,12 @@ public class LanguageResource {
         if (language.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("language", "idexists", "A new language cannot already have an ID")).body(null);
         }
+
+
+        User loggedInUser = userService.getUserWithAuthorities();
+        if (loggedInUser != null)
+            language.setUser(loggedInUser);
+
         Language result = languageRepository.save(language);
         return ResponseEntity.created(new URI("/api/languages/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("language", result.getId().toString()))
