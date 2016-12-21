@@ -1,0 +1,74 @@
+entity Platform {
+	name String required
+}
+
+entity Project {
+	name String required,
+    description String
+}
+
+entity Language {
+	name String required,
+    shortName String required
+}
+
+entity Definition {
+	label String required,
+	text String required,
+    version Integer required,
+    CreatedAt ZonedDateTime required,
+    UpdatedAt ZonedDateTime required
+}
+
+entity Translation {
+	text String	required,
+    deleted Boolean required,
+    updatedAt ZonedDateTime required
+}
+
+entity Release {
+	name String	required,
+    deadline LocalDate required
+}
+
+entity LogEntry {
+	timestamp ZonedDateTime required,
+    message String required,
+    result String required
+}
+
+
+relationship ManyToMany {
+	Project{user(login)} to User
+}
+
+relationship ManyToOne {
+	Language{user(login)} to User
+}
+
+relationship ManyToOne {
+	LogEntry{user(login)} to User
+}
+
+relationship ManyToMany {
+	Project{platform(name)} to Platform
+}
+relationship ManyToMany {
+	Project{language(name)} to Language
+}
+relationship OneToMany {
+	Project{definition(label)} to Definition{project(name)}
+}
+relationship OneToMany {
+	Project{release(name)} to Release{project(name)}
+}
+
+relationship OneToMany {
+	Definition{translation(text)} to Translation{definition(label)}
+}
+relationship ManyToMany {
+	Release{definition(label)} to Definition
+}
+relationship ManyToOne {
+	Translation{language(name)} to Language
+}

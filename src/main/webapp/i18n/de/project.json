@@ -1,0 +1,33 @@
+{
+    "translatorApp": {
+        "project" : {
+            "home": {
+                "title": "Projekte",
+                "createLabel": "Projekt erstellen",
+                "projectDetails": "Projekt Details",
+                "search": "Suche nach Projekt"
+            },
+            "created": "Projekt erstellt mit ID {{ param }}",
+            "updated": "Projekt aktualisiert mit ID {{ param }}",
+            "deleted": "Projekt gelöscht mit ID {{ param }}",
+            "delete": {
+                "question": "Soll Projekt {{ id }} wirklich dauerhaft gelöscht werden?"
+            },
+            "detail": {
+                "details": "Details",
+                "title": "Projekt",
+                "actions": "Aktionen",
+                "release": "Releases"
+            },
+            "name": "Name",
+            "description": "Beschreibung",
+            "definition": "Definition",
+            "release": "Release",
+            "user": "User",
+            "platform": "Plattform",
+            "language": "Sprache",
+            "developerView": "Entwickler-Ansicht",
+            "statistics": "Statistiken"
+        }
+    }
+}

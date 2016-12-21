@@ -1,0 +1,56 @@
+
+<div>
+    <h2><span data-translate="translatorApp.project.detail.title">Project</span>: {{vm.project.name}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><span data-translate="translatorApp.project.detail.actions">Actions</span></div>
+        <div class="panel-body">
+            <div class="col-md-2">
+                <button class="btn btn-primary" ui-sref="release({projectId: vm.project.id})" >
+                    <span  data-translate="translatorApp.project.detail.release">Releases</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span data-translate="translatorApp.project.detail.details">Details</span>
+        </div>
+        <div class="panel-body">
+            <div class="container">
+                <div class="row">
+                    <strong class="col-md-2">
+                        <span data-translate="translatorApp.project.name">Name</span>:
+                    </strong>
+                    <div class="col-md-8">
+                        {{vm.project.name}}
+                        <button type="button" ui-sref="project-detail.edit({id:vm.project.id})" class="btn btn-link">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <strong class="col-md-2">
+                        <span data-translate="translatorApp.project.description">Description</span>:
+                    </strong>
+                    <div class="col-md-7 ">
+                        <span ng-bind-html="vm.replaceNewLineWithBR(vm.project.description)"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <button type="submit"
+            ui-sref="{{ vm.previousState }}"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span data-translate="entity.action.back"> Back</span>
+    </button>
+
+
+</div>

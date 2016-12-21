@@ -1,0 +1,30 @@
+{
+    "translatorApp": {
+        "translation" : {
+            "home": {
+                "title": "Translations",
+                "createLabel": "Translation erstellen",
+                "createOrEditLabel": "Translation erstellen oder bearbeiten",
+                "search": "Suche nach Translation"
+            },
+            "translations": "Übersetzungen",
+            "translation": "Übersetzung",
+            "english": "Englisch",
+            "created": "Translation erstellt mit ID {{ param }}",
+            "updated": "Translation aktualisiert mit ID {{ param }}",
+            "deleted": "Translation gelöscht mit ID {{ param }}",
+            "delete": {
+                "question": "Soll Translation {{ id }} wirklich dauerhaft gelöscht werden?"
+            },
+            "detail": {
+                "title": "Translation"
+            },
+            "text": "Text",
+            "deleted": "Deleted",
+            "updatedAt": "Updated At",
+            "language": "Language",
+            "definition": "Definition",
+            "filter": "Filter"
+        }
+    }
+}

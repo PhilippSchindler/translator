@@ -1,0 +1,22 @@
+{
+    "translatorApp": {
+        "platform" : {
+            "home": {
+                "title": "Platforms",
+                "createLabel": "Platform erstellen",
+                "createOrEditLabel": "Platform erstellen oder bearbeiten",
+                "search": "Suche nach Platform"
+            },
+            "created": "Platform erstellt mit ID {{ param }}",
+            "updated": "Platform aktualisiert mit ID {{ param }}",
+            "deleted": "Platform gelöscht mit ID {{ param }}",
+            "delete": {
+                "question": "Soll Platform {{ id }} wirklich dauerhaft gelöscht werden?"
+            },
+            "detail": {
+                "title": "Platform"
+            },
+            "name": "Name"
+        }
+    }
+}
