@@ -13,7 +13,7 @@
             parent: 'entity',
             url: '/project/{projectId}/release',
             data: {
-                authorities: ['ROLE_USER'],
+                authorities: ['ROLE_USER', 'ROLE_CUSTOMER'],
                 pageTitle: 'translatorApp.release.home.title'
             },
             views: {
@@ -38,7 +38,7 @@
             parent: 'entity',
             url: '/project/{projectId}/release/{id}',
             data: {
-                authorities: ['ROLE_USER'],
+                authorities: ['ROLE_USER', 'ROLE_CUSTOMER'],
                 pageTitle: 'translatorApp.release.detail.title'
             },
             views: {
@@ -73,7 +73,7 @@
             parent: 'release',
             url: '/new',
             data: {
-                authorities: ['ROLE_USER']
+                authorities: ['ROLE_USER', 'ROLE_CUSTOMER']
             },
             onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
                 $uibModal.open({
