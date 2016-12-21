@@ -102,12 +102,10 @@ public class ProjectResource {
      *
      * @return the ResponseEntity with status 200 (OK) and the list of projects in body
      */
-    @GetMapping("users/{userId}/singleproject")
+    @GetMapping("users/{userLogin}/singleproject")
     @Timed
-    public Project getSingleProjectByUser(@PathVariable Long userId) {
-        log.debug("REST request to get all Projects");
-        Project project = projectRepository.findSingleProjectByUserId(userId);
-        return project;
+    public Project getSingleProjectByUser(@PathVariable String userLogin) {
+        return projectRepository.findSingleProjectByUserLogin(userLogin);
     }
 
     /**

@@ -13,7 +13,7 @@
             parent: 'entity',
             url: '/project',
             data: {
-                authorities: ['ROLE_USER'],
+                authorities: ['ROLE_USER', 'ROLE_CUSTOMER'],
                 pageTitle: 'translatorApp.project.home.title'
             },
             views: {

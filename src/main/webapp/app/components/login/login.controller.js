@@ -5,9 +5,9 @@
         .module('translatorApp')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['$rootScope', '$state', '$timeout', 'Auth', '$uibModalInstance'];
+    LoginController.$inject = ['$rootScope', '$state', '$timeout', 'Principal', 'Auth', '$uibModalInstance', 'Project'];
 
-    function LoginController ($rootScope, $state, $timeout, Auth, $uibModalInstance) {
+    function LoginController ($rootScope, $state, $timeout, Principal, Auth, $uibModalInstance, Project) {
         var vm = this;
 
         vm.authenticationError = false;
@@ -48,13 +48,23 @@
 
                 $rootScope.$broadcast('authenticationSuccess');
 
-                // previousState was set in the authExpiredInterceptor before being redirected to login modal.
-                // since login is successful, go to stored previousState and clear previousState
-                if (Auth.getPreviousState()) {
-                    var previousState = Auth.getPreviousState();
-                    Auth.resetPreviousState();
-                    $state.go(previousState.name, previousState.params);
-                }
+                Principal.identity().then(function(account) {
+                    let userAuthority = account.authorities[0];
+                    if(userAuthority === 'ROLE_CUSTOMER')
+                        $state.go('project');
+                    else {
+                        Project.getByUser({userLogin: account.login}, function(project){
+                            if(userAuthority === 'ROLE_DEVELOPER')
+                                $state.go('developer-view', {projectId: project.id});
+                            else if(userAuthority === 'ROLE_TRANSLATOR')
+                                $state.go('translator-view', {projectId: project.id});
+                            else if(userAuthority === 'ROLE_RELEASE_MANAGER')
+                                $state.go('release', {projectId: project.id});
+                            else
+                                $state.go('home');
+                        });
+                    }
+                });
             }).catch(function () {
                 vm.authenticationError = true;
             });
