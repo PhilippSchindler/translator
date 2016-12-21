@@ -13,7 +13,7 @@
             parent: 'entity',
             url: '/project/{projectId}/release',
             data: {
-                authorities: ['ROLE_USER', 'ROLE_CUSTOMER'],
+                authorities: ['ROLE_CUSTOMER'],
                 pageTitle: 'translatorApp.release.home.title'
             },
             views: {
@@ -38,7 +38,7 @@
             parent: 'entity',
             url: '/project/{projectId}/release/{id}',
             data: {
-                authorities: ['ROLE_USER', 'ROLE_CUSTOMER'],
+                authorities: ['ROLE_CUSTOMER'],
                 pageTitle: 'translatorApp.release.detail.title'
             },
             views: {
@@ -60,12 +60,11 @@
                     return Release.get({id : $stateParams.id}).$promise;
                 }],
                 previousState: ["$state", function ($state) {
-                    var currentStateData = {
+                    return {
                         name: $state.current.name || 'release',
                         params: $state.params,
                         url: $state.href($state.current.name, $state.params)
                     };
-                    return currentStateData;
                 }]
             }
         })
@@ -73,7 +72,7 @@
             parent: 'release',
             url: '/new',
             data: {
-                authorities: ['ROLE_USER', 'ROLE_CUSTOMER']
+                authorities: ['ROLE_CUSTOMER']
             },
             onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
                 $uibModal.open({

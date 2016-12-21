@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     angular
@@ -7,7 +7,7 @@
 
     TranslatorViewController.$inject = ['$scope', '$state', '$filter', 'project', 'Translation', 'Project', 'Definition'];
 
-    function TranslatorViewController ($scope, $state, $filter, project, Translation, Project, Definition) {
+    function TranslatorViewController($scope, $state, $filter, project, Translation, Project, Definition) {
         var vm = this;
 
         vm.definitions = [];
@@ -38,37 +38,37 @@
 
         function loadAll() {
             vm.changedDefinitionIds.clear();
-            Definition.queryLatestByProject({projectId: vm.project.id}, function(resultDefinition) {
+            Definition.queryLatestByProject({projectId: vm.project.id}, function (resultDefinition) {
                 vm.definitions = $filter('orderBy')(resultDefinition, 'label');
             });
         }
 
-        vm.getTranslation = function(translations, language){
-            for(var i=0; i < translations.length; i++){
+        vm.getTranslation = function (translations, language) {
+            for (var i = 0; i < translations.length; i++) {
                 var t = translations[i];
-                if(t.language.id === language.id)
+                if (t.language.id === language.id)
                     return t;
             }
             return "";
         }
 
-        vm.markDefinitionAsChanged = function(definition){
+        vm.markDefinitionAsChanged = function (definition) {
             vm.changedDefinitionIds.add(definition.id);
         }
 
-        vm.onlyShowNotTranslatedChanged = function(){
-            if(vm.onlyShowNotTranslated){
-                for(var j=0; j<vm.definitions.length; j++){
+        vm.onlyShowNotTranslatedChanged = function () {
+            if (vm.onlyShowNotTranslated) {
+                for (var j = 0; j < vm.definitions.length; j++) {
                     let definition = vm.definitions[j];
                     let foundEmptyCell = false;
-                    for(var i=0; i<$scope.languageSelectOptions.selectedItems.length; i++){
+                    for (var i = 0; i < $scope.languageSelectOptions.selectedItems.length; i++) {
                         let lang = $scope.languageSelectOptions.selectedItems[i];
-                        if($('#' + definition.id + lang.name).val() === ""){
+                        if ($('#' + definition.id + lang.name).val() === "") {
                             foundEmptyCell = true;
                             break;
                         }
                     }
-                    if(!foundEmptyCell)
+                    if (!foundEmptyCell)
                         vm.definitionIdsFullyTranslatedToHide.add(definition.id);
                 }
             } else {
@@ -76,66 +76,68 @@
             }
         }
 
-        vm.searchChanged = function(){
+        vm.searchChanged = function () {
             vm.definitionIdsSearchToHide.clear();
-            for(var j=0; j<vm.definitions.length; j++){
+            for (var j = 0; j < vm.definitions.length; j++) {
                 let definition = vm.definitions[j];
                 let labelSearch = vm.searches['Label'];
-                if(definition.label.toLowerCase().search(labelSearch == undefined ? "" : labelSearch.toLowerCase()) < 0){
+                if (definition.label.toLowerCase().search(labelSearch == undefined ? "" : labelSearch.toLowerCase()) < 0) {
                     vm.definitionIdsSearchToHide.add(definition.id);
                     continue;
                 }
                 let englishSearch = vm.searches['English'];
-                if(definition.text.toLowerCase().search(englishSearch == undefined ? "" : englishSearch.toLowerCase()) < 0){
+                if (definition.text.toLowerCase().search(englishSearch == undefined ? "" : englishSearch.toLowerCase()) < 0) {
                     vm.definitionIdsSearchToHide.add(definition.id);
                     continue;
                 }
                 let foundWrongCell = false;
-                for(var i=0; i<$scope.languageSelectOptions.selectedItems.length; i++){
+                for (var i = 0; i < $scope.languageSelectOptions.selectedItems.length; i++) {
                     let lang = $scope.languageSelectOptions.selectedItems[i];
                     let inputValue = $('#' + definition.id + lang.name).val();
                     let searchLang = vm.searches[lang.name];
-                    if(inputValue.toLowerCase().search(searchLang == undefined ? "" : searchLang.toLowerCase()) < 0){
+                    if (inputValue.toLowerCase().search(searchLang == undefined ? "" : searchLang.toLowerCase()) < 0) {
                         foundWrongCell = true;
                         break;
                     }
                 }
-                if(foundWrongCell)
+                if (foundWrongCell)
                     vm.definitionIdsSearchToHide.add(definition.id);
             }
         }
 
-        vm.isRowToHide = function(definition){
-            if(vm.definitionIdsFullyTranslatedToHide.has(definition.id))
+        vm.isRowToHide = function (definition) {
+            if (vm.definitionIdsFullyTranslatedToHide.has(definition.id))
                 return true;
 
-            if(vm.definitionIdsSearchToHide.has(definition.id))
+            if (vm.definitionIdsSearchToHide.has(definition.id))
                 return true;
 
             return false;
         }
 
-        vm.isLangToHide = function(lang){
-            for(var i=0; i<$scope.languageSelectOptions.selectedItems.length; i++){
+        vm.isLangToHide = function (lang) {
+            for (var i = 0; i < $scope.languageSelectOptions.selectedItems.length; i++) {
                 let selectedLang = $scope.languageSelectOptions.selectedItems[i];
-                if(selectedLang.name == lang.name)
+                if (selectedLang.name == lang.name)
                     return false;
             }
             return true;
         }
 
-        vm.save = function(){
+        vm.save = function () {
             let definitionsToUpdate = [];
-            for(let definitionId of vm.changedDefinitionIds){
+            for (let definitionId in vm.changedDefinitionIds) {
                 let translations = [];
-                for(var i=0; i<vm.project.languages.length; i++){
+                for (var i = 0; i < vm.project.languages.length; i++) {
                     let lang = vm.project.languages[i];
                     translations.push({langId: lang.id, text: $('#' + definitionId + lang.name).val()});
                 }
                 definitionsToUpdate.push({definitionId: definitionId, translations: translations});
             }
             Translation.updateChangedTranslations(definitionsToUpdate,
-                function(){loadAll();});
+                function () {
+                    loadAll();
+                });
         }
     }
 })();

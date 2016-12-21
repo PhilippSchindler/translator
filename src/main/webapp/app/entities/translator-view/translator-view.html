@@ -1,7 +1,20 @@
 <div>
     <h2>{{vm.project.name}}</h2>
+    <hr>
     <jhi-alert></jhi-alert>
-    <br/>
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><span data-translate="translatorApp.translatorView.actions">Actions</span></div>
+        <div class="panel-body">
+            <div class="col-md-12">
+                <button class="btn btn-success" ui-sref="statistics({projectId: vm.project.id})">
+                    <span class="glyphicon glyphicon-stats"></span>
+                    <span class="hidden-xs hidden-sm" data-translate="translatorApp.translatorView.statistics"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="panel panel-default">
         <div class="panel-heading" data-translate="translatorApp.translatorView.filter">Filter</div>
         <div class="panel-body">

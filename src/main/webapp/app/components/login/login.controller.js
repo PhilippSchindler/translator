@@ -1,13 +1,13 @@
-(function() {
+(function () {
     'use strict';
 
     angular
         .module('translatorApp')
         .controller('LoginController', LoginController);
 
-    LoginController.$inject = ['$rootScope', '$state', '$timeout', 'Principal', 'Auth', '$uibModalInstance', 'Project'];
+    LoginController.$inject = ['$rootScope', '$state', '$timeout', '$translate', '$localStorage', 'Principal', 'Auth', '$uibModalInstance', 'Project'];
 
-    function LoginController ($rootScope, $state, $timeout, Principal, Auth, $uibModalInstance, Project) {
+    function LoginController($rootScope, $state, $timeout, $translate, $localStorage, Principal, Auth, $uibModalInstance, Project) {
         var vm = this;
 
         vm.authenticationError = false;
@@ -20,9 +20,11 @@
         vm.requestResetPassword = requestResetPassword;
         vm.username = null;
 
-        $timeout(function (){angular.element('#username').focus();});
+        $timeout(function () {
+            angular.element('#username').focus();
+        });
 
-        function cancel () {
+        function cancel() {
             vm.credentials = {
                 username: null,
                 password: null,
@@ -32,7 +34,7 @@
             $uibModalInstance.dismiss('cancel');
         }
 
-        function login (event) {
+        function login(event) {
             event.preventDefault();
             Auth.login({
                 username: vm.username,
@@ -48,34 +50,53 @@
 
                 $rootScope.$broadcast('authenticationSuccess');
 
-                Principal.identity().then(function(account) {
-                    let userAuthority = account.authorities[0];
-                    if(userAuthority === 'ROLE_CUSTOMER')
+                Principal.identity().then(function (account) {
+                    if (account.authorities.includes('ROLE_ADMIN')) {
+                        $rootScope.homePath = '';
+                        $state.go('home');
+                    } else if (account.authorities.includes('ROLE_CUSTOMER')) {
+                        $rootScope.homePath = 'project';
                         $state.go('project');
-                    else {
-                        Project.getByUser({userLogin: account.login}, function(project){
-                            if(userAuthority === 'ROLE_DEVELOPER')
-                                $state.go('developer-view', {projectId: project.id});
-                            else if(userAuthority === 'ROLE_TRANSLATOR')
-                                $state.go('translator-view', {projectId: project.id});
-                            else if(userAuthority === 'ROLE_RELEASE_MANAGER')
-                                $state.go('release', {projectId: project.id});
-                            else
-                                $state.go('home');
-                        });
+                    } else {
+                        loadProjectAndNavigate(account, account.authorities);
                     }
+                    $localStorage.homePath = $rootScope.homePath;
                 });
             }).catch(function () {
                 vm.authenticationError = true;
             });
         }
 
-        function register () {
+        function loadProjectAndNavigate(account, userAuthorities) {
+            Project.getByUser({userLogin: account.login}, function (project) {
+                if (!project.id) {
+                    $state.go('error');
+                    $rootScope.errorMessage = $translate.instant('error.couldNotLoadProject');
+                    return;
+                }
+
+                if (userAuthorities.includes('ROLE_DEVELOPER')) {
+                    $rootScope.homePath = 'project/' + project.id + '/developer-view';
+                    $state.go('developer-view', {projectId: project.id});
+                } else if (userAuthorities.includes('ROLE_TRANSLATOR')) {
+                    $rootScope.homePath = 'project/' + project.id + '/translator-view';
+                    $state.go('translator-view', {projectId: project.id});
+                } else if (userAuthorities.includes('ROLE_RELEASE_MANAGER')) {
+                    $rootScope.homePath = 'project/' + project.id + '/release-manager-view';
+                    $state.go('release-manager-view', {projectId: project.id});
+                } else {
+                    $state.go('home');
+                }
+                $localStorage.homePath = $rootScope.homePath;
+            });
+        }
+
+        function register() {
             $uibModalInstance.dismiss('cancel');
             $state.go('register');
         }
 
-        function requestResetPassword () {
+        function requestResetPassword() {
             $uibModalInstance.dismiss('cancel');
             $state.go('requestReset');
         }
