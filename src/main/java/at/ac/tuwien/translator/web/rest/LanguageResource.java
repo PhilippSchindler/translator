@@ -1,11 +1,10 @@
 package at.ac.tuwien.translator.web.rest;
 
-import at.ac.tuwien.translator.domain.Authority;
-import at.ac.tuwien.translator.domain.Language;
-import at.ac.tuwien.translator.domain.User;
+import at.ac.tuwien.translator.domain.*;
 import at.ac.tuwien.translator.repository.LanguageRepository;
+import at.ac.tuwien.translator.repository.ProjectRepository;
+import at.ac.tuwien.translator.repository.TranslationRepository;
 import at.ac.tuwien.translator.repository.UserRepository;
-import at.ac.tuwien.translator.security.AuthoritiesConstants;
 import at.ac.tuwien.translator.service.UserService;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
 import com.codahale.metrics.annotation.Timed;
@@ -13,10 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
-
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
@@ -35,6 +31,12 @@ public class LanguageResource {
 
     @Inject
     private LanguageRepository languageRepository;
+
+    @Inject
+    private ProjectRepository projectRepository;
+
+    @Inject
+    TranslationRepository translationRepository;
 
     @Inject
     private UserRepository userRepository;
@@ -138,8 +140,22 @@ public class LanguageResource {
     @Timed
     public ResponseEntity<Void> deleteLanguage(@PathVariable Long id) {
         log.debug("REST request to delete Language : {}", id);
-        languageRepository.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("language", id.toString())).build();
+
+        int numProjects = languageRepository.findNumOfLanguageUsagesInProjects(id);
+        log.debug("Language " + id + " used in " + numProjects + " projects");
+
+        int numTranslations = languageRepository.findNumOfLanguageUsagesInTranslations(id);
+
+        if (numProjects == 0 && numTranslations == 0) {
+            // language is not used an can be deleted safely
+            languageRepository.delete(id);
+            return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("language", id.toString())).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).headers(HeaderUtil.createFailureAlert(
+            "language", "languageDeleteConflict",
+            "Cannot delete language, as it is used in projects or translations."
+        )).build();
     }
 
 }
