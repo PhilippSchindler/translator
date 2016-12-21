@@ -10,7 +10,9 @@
     function ProjectUserManagementDialogController ($stateParams, $uibModalInstance, entity, User, JhiLanguageService) {
         var vm = this;
 
-        vm.authorities = ['ROLE_USER', 'ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_DEVELOPER', 'ROLE_TRANSLATOR', 'ROLE_RELEASE_MANAGER'];
+        vm.projectId = $stateParams.id;
+
+        vm.authorities = ['ROLE_DEVELOPER', 'ROLE_TRANSLATOR', 'ROLE_RELEASE_MANAGER'];
         vm.clear = clear;
         vm.languages = null;
         vm.save = save;
@@ -39,8 +41,8 @@
             if (vm.user.id !== null) {
                 User.update(vm.user, onSaveSuccess, onSaveError);
             } else {
-                vm.user.langKey
-                User.save(vm.user, onSaveSuccess, onSaveError);
+                vm.user.projectId = vm.projectId;
+                User.createProjectMember(vm.user, onSaveSuccess, onSaveError);
             }
         }
     }

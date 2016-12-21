@@ -23,25 +23,10 @@
 
         User.query({
             page: 0,
-            size: 100,
-            sort: 'id,asc'
+            size: 1000
         }, onSuccess, onError);
 
         function onSuccess(data, headers) {
-            //hide anonymous user from user management: it's a required user for Spring Security
-            var hiddenUsersSize = 0;
-            for (var i in data) {
-                if (data[i]['login'] === 'anonymoususer') {
-                    data.splice(i, 1);
-                    hiddenUsersSize++;
-                    continue;
-                }
-
-            }
-            //vm.links = ParseLinks.parse(headers('link'));
-            //vm.totalItems = headers('X-Total-Count') - hiddenUsersSize;
-            //vm.queryCount = vm.totalItems;
-            //vm.page = pagingParams.page;
             vm.users = data;
         }
 

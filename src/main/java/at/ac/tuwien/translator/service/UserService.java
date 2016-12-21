@@ -1,12 +1,15 @@
 package at.ac.tuwien.translator.service;
 
 import at.ac.tuwien.translator.domain.Authority;
+import at.ac.tuwien.translator.domain.Project;
 import at.ac.tuwien.translator.domain.User;
 import at.ac.tuwien.translator.repository.AuthorityRepository;
+import at.ac.tuwien.translator.repository.ProjectRepository;
 import at.ac.tuwien.translator.repository.UserRepository;
 import at.ac.tuwien.translator.security.AuthoritiesConstants;
 import at.ac.tuwien.translator.security.SecurityUtils;
 import at.ac.tuwien.translator.service.util.RandomUtil;
+import at.ac.tuwien.translator.web.rest.vm.CreateProjectMember;
 import at.ac.tuwien.translator.web.rest.vm.ManagedUserVM;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,9 @@ public class UserService {
 
     @Inject
     private AuthorityRepository authorityRepository;
+
+    @Inject
+    private ProjectRepository projectRepository;
 
     public Optional<User> activateRegistration(String key) {
         log.debug("Activating user for activation key {}", key);
@@ -102,6 +108,39 @@ public class UserService {
         userRepository.save(newUser);
         log.debug("Created Information for User: {}", newUser);
         return newUser;
+    }
+
+    public User createProjectMember(CreateProjectMember projectMember){
+        User user = new User();
+        user.setLogin(projectMember.getLogin());
+        user.setFirstName(projectMember.getFirstName());
+        user.setLastName(projectMember.getLastName());
+        user.setEmail(projectMember.getEmail());
+        String encryptedPassword = passwordEncoder.encode(projectMember.getLogin());
+        user.setLangKey("de");
+        user.setPassword(encryptedPassword);
+        if (projectMember.getAuthority() != null) {
+            Set<Authority> authorities = new HashSet<>();
+            Authority authority = authorityRepository.findOne(AuthoritiesConstants.DEVELOPER);
+            authorities.add(authority);
+            user.setAuthorities(authorities);
+        }
+        user.setLastModifiedBy(null);
+        user.setActivated(true);
+        List<Project> projects = new ArrayList<>();
+        Project project = projectRepository.findOne(projectMember.getProjectId());
+        projects.add(project);
+        user.setProjects(projects);
+
+        project.getUsers().add(user);
+
+
+        userRepository.save(user);
+        projectRepository.save(project);
+        log.debug("Created Information for User: {}", user);
+        user.setProjects(null);
+        return user;
+
     }
 
     public User createUser(ManagedUserVM managedUserVM) {

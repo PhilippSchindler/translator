@@ -1,6 +1,7 @@
 package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.config.Constants;
+import at.ac.tuwien.translator.web.rest.vm.CreateProjectMember;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.User;
 import at.ac.tuwien.translator.repository.UserRepository;
@@ -102,6 +103,30 @@ public class UserResource {
         }
     }
 
+    @PostMapping("/users/createProjectMember")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.CUSTOMER})
+    public ResponseEntity<?> createProjectMember(@RequestBody CreateProjectMember projectMember) throws URISyntaxException {
+        log.debug("REST request to save User : {}", projectMember);
+
+        //Lowercase the user login before comparing with database
+        if (userRepository.findOneByLogin(projectMember.getLogin().toLowerCase()).isPresent()) {
+            return ResponseEntity.badRequest()
+                .headers(HeaderUtil.createFailureAlert("userManagement", "userexists", "Login already in use"))
+                .body(null);
+        } else if (userRepository.findOneByEmail(projectMember.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest()
+                .headers(HeaderUtil.createFailureAlert("userManagement", "emailexists", "Email already in use"))
+                .body(null);
+        } else {
+            User newUser = userService.createProjectMember(projectMember);
+            //mailService.sendCreationEmail(newUser);
+            return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
+                .headers(HeaderUtil.createAlert( "userManagement.created", newUser.getLogin()))
+                .body(newUser);
+        }
+    }
+
     /**
      * PUT  /users : Updates an existing User.
      *
@@ -112,7 +137,7 @@ public class UserResource {
      */
     @PutMapping("/users")
     @Timed
-    @Secured(AuthoritiesConstants.ADMIN)
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.CUSTOMER})
     public ResponseEntity<ManagedUserVM> updateUser(@RequestBody ManagedUserVM managedUserVM) {
         log.debug("REST request to update User : {}", managedUserVM);
         Optional<User> existingUser = userRepository.findOneByEmail(managedUserVM.getEmail());
@@ -149,6 +174,15 @@ public class UserResource {
             .collect(Collectors.toList());
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/users");
         return new ResponseEntity<>(managedUserVMs, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/project/{projectId}")
+    @Timed
+    public ResponseEntity<List<User>> getAllUsersPerProject(@PathVariable long projectId)
+        throws URISyntaxException {
+        List<User> users = userRepository.findAllWithProjectId(projectId);
+        return ResponseEntity.ok()
+            .body(users);
     }
 
     /**

@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findOneByEmail(String email);
 
     Optional<User> findOneByLogin(String login);
+
+    @Query("select user from User user inner join fetch user.projects projects where projects.id = (:id)")
+    List<User> findAllWithProjectId(@Param("id") Long id);
 
     @Query(value = "select distinct user from User user left join fetch user.authorities",
         countQuery = "select count(user) from User user")

@@ -17,7 +17,11 @@
                     return data;
                 }
             },
-            'save': { method:'POST' },
+            'save': { method:'POST'},
+            'createProjectMember': {
+                method:'POST',
+                params: {login: 'createProjectMember'}
+            },
             'update': { method:'PUT' },
             'delete':{ method:'DELETE'}
         });

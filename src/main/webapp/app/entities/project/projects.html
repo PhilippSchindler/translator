@@ -19,34 +19,15 @@
             <thead>
                 <tr>
                     <!--<th><span data-translate="global.field.id">ID</span></th>-->
-                    <th><span data-translate="translatorApp.project.name">Name</span></th>
-                    <th><span data-translate="translatorApp.project.description">Description</span></th>
-                    <th><span data-translate="translatorApp.project.user">User</span></th>
-                    <th><span data-translate="translatorApp.project.platform">Platform</span></th>
-                    <th><span data-translate="translatorApp.project.language">Language</span></th>
+                    <th><span>Name</span></th>
+                    <th><span>Description</span></th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="project in vm.projects track by project.id">
-                    <!--<td><a ui-sref="project-detail({id:project.id})">{{project.id}}</a></td>-->
                     <td><a ui-sref="project-detail({id:project.id})">{{project.name}}</a></td>
                     <td>{{project.description}}</td>
-                    <td>
-                        <span ng-repeat="user in project.users">
-                            {{user.login}}{{$last ? '' : ', '}}
-                        </span>
-                    </td>
-                    <td>
-                        <span ng-repeat="platform in project.platforms">
-                            <a class="form-control-static" ui-sref="platform-detail({id: platform.id})">{{platform.name}}</a>{{$last ? '' : ', '}}
-                        </span>
-                    </td>
-                    <td>
-                        <span ng-repeat="language in project.languages">
-                            <a class="form-control-static" ui-sref="language-detail({id: language.id})">{{language.name}}</a>{{$last ? '' : ', '}}
-                        </span>
-                    </td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"
