@@ -2,6 +2,7 @@ package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.TranslatorApp;
 
+import at.ac.tuwien.translator.domain.Language;
 import at.ac.tuwien.translator.domain.Translation;
 import at.ac.tuwien.translator.repository.TranslationRepository;
 
@@ -84,10 +85,16 @@ public class TranslationResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static Translation createEntity(EntityManager em) {
+        Language language = new Language();
+        language.setName("Deutsch");
+        language.setShortName("DE");
+        em.persist(language);
+
         Translation translation = new Translation()
                 .text(DEFAULT_TEXT)
                 .deleted(DEFAULT_DELETED)
                 .updatedAt(DEFAULT_UPDATED_AT);
+        translation.setLanguage(language);
         return translation;
     }
 

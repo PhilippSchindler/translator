@@ -1,5 +1,7 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.DefinitionToUpdate;
+import at.ac.tuwien.translator.service.TranslationService;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Translation;
 
@@ -8,7 +10,6 @@ import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +29,12 @@ import java.util.Optional;
 public class TranslationResource {
 
     private final Logger log = LoggerFactory.getLogger(TranslationResource.class);
-        
+
     @Inject
     private TranslationRepository translationRepository;
+
+    @Inject
+    private TranslationService translationService;
 
     /**
      * POST  /translations : Create a new translation.
@@ -72,6 +76,13 @@ public class TranslationResource {
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("translation", translation.getId().toString()))
             .body(result);
+    }
+
+    @PutMapping("/translations/updateChangedTranslations")
+    @Timed
+    public ResponseEntity<Void> updateChangedTranslations(@RequestBody List<DefinitionToUpdate> definitions) throws URISyntaxException {
+        translationService.updateChangedTranslations(definitions);
+        return ResponseEntity.ok().build();
     }
 
     /**

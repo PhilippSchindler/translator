@@ -12,7 +12,14 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface LanguageRepository extends JpaRepository<Language,Long> {
 
-    @Query("select language from Language language where language.user.login = ?#{principal.username}")
-    List<Language> findByUserIsCurrentUser();
+    @Query("select language from Language language where language.user.id = ?1")
+    List<Language> findByUser(Long userId);
 
+    List<Language> findByProjects_id(Long projectId);
+
+    @Query("select count(p) from Project p join p.languages l where l.id = ?1")
+    int findNumOfLanguageUsagesInProjects(Long languageId);
+
+    @Query("select count(t) from Translation t join t.language l where l.id = ?1")
+    int findNumOfLanguageUsagesInTranslations(Long languageId);
 }

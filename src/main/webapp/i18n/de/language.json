@@ -2,23 +2,23 @@
     "translatorApp": {
         "language" : {
             "home": {
-                "title": "Languages",
-                "createLabel": "Language erstellen",
-                "createOrEditLabel": "Language erstellen oder bearbeiten",
-                "search": "Suche nach Language"
+                "title": "Srachen verwalten",
+                "createLabel": "Sprache hinzufügen",
+                "createOrEditLabel": "Sprache erstellen oder bearbeiten",
+                "search": "Suche nach Sprache"
             },
-            "created": "Language erstellt mit ID {{ param }}",
-            "updated": "Language aktualisiert mit ID {{ param }}",
-            "deleted": "Language gelöscht mit ID {{ param }}",
+            "created": "Sprache mit ID {{ param }} erstellt",
+            "updated": "Sprache mit ID {{ param }} aktualisiert",
+            "deleted": "Sprache mit ID {{ param }} gelöscht",
             "delete": {
-                "question": "Soll Language {{ id }} wirklich dauerhaft gelöscht werden?"
+                "question": "Soll die Sprache {{ id }} wirklich dauerhaft gelöscht werden?"
             },
             "detail": {
-                "title": "Language"
+                "title": "Sprache"
             },
             "name": "Name",
-            "shortName": "Short Name",
-            "user": "User"
+            "shortName": "Kürzel",
+            "user": "erstellt von"
         }
     }
 }

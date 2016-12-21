@@ -4,7 +4,7 @@ public class LanguageNotTranslatedDto {
 
     private String language;
 
-    private int missingTranslations;
+    private long missingTranslations;
 
     public String getLanguage() {
         return language;
@@ -14,11 +14,11 @@ public class LanguageNotTranslatedDto {
         this.language = language;
     }
 
-    public int getMissingTranslations() {
+    public long getMissingTranslations() {
         return missingTranslations;
     }
 
-    public void setMissingTranslations(int missingTranslations) {
+    public void setMissingTranslations(long missingTranslations) {
         this.missingTranslations = missingTranslations;
     }
 }

@@ -2,6 +2,7 @@ package at.ac.tuwien.translator.domain;
 
 import at.ac.tuwien.translator.config.Constants;
 
+import at.ac.tuwien.translator.security.AuthoritiesConstants;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -188,6 +189,14 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setProjects(List<Project> projects) {
         this.projects = projects;
+    }
+
+    public boolean isAdmin() {
+        for (Authority a : authorities)
+            if (a.getName().equals(AuthoritiesConstants.ADMIN))
+                return true;
+
+        return false;
     }
 
     @Override

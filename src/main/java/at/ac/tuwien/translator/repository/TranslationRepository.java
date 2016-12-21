@@ -13,10 +13,10 @@ import java.util.List;
 @SuppressWarnings("unused")
 public interface TranslationRepository extends JpaRepository<Translation,Long> {
 
-    @Query("select distinct translation from Translation translation left join fetch translation.languages")
+    @Query("select distinct translation from Translation translation")
     List<Translation> findAllWithEagerRelationships();
 
-    @Query("select translation from Translation translation left join fetch translation.languages where translation.id =:id")
+    @Query("select translation from Translation translation where translation.id =:id")
     Translation findOneWithEagerRelationships(@Param("id") Long id);
 
 }

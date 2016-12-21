@@ -1,5 +1,6 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.Project;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Release;
 
@@ -28,7 +29,7 @@ import java.util.Optional;
 public class ReleaseResource {
 
     private final Logger log = LoggerFactory.getLogger(ReleaseResource.class);
-        
+
     @Inject
     private ReleaseRepository releaseRepository;
 
@@ -117,6 +118,14 @@ public class ReleaseResource {
         log.debug("REST request to delete Release : {}", id);
         releaseRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("release", id.toString())).build();
+    }
+
+    @GetMapping("/releases/project/{projectId}")
+    @Timed
+    public List<Release> getReleasesByProject(@PathVariable Long projectId) {
+        log.debug("REST request to get releases by project");
+        List<Release> releases = releaseRepository.findByProjectId(projectId);
+        return releases;
     }
 
 }

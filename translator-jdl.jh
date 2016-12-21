@@ -69,6 +69,6 @@ relationship OneToMany {
 relationship ManyToMany {
 	Release{definition(label)} to Definition
 }
-relationship ManyToMany {
+relationship ManyToOne {
 	Translation{language(name)} to Language
 }

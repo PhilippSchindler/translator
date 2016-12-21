@@ -1,70 +1,43 @@
 <div>
-    <h2 data-translate="translatorApp.translation.home.title">Translations</h2>
+    <h2>{{vm.project.name}}</h2>
     <jhi-alert></jhi-alert>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-xs-4 no-padding-left">
-                <button class="btn btn-primary" ui-sref="translation.new" >
-                    <span class="glyphicon glyphicon-plus"></span>
-                    <span  data-translate="translatorApp.translation.home.createLabel">
-                        Create new Translation
-                    </span>
-                </button>
-            </div>
+    <br/>
+    <div class="panel panel-default">
+        <div class="panel-heading" data-translate="translatorApp.translation.filter">Filter</div>
+        <div class="panel-body">
+            <input type="checkbox"
+                   ng-model="vm.onlyShowNotTranslated"
+                   ng-change="vm.onlyShowNotTranslatedChanged()"> Only show not translated entries
         </div>
     </div>
-    <br/>
-    <div class="table-responsive">
-        <table class="jh-table table table-striped">
-            <thead>
-                <tr>
-                    <th><span data-translate="global.field.id">ID</span></th>
-                    <th><span data-translate="translatorApp.translation.text">Text</span></th>
-                    <th><span data-translate="translatorApp.translation.deleted">Deleted</span></th>
-                    <th><span data-translate="translatorApp.translation.updatedAt">Updated At</span></th>
-                    <th><span data-translate="translatorApp.translation.language">Language</span></th>
-                    <th><span data-translate="translatorApp.translation.definition">Definition</span></th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="translation in vm.translations track by translation.id">
-                    <td><a ui-sref="translation-detail({id:translation.id})">{{translation.id}}</a></td>
-                    <td>{{translation.text}}</td>
-                    <td>{{translation.deleted}}</td>
-                    <td>{{translation.updatedAt | date:'medium'}}</td>
-                    <td>
-                        <span ng-repeat="language in translation.languages">
-                            <a class="form-control-static" ui-sref="language-detail({id: language.id})">{{language.name}}</a>{{$last ? '' : ', '}}
-                        </span>
-                    </td>
-                    <td>
-                        <a ui-sref="definition-detail({id:translation.definition.id})">{{translation.definition.label}}</a>
-                    </td>
-                    <td class="text-right">
-                        <div class="btn-group flex-btn-group-container">
-                            <button type="submit"
-                                    ui-sref="translation-detail({id:translation.id})"
-                                    class="btn btn-info btn-sm">
-                                <span class="glyphicon glyphicon-eye-open"></span>
-                                <span class="hidden-xs hidden-sm" data-translate="entity.action.view"></span>
-                            </button>
-                            <button type="submit"
-                                    ui-sref="translation.edit({id:translation.id})"
-                                    class="btn btn-primary btn-sm">
-                                <span class="glyphicon glyphicon-pencil"></span>
-                                <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"></span>
-                            </button>
-                            <button type="submit"
-                                    ui-sref="translation.delete({id:translation.id})"
-                                    class="btn btn-danger btn-sm">
-                                <span class="glyphicon glyphicon-remove-circle"></span>
-                                <span class="hidden-xs hidden-sm" data-translate="entity.action.delete"></span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="panel panel-default">
+        <div class="panel-heading" data-translate="translatorApp.translation.translations">Translations</div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="jh-table table table-striped">
+                    <thead>
+                        <tr>
+                            <th><span>Label</span></th>
+                            <th><span data-translate="translatorApp.translation.english">English</span></th>
+                            <th ng-repeat="lang in vm.project.languages">{{lang.name}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="definition in vm.definitions" ng-hide="vm.isRowToHide(definition)">
+                            <td>{{definition.label}}</td>
+                            <td>{{definition.text}}</td>
+                            <td ng-repeat="lang in vm.project.languages">
+                                <input id="{{definition.id}}{{lang.name}}" value="{{vm.getTranslation(definition.translations, lang).text}}"
+                                       ng-keydown="vm.markDefinitionAsChanged(definition)"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-primary"
+                    data-translate="entity.action.save"
+                    ng-click="vm.save()"
+                    ng-disabled="vm.changedDefinitionIds.size === 0">Save</button>
+        </div>
     </div>
 </div>

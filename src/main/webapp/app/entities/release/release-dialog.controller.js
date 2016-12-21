@@ -5,9 +5,9 @@
         .module('translatorApp')
         .controller('ReleaseDialogController', ReleaseDialogController);
 
-    ReleaseDialogController.$inject = ['$timeout', '$scope', '$stateParams', '$uibModalInstance', 'entity', 'Release', 'Definition', 'Project'];
+    ReleaseDialogController.$inject = ['$timeout', '$scope', '$stateParams', '$uibModalInstance', 'entity', 'Release', 'Definition', 'Project', 'project'];
 
-    function ReleaseDialogController ($timeout, $scope, $stateParams, $uibModalInstance, entity, Release, Definition, Project) {
+    function ReleaseDialogController ($timeout, $scope, $stateParams, $uibModalInstance, entity, Release, Definition, Project, project) {
         var vm = this;
 
         vm.release = entity;
@@ -31,6 +31,7 @@
             if (vm.release.id !== null) {
                 Release.update(vm.release, onSaveSuccess, onSaveError);
             } else {
+                vm.release.project = project;
                 Release.save(vm.release, onSaveSuccess, onSaveError);
             }
         }

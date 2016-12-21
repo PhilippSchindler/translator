@@ -1,18 +1,18 @@
 package at.ac.tuwien.translator.web.rest;
 
-import com.codahale.metrics.annotation.Timed;
-import at.ac.tuwien.translator.domain.Language;
-
+import at.ac.tuwien.translator.domain.*;
 import at.ac.tuwien.translator.repository.LanguageRepository;
+import at.ac.tuwien.translator.repository.ProjectRepository;
+import at.ac.tuwien.translator.repository.TranslationRepository;
+import at.ac.tuwien.translator.repository.UserRepository;
+import at.ac.tuwien.translator.service.UserService;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
-
+import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
@@ -28,9 +28,21 @@ import java.util.Optional;
 public class LanguageResource {
 
     private final Logger log = LoggerFactory.getLogger(LanguageResource.class);
-        
+
     @Inject
     private LanguageRepository languageRepository;
+
+    @Inject
+    private ProjectRepository projectRepository;
+
+    @Inject
+    TranslationRepository translationRepository;
+
+    @Inject
+    private UserRepository userRepository;
+
+    @Inject
+    private UserService userService;
 
     /**
      * POST  /languages : Create a new language.
@@ -46,6 +58,11 @@ public class LanguageResource {
         if (language.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("language", "idexists", "A new language cannot already have an ID")).body(null);
         }
+
+        User loggedInUser = userService.getUserWithAuthorities();
+        if (loggedInUser != null)
+            language.setUser(loggedInUser);
+
         Language result = languageRepository.save(language);
         return ResponseEntity.created(new URI("/api/languages/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("language", result.getId().toString()))
@@ -83,7 +100,15 @@ public class LanguageResource {
     @Timed
     public List<Language> getAllLanguages() {
         log.debug("REST request to get all Languages");
-        List<Language> languages = languageRepository.findAll();
+        List<Language> languages;
+
+        User loggedInUser = userService.getUserWithAuthorities();
+
+        if (loggedInUser == null || loggedInUser.isAdmin()) // loggedInUser == null for integration tests
+            languages = languageRepository.findAll();
+        else
+            languages = languageRepository.findByUser(loggedInUser.getId());
+
         return languages;
     }
 
@@ -115,8 +140,22 @@ public class LanguageResource {
     @Timed
     public ResponseEntity<Void> deleteLanguage(@PathVariable Long id) {
         log.debug("REST request to delete Language : {}", id);
-        languageRepository.delete(id);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("language", id.toString())).build();
+
+        int numProjects = languageRepository.findNumOfLanguageUsagesInProjects(id);
+        log.debug("Language " + id + " used in " + numProjects + " projects");
+
+        int numTranslations = languageRepository.findNumOfLanguageUsagesInTranslations(id);
+
+        if (numProjects == 0 && numTranslations == 0) {
+            // language is not used an can be deleted safely
+            languageRepository.delete(id);
+            return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("language", id.toString())).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).headers(HeaderUtil.createFailureAlert(
+            "language", "languageDeleteConflict",
+            "Cannot delete language, as it is used in projects or translations."
+        )).build();
     }
 
 }

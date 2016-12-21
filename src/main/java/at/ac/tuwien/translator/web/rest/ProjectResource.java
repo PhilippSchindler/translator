@@ -1,5 +1,8 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.User;
+import at.ac.tuwien.translator.repository.UserRepository;
+import at.ac.tuwien.translator.security.SecurityUtils;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Project;
 
@@ -28,9 +31,11 @@ import java.util.Optional;
 public class ProjectResource {
 
     private final Logger log = LoggerFactory.getLogger(ProjectResource.class);
-        
+
     @Inject
     private ProjectRepository projectRepository;
+    @Inject
+    private UserRepository userRepository;
 
     /**
      * POST  /projects : Create a new project.
@@ -46,7 +51,12 @@ public class ProjectResource {
         if (project.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("project", "idexists", "A new project cannot already have an ID")).body(null);
         }
+        Optional<User> userOptional = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin());
+        if(userOptional.isPresent()) {
+            project.addUser(userOptional.get());
+        }
         Project result = projectRepository.save(project);
+
         return ResponseEntity.created(new URI("/api/projects/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("project", result.getId().toString()))
             .body(result);
@@ -85,6 +95,17 @@ public class ProjectResource {
         log.debug("REST request to get all Projects");
         List<Project> projects = projectRepository.findAllWithEagerRelationships();
         return projects;
+    }
+
+    /**
+     * GET  /projects : get all the projects.
+     *
+     * @return the ResponseEntity with status 200 (OK) and the list of projects in body
+     */
+    @GetMapping("users/{userLogin}/singleproject")
+    @Timed
+    public Project getSingleProjectByUser(@PathVariable String userLogin) {
+        return projectRepository.findSingleProjectByUserLogin(userLogin);
     }
 
     /**

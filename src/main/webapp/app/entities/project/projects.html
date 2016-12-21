@@ -18,16 +18,16 @@
         <table class="jh-table table table-striped">
             <thead>
                 <tr>
-                    <!--<th><span data-translate="global.field.id">ID</span></th>-->
-                    <th><span>Name</span></th>
-                    <th><span>Description</span></th>
+                    <th><span data-translate="global.field.id">ID</span></th>
+                    <th><span data-translate="translatorApp.project.name">Name</span></th>
+                    <th><span data-translate="translatorApp.project.description">Description</span></th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="project in vm.projects track by project.id">
                     <td><a ui-sref="project-detail({id:project.id})">{{project.name}}</a></td>
-                    <td>{{project.description}}</td>
+                    <td><span ng-bind-html="vm.replaceNewLineWithBR(project.description)"></span></td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"

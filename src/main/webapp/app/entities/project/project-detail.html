@@ -1,14 +1,56 @@
 
 <div>
-    <h2><span data-translate="translatorApp.project.detail.title">Project</span> {{vm.project.id}}</h2>
+    <h2><span data-translate="translatorApp.project.detail.title">Project</span>: {{vm.project.name}}</h2>
     <hr>
     <jhi-alert-error></jhi-alert-error>
 
+    <div class="panel panel-default">
+        <div class="panel-heading"><span data-translate="translatorApp.project.detail.actions">Actions</span></div>
+        <div class="panel-body">
+            <div class="col-md-2">
+                <button class="btn btn-primary" ui-sref="release({projectId: vm.project.id})" >
+                    <span  data-translate="translatorApp.project.detail.release">Releases</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span data-translate="translatorApp.project.detail.details">Details</span>
+        </div>
+        <div class="panel-body">
+            <div class="container">
+                <div class="row">
+                    <strong class="col-md-2">
+                        <span data-translate="translatorApp.project.name">Name</span>:
+                    </strong>
+                    <div class="col-md-8">
+                        {{vm.project.name}}
+                        <button type="button" ui-sref="project-detail.edit({id:vm.project.id})" class="btn btn-link">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <strong class="col-md-2">
+                        <span data-translate="translatorApp.project.description">Description</span>:
+                    </strong>
+                    <div class="col-md-7 ">
+                        <span ng-bind-html="vm.replaceNewLineWithBR(vm.project.description)"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
     <!-- USER MANAGEMENT -->
-    <div class="panel panel panel-primary">
+    <div class="panel panel-default">
         <div class="panel-heading">
-            <h3 class="panel-title">User</h3>
+            <span >Users</span>
         </div>
         <div class="panel-body">
             <div class="table-responsive">
@@ -59,44 +101,11 @@
         </button>
     </div>
 
-
-    <dl class="dl-horizontal jh-entity-details">
-        <dt><span data-translate="translatorApp.project.name">Name</span></dt>
-        <dd>
-            <span>{{vm.project.name}}</span>
-        </dd>
-        <dt><span data-translate="translatorApp.project.description">Description</span></dt>
-        <dd>
-            <span>{{vm.project.description}}</span>
-        </dd>
-        <dt><span data-translate="translatorApp.project.user">User</span></dt>
-        <dd>
-            <span ng-repeat="user in vm.project.users">
-                {{user.login}}{{$last ? '' : ', '}}
-            </span>
-        </dd>
-        <dt><span data-translate="translatorApp.project.platform">Platform</span></dt>
-        <dd>
-            <span ng-repeat="platform in vm.project.platforms">
-                <a ui-sref="platform-detail({id: platform.id})">{{platform.name}}</a>{{$last ? '' : ', '}}
-            </span>
-        </dd>
-        <dt><span data-translate="translatorApp.project.language">Language</span></dt>
-        <dd>
-            <span ng-repeat="language in vm.project.languages">
-                <a ui-sref="language-detail({id: language.id})">{{language.name}}</a>{{$last ? '' : ', '}}
-            </span>
-        </dd>
-    </dl>
-
     <button type="submit"
             ui-sref="{{ vm.previousState }}"
             class="btn btn-info">
         <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span data-translate="entity.action.back"> Back</span>
     </button>
 
-    <button type="button" ui-sref="project-detail.edit({id:vm.project.id})" class="btn btn-primary">
-        <span class="glyphicon glyphicon-pencil"></span>
-        <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"> Edit</span>
-    </button>
+
 </div>

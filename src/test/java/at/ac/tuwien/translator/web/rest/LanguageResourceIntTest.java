@@ -5,6 +5,7 @@ import at.ac.tuwien.translator.TranslatorApp;
 import at.ac.tuwien.translator.domain.Language;
 import at.ac.tuwien.translator.repository.LanguageRepository;
 
+import at.ac.tuwien.translator.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,9 @@ public class LanguageResourceIntTest {
     private LanguageRepository languageRepository;
 
     @Inject
+    private UserService userService;
+
+    @Inject
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Inject
@@ -64,6 +68,7 @@ public class LanguageResourceIntTest {
         MockitoAnnotations.initMocks(this);
         LanguageResource languageResource = new LanguageResource();
         ReflectionTestUtils.setField(languageResource, "languageRepository", languageRepository);
+        ReflectionTestUtils.setField(languageResource, "userService", userService);
         this.restLanguageMockMvc = MockMvcBuilders.standaloneSetup(languageResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setMessageConverters(jacksonMessageConverter).build();

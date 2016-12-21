@@ -27,33 +27,26 @@
             <column name="text" type="varchar(255)">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="deleted" type="boolean">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="updated_at" type="timestamp">
                 <constraints nullable="false" />
             </column>
-            
+
             <column name="definition_id" type="bigint">
                 <constraints nullable="true" />
+            </column>
+
+            <column name="language_id" type="bigint">
+                <constraints nullable="false"/>
             </column>
 
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
         <dropDefaultValue tableName="translation" columnName="updated_at" columnDataType="datetime"/>
-        
-        <createTable tableName="translation_language">
-            <column name="languages_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="translations_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
 
-        <addPrimaryKey columnNames="translations_id, languages_id" tableName="translation_language"/>
-        
     </changeSet>
 </databaseChangeLog>
