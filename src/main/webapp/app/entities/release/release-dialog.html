@@ -8,11 +8,6 @@
     </div>
     <div class="modal-body">
         <jhi-alert-error></jhi-alert-error>
-        <div class="form-group" ng-show="vm.release.id">
-            <label for="id" data-translate="global.field.id">ID</label>
-            <input type="text" class="form-control" id="id" name="id"
-                    ng-model="vm.release.id" readonly />
-        </div>
         <div class="form-group">
             <label class="control-label" data-translate="translatorApp.release.name" for="field_name">Name</label>
             <input type="text" class="form-control" name="name" id="field_name"
@@ -40,17 +35,6 @@
                     This field is required.
                 </p>
             </div>
-        </div>
-
-        <div class="form-group">
-            <label data-translate="translatorApp.release.definition" for="field_definition">Definition</label>
-            <select class="form-control" id="field_definition" multiple name="definition" ng-model="vm.release.definitions" ng-options="definition as definition.label for definition in vm.definitions track by definition.id"></select>
-        </div>
-        <div class="form-group">
-            <label data-translate="translatorApp.release.project" for="field_project">Project</label>
-            <select class="form-control" id="field_project" name="project" ng-model="vm.release.project" ng-options="project as project.name for project in vm.projects track by project.id">
-                <option value=""></option>
-            </select>
         </div>
     </div>
     <div class="modal-footer">

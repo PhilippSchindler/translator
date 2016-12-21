@@ -36,7 +36,12 @@
                     copy.deadline = DateUtils.convertLocalDateToServer(copy.deadline);
                     return angular.toJson(copy);
                 }
-            }
+            },
+            'getByProject': {
+                method: 'GET',
+                url:  'api/releases/project/:projectId',
+                isArray: true
+            },
         });
     }
 })();

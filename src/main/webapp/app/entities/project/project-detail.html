@@ -7,14 +7,17 @@
     <div class="panel panel-default">
         <div class="panel-heading"><span data-translate="translatorApp.project.detail.actions">Actions</span></div>
         <div class="panel-body">
-
+            <div class="col-md-2">
+                <button class="btn btn-primary" ui-sref="release({projectId: vm.project.id})" >
+                    <span  data-translate="translatorApp.project.detail.release">Releases</span>
+                </button>
+            </div>
         </div>
     </div>
 
     <div class="panel panel-default">
         <div class="panel-heading">
             <span data-translate="translatorApp.project.detail.details">Details</span>
-
         </div>
         <div class="panel-body">
             <div class="container">
@@ -38,7 +41,6 @@
                         <span ng-bind-html="vm.replaceNewLineWithBR(vm.project.description)"></span>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

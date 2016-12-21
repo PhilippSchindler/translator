@@ -16,7 +16,8 @@
             "detail": {
                 "details": "Details",
                 "title": "Projekt",
-                "actions": "Aktionen"
+                "actions": "Aktionen",
+                "release": "Releases"
             },
             "name": "Name",
             "description": "Beschreibung",
