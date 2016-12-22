@@ -12,8 +12,10 @@
 
         vm.releases = [];
         vm.project = project;
+        vm.showButton = false;
 
         loadAll();
+        showNewReleaseButton();
 
         function loadAll() {
             Release.getByProject({projectId: vm.project.id}, function(result) {
@@ -22,14 +24,12 @@
             });
         }
 
-        vm.showNewReleaseButton = function () {
+        function showNewReleaseButton() {
             Principal.identity().then(function(account) {
                 let userAuthority = account.authorities[0];
-                if(userAuthority === 'ROLE_CUSTOMER')
-                    return true;
-                else {
-                    return false;
-                }
+                if (userAuthority === 'ROLE_CUSTOMER') {
+                    vm.showButton = true;
+                 }
             });
         }
     }

@@ -82,8 +82,8 @@
                     $rootScope.homePath = 'project/' + project.id + '/translator-view';
                     $state.go('translator-view', {projectId: project.id});
                 } else if (userAuthorities.includes('ROLE_RELEASE_MANAGER')) {
-                    $rootScope.homePath = 'project/' + project.id + '/release-manager-view';
-                    $state.go('release-manager-view', {projectId: project.id});
+                    $rootScope.homePath = 'project/' + project.id + '/release';
+                    $state.go('release', {projectId: project.id});
                 } else {
                     $state.go('home');
                 }

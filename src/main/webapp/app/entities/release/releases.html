@@ -1,10 +1,10 @@
 <div>
     <h2 data-translate="translatorApp.release.home.title">Releases</h2>
     <jhi-alert></jhi-alert>
-    <div class="container-fluid">
+    <div class="container-fluid" ng-if="vm.showButton">
         <div class="row">
-            <div class="col-xs-4 no-padding-left">
-                <button class="btn btn-primary" ui-sref="release.new({projectId: vm.project.id})"><!-- ng-if="vm.showNewReleaseButton()"-->
+            <div class="col-xs-4 no-padding-left" >
+                <button class="btn btn-primary" ui-sref="release.new({projectId: vm.project.id})">
                    Neues Release anlegen
                 </button>
             </div>
@@ -13,9 +13,16 @@
     <br/>
     <div class="table-responsive">
         <table class="jh-table table table-striped">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Deadline</th>
+                </tr>
+            </thead>
             <tbody>
                 <tr ng-repeat="release in vm.releases track by release.id">
                     <td><a ui-sref="release-detail({id:release.id, projectId:release.project.id})">{{release.name}}</a></td>
+                    <td>{{release.deadline | date:'mediumDate'}}</td>
                 </tr>
             </tbody>
         </table>

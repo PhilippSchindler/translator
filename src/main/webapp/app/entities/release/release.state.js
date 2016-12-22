@@ -13,7 +13,7 @@
             parent: 'entity',
             url: '/project/{projectId}/release',
             data: {
-                authorities: ['ROLE_CUSTOMER'],
+                authorities: ['ROLE_CUSTOMER', 'ROLE_RELEASE_MANAGER', 'ROLE_ADMIN'],
                 pageTitle: 'translatorApp.release.home.title'
             },
             views: {
@@ -38,7 +38,7 @@
             parent: 'entity',
             url: '/project/{projectId}/release/{id}',
             data: {
-                authorities: ['ROLE_CUSTOMER'],
+                authorities: ['ROLE_CUSTOMER', 'ROLE_RELEASE_MANAGER', 'ROLE_ADMIN'],
                 pageTitle: 'translatorApp.release.detail.title'
             },
             views: {
