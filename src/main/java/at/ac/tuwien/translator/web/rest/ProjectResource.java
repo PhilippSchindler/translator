@@ -3,6 +3,7 @@ package at.ac.tuwien.translator.web.rest;
 import at.ac.tuwien.translator.domain.User;
 import at.ac.tuwien.translator.repository.UserRepository;
 import at.ac.tuwien.translator.security.SecurityUtils;
+import at.ac.tuwien.translator.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Project;
 
@@ -36,6 +37,10 @@ public class ProjectResource {
     private ProjectRepository projectRepository;
     @Inject
     private UserRepository userRepository;
+
+
+    @Inject
+    private UserService userService;
 
     /**
      * POST  /projects : Create a new project.
@@ -93,7 +98,15 @@ public class ProjectResource {
     @Timed
     public List<Project> getAllProjects() {
         log.debug("REST request to get all Projects");
-        List<Project> projects = projectRepository.findAllWithEagerRelationships();
+        List<Project> projects;
+
+        User loggedInUser = userService.getUserWithAuthorities();
+
+        if (loggedInUser == null || loggedInUser.isAdmin()) // loggedInUser == null for integration tests
+            projects = projectRepository.findAllWithEagerRelationships();
+        else
+            projects = projectRepository.findAllWithEagerRelationshipsByUser(loggedInUser.getId());
+
         return projects;
     }
 
