@@ -1,7 +1,6 @@
 package at.ac.tuwien.translator.repository;
 
 import at.ac.tuwien.translator.domain.Project;
-
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
@@ -21,4 +20,13 @@ public interface ProjectRepository extends JpaRepository<Project,Long> {
 
     @Query("SELECT p FROM Project p JOIN p.users u WHERE u.login = (:userLogin)")
     Project findSingleProjectByUserLogin(@Param("userLogin") String userLogin);
+
+
+
+    @Query("select distinct project from Project project " +
+               "left join fetch project.users as u " +
+               "left join fetch project.platforms " +
+               "left join fetch project.languages " +
+            "where u.id = (:userId) ")
+    List<Project> findAllWithEagerRelationshipsByUser(@Param("userId")Long userId);
 }

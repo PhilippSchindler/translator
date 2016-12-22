@@ -6,6 +6,7 @@ import at.ac.tuwien.translator.domain.Project;
 import at.ac.tuwien.translator.repository.ProjectRepository;
 
 import at.ac.tuwien.translator.repository.UserRepository;
+import at.ac.tuwien.translator.service.UserService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +52,9 @@ public class ProjectResourceIntTest {
     private UserRepository userRepository;
 
     @Inject
+    private UserService userService;
+
+    @Inject
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Inject
@@ -69,6 +73,7 @@ public class ProjectResourceIntTest {
         ProjectResource projectResource = new ProjectResource();
         ReflectionTestUtils.setField(projectResource, "projectRepository", projectRepository);
         ReflectionTestUtils.setField(projectResource, "userRepository", userRepository);
+        ReflectionTestUtils.setField(projectResource, "userService", userService);
         this.restProjectMockMvc = MockMvcBuilders.standaloneSetup(projectResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setMessageConverters(jacksonMessageConverter).build();
