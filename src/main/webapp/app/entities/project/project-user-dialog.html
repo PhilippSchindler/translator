@@ -74,9 +74,12 @@
             </div>
         </div>
         <div class="form-group">
-            <label>Profiles</label>
-            <select class="form-control" name="authority" ng-model="vm.user.authority"
-                    ng-options="authority for authority in vm.authorities">
+            <label>Rolle</label>
+            <select class="form-control" name="authority" ng-model="vm.user.authority">
+                <option value="ROLE_DEVELOPER">Entwickler</option>
+                <option value="ROLE_TRANSLATOR">Übersetzer</option>
+                <option value="ROLE_RELEASE_MANAGER">Release Manager</option>
+                <option value="ROLE_CUSTOMER">Kunde</option>
             </select>
         </div>
     </div>

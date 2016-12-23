@@ -62,7 +62,7 @@
                         <th>ID</th>
                         <th>Login</th>
                         <th>Email</th>
-                        <th>Profiles</th>
+                        <th>Rolle</th>
                         <th></th>
                     </tr>
                     </thead>
@@ -73,23 +73,23 @@
                         <td>{{user.email}}</td>
                         <td>
                             <div ng-repeat="authority in user.authorities">
-                                <span class="label label-info">{{ authority.name }}</span>
+                                <span class="label label-info" ng-if="authority.name !== 'ROLE_USER'">{{ authority.name.substring(5) }}</span>
                             </div>
                         </td>
                         <td class="text-right">
                             <div class="btn-group flex-btn-group-container">
                                 <button type="submit"
-                                        ui-sref="user-management.edit({login:user.login})"
+                                        ui-sref="project-detail.editUser({login:user.login})"
                                         class="btn btn-primary btn-sm">
                                     <span class="glyphicon glyphicon-pencil"></span>
                                     <span class="hidden-xs hidden-sm">Bearbeiten</span>
                                 </button>
-                                <button type="submit"
-                                        ui-sref="user-management.delete({login:user.login})"
-                                        class="btn btn-danger btn-sm" ng-disabled="vm.currentAccount.login==user.login">
-                                    <span class="glyphicon glyphicon-remove-circle"></span>
-                                    <span class="hidden-xs hidden-sm">Löschen</span>
-                                </button>
+                                <!--<button type="submit"-->
+                                        <!--ui-sref="project-detail.deleteUser({login:user.login})"-->
+                                        <!--class="btn btn-danger btn-sm">-->
+                                    <!--<span class="glyphicon glyphicon-remove-circle"></span>-->
+                                    <!--<span class="hidden-xs hidden-sm">Löschen</span>-->
+                                <!--</button>-->
                             </div>
                         </td>
                     </tr>

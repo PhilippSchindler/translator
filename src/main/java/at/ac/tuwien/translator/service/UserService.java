@@ -19,8 +19,8 @@ import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import javax.inject.Inject;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
@@ -130,24 +130,24 @@ public class UserService {
         user.setFirstName(projectMember.getFirstName());
         user.setLastName(projectMember.getLastName());
         user.setEmail(projectMember.getEmail());
-        String encryptedPassword = passwordEncoder.encode(projectMember.getLogin());
         user.setLangKey("de");
-        user.setPassword(encryptedPassword);
+        user.setPassword(passwordEncoder.encode(projectMember.getLogin()));
+
+        Set<Authority> authorities = new HashSet<>();
+        authorities.add(authorityRepository.findOne(AuthoritiesConstants.USER));
         if (projectMember.getAuthority() != null) {
-            Set<Authority> authorities = new HashSet<>();
-            Authority authority = authorityRepository.findOne(AuthoritiesConstants.DEVELOPER);
-            authorities.add(authority);
-            user.setAuthorities(authorities);
+            authorities.add(authorityRepository.findOne(projectMember.getAuthority()));
         }
+        user.setAuthorities(authorities);
         user.setLastModifiedBy(null);
         user.setActivated(true);
+
         List<Project> projects = new ArrayList<>();
         Project project = projectRepository.findOne(projectMember.getProjectId());
         projects.add(project);
         user.setProjects(projects);
 
         project.getUsers().add(user);
-
 
         userRepository.save(user);
         projectRepository.save(project);

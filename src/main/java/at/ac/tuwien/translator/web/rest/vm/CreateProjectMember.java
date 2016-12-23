@@ -5,6 +5,8 @@ package at.ac.tuwien.translator.web.rest.vm;
  */
 public class CreateProjectMember {
 
+    private Long id;
+
     private String login;
 
     private String password;
@@ -21,6 +23,14 @@ public class CreateProjectMember {
 
     public CreateProjectMember(){
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getLogin() {
