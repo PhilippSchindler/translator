@@ -23,7 +23,7 @@
                 params: {login: 'createProjectMember'}
             },
             'updateProjectMember': {
-                method: 'POST',
+                method: 'PUT',
                 params: {login: 'updateProjectMember'}
             },
             'update': {method: 'PUT'},
