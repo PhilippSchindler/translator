@@ -1,0 +1,125 @@
+<div>
+    <h2><span data-translate="translatorApp.project.detail.title">Project</span>: {{vm.project.name}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><span data-translate="translatorApp.project.detail.actions">Actions</span></div>
+        <div class="panel-body">
+            <div class="col-md-12">
+                <button class="btn btn-primary" ui-sref="release({projectId: vm.project.id})">
+                    <span data-translate="translatorApp.project.detail.release">Releases</span>
+                </button>
+                <button class="btn btn-success" ui-sref="statistics({projectId: vm.project.id})">
+                    <span class="glyphicon glyphicon-stats"></span>
+                    <span class="hidden-xs hidden-sm" data-translate="translatorApp.project.statistics"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span data-translate="translatorApp.project.detail.details">Details</span>
+        </div>
+        <div class="panel-body">
+            <div class="container">
+                <div class="row">
+                    <strong class="col-md-2">
+                        <span data-translate="translatorApp.project.name">Name</span>:
+                    </strong>
+                    <div class="col-md-8">
+                        {{vm.project.name}}
+                        <button type="button" ui-sref="project-detail.edit({id:vm.project.id})" class="btn btn-link">
+                            <span class="glyphicon glyphicon-pencil"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <strong class="col-md-2">
+                        <span data-translate="translatorApp.project.description">Description</span>:
+                    </strong>
+                    <div class="col-md-7 ">
+                        <span ng-bind-html="vm.replaceNewLineWithBR(vm.project.description)"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span data-translate="translatorApp.project.detail.languages">Languages</span>
+        </div>
+        <div class="panel-body">
+            <dualmultiselect options="languageSelectOptions"> </dualmultiselect>
+            <br>
+            <button class="btn btn-primary" ui-sref="project-detail.newLanguage">
+                <span class="glyphicon glyphicon-flash"></span>
+                <span data-translate="translatorApp.project.detail.createNewLanguage">Create new language</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- USER MANAGEMENT -->
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Users</span>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr callback="vm.transition()">
+                        <th>ID</th>
+                        <th>Login</th>
+                        <th>Email</th>
+                        <th>Rolle</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="user in vm.project.users">
+                        <td>{{user.id}}</td>
+                        <td>{{user.login}}</td>
+                        <td>{{user.email}}</td>
+                        <td>
+                            <div ng-repeat="authority in user.authorities">
+                                <span class="label label-info" ng-if="authority.name !== 'ROLE_USER'">{{ authority.name.substring(5) }}</span>
+                            </div>
+                        </td>
+                        <td class="text-right">
+                            <div class="btn-group flex-btn-group-container">
+                                <button type="submit"
+                                        ui-sref="project-detail.editUser({login:user.login})"
+                                        class="btn btn-primary btn-sm">
+                                    <span class="glyphicon glyphicon-pencil"></span>
+                                    <span class="hidden-xs hidden-sm">Bearbeiten</span>
+                                </button>
+                                <!--<button type="submit"-->
+                                        <!--ui-sref="project-detail.deleteUser({login:user.login})"-->
+                                        <!--class="btn btn-danger btn-sm">-->
+                                    <!--<span class="glyphicon glyphicon-remove-circle"></span>-->
+                                    <!--<span class="hidden-xs hidden-sm">Löschen</span>-->
+                                <!--</button>-->
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-primary" ui-sref="project-detail.newUser">
+                <span class="glyphicon glyphicon-flash"></span> <span>Neuen Benutzer erstellen</span>
+            </button>
+        </div>
+    </div>
+
+    <button type="submit"
+            ui-sref="{{ vm.previousState }}"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span data-translate="entity.action.back"> Back</span>
+    </button>
+
+
+</div>

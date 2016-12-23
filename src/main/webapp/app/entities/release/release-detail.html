@@ -1,0 +1,36 @@
+
+<div>
+    <h2><span data-translate="translatorApp.release.detail.title">Release</span>: {{vm.release.name}}</h2>
+    <hr>
+    <jhi-alert-error></jhi-alert-error>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Details</div>
+        <div class="panel-body">
+            <div class="container">
+                <div class="row">
+                    <strong class="col-md-2">Name:</strong>
+                    <div class="col-md-10">
+                        {{vm.release.name}}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <strong class="col-md-2">
+                        <span data-translate="translatorApp.release.deadline">Deadline</span>:
+                    </strong>
+                    <div class="col-md-7 ">
+                        <span>{{vm.release.deadline | date:'mediumDate'}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit"
+            ui-sref="release({projectId: vm.release.project.id})"
+            class="btn btn-info">
+        <span class="glyphicon glyphicon-arrow-left"></span>&nbsp;<span data-translate="entity.action.back"> Back</span>
+    </button>
+
+</div>

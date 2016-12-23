@@ -1,0 +1,7 @@
+{
+    "error": {
+        "title": "Fehlerseite!",
+        "403": "Sie haben nicht die nötigen Berechtigungen diese Seite anzuzeigen.",
+        "couldNotLoadProject": "Konnte zugeteiltes Projekt nicht laden. Bitte wenden Sie sich an den Administrator."
+    }
+}

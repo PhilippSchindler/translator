@@ -1,0 +1,22 @@
+<div ng-cloak>
+    <div class="row">
+        <div class="col-md-4">
+            <span class="hipster img-responsive img-rounded"></span>
+        </div>
+        <div class="col-md-8">
+            <h1>Willkommen auf der Translator Webapplikation</h1>
+            <p class="lead">Dies ist die Startseite.</p>
+
+            <div ng-switch="vm.isAuthenticated()">
+                <div class="alert alert-success" ng-switch-when="true" data-translate="home.logged.message" translate-values="{username: '{{vm.account.login}}'}">
+                    You are logged in as user "{{vm.account.login}}".
+                </div>
+
+                <div class="alert alert-warning" ng-switch-when="false">
+                    Bereits registiert? - <a class="alert-link" href="" ng-click="vm.login()">Hier können Sie sich anmelden. </a><br/>
+                    Sie haben noch keinen Account? - <a class="alert-link" ui-sref="register">Registrieren Sie sich!</a>
+                </div>
+           </div>
+        </div>
+    </div>
+</div>

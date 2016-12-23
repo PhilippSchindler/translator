@@ -1,0 +1,12 @@
+version: '2'
+services:
+    translator-postgresql:
+        container_name: translator-postgresql
+        image: postgres:9.5.4
+        # volumes:
+        #     - ~/volumes/jhipster/translator/postgresql/:/var/lib/postgresql/
+        environment:
+            - POSTGRES_USER=translator
+            - POSTGRES_PASSWORD=
+        ports:
+            - 5432:5432

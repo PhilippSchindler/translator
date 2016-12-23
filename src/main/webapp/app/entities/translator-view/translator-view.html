@@ -1,0 +1,76 @@
+<div>
+    <h2>{{vm.project.name}}</h2>
+    <hr>
+    <jhi-alert></jhi-alert>
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><span data-translate="translatorApp.translatorView.actions">Actions</span></div>
+        <div class="panel-body">
+            <div class="col-md-12">
+                <button class="btn btn-success" ui-sref="statistics({projectId: vm.project.id})">
+                    <span class="glyphicon glyphicon-stats"></span>
+                    <span class="hidden-xs hidden-sm" data-translate="translatorApp.translatorView.statistics"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading" data-translate="translatorApp.translatorView.filter">Filter</div>
+        <div class="panel-body">
+            <dualmultiselect options="languageSelectOptions"> </dualmultiselect>
+            <br>
+            <input type="checkbox"
+                   ng-model="vm.onlyShowNotTranslated"
+                   ng-change="vm.onlyShowNotTranslatedChanged()"> Only show not translated entries
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" data-translate="translatorApp.translatorView.translations">Translations</div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="jh-table table table-striped">
+                    <thead>
+                        <tr>
+                            <th><span>Label</span></th>
+                            <th><span data-translate="translatorApp.translatorView.english">English</span></th>
+                            <th ng-repeat="lang in vm.project.languages" ng-hide="vm.isLangToHide(lang)">{{lang.name}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input ng-keyup="vm.searchChanged()"
+                                       ng-model="vm.searches['Label']"
+                                       placeholder="{{'translatorApp.translatorView.filter' | translate}} Label...">
+                                <i class="glyphicon glyphicon-search"/>
+                            </td>
+                            <td><input ng-keyup="vm.searchChanged()"
+                                       ng-model="vm.searches['English']"
+                                       placeholder="{{'translatorApp.translatorView.filter' | translate}} {{'translatorApp.translatorView.english' | translate}}...">
+                                <i class="glyphicon glyphicon-search"/>
+                            </td>
+                            <td ng-repeat="lang in vm.project.languages" ng-hide="vm.isLangToHide(lang)">
+                                <input ng-keyup="vm.searchChanged()"
+                                       ng-model="vm.searches[lang.name]"
+                                       placeholder="{{'translatorApp.translatorView.filter' | translate}} {{lang.name}}...">
+                                <i class="glyphicon glyphicon-search"/>
+                            </td>
+                        </tr>
+                        <tr ng-repeat="definition in vm.definitions" ng-hide="vm.isRowToHide(definition)">
+                            <td>{{definition.label}}</td>
+                            <td>{{definition.text}}</td>
+                            <td ng-repeat="lang in vm.project.languages" ng-hide="vm.isLangToHide(lang)">
+                                <input id="{{definition.id}}{{lang.name}}" value="{{vm.getTranslation(definition.translations, lang).text}}"
+                                       ng-keydown="vm.markDefinitionAsChanged(definition)"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-primary"
+                    data-translate="entity.action.save"
+                    ng-click="vm.save()"
+                    ng-disabled="vm.changedDefinitionIds.size === 0">Save</button>
+        </div>
+    </div>
+</div>

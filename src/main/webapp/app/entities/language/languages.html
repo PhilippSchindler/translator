@@ -1,0 +1,62 @@
+<div>
+    <h2 data-translate="translatorApp.language.home.title">Languages</h2>
+    <jhi-alert></jhi-alert>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-4 no-padding-left">
+                <button class="btn btn-primary" ui-sref="language.new" >
+                    <span class="glyphicon glyphicon-plus"></span>
+                    <span  data-translate="translatorApp.language.home.createLabel">
+                        Create new Language
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="table-responsive">
+        <table class="jh-table table table-striped">
+            <thead>
+                <tr>
+                    <th><span data-translate="global.field.id">ID</span></th>
+                    <th><span data-translate="translatorApp.language.name">Name</span></th>
+                    <th><span data-translate="translatorApp.language.shortName">Short Name</span></th>
+                    <th><span data-translate="translatorApp.language.user">User</span></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="language in vm.languages track by language.id">
+                    <td><a ui-sref="language-detail({id:language.id})">{{language.id}}</a></td>
+                    <td>{{language.name}}</td>
+                    <td>{{language.shortName}}</td>
+                    <td>
+                        {{language.user.login}}
+                    </td>
+                    <td class="text-right">
+                        <div class="btn-group flex-btn-group-container">
+                            <button type="submit"
+                                    ui-sref="language-detail({id:language.id})"
+                                    class="btn btn-info btn-sm">
+                                <span class="glyphicon glyphicon-eye-open"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.view"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="language.edit({id:language.id})"
+                                    class="btn btn-primary btn-sm">
+                                <span class="glyphicon glyphicon-pencil"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.edit"></span>
+                            </button>
+                            <button type="submit"
+                                    ui-sref="language.delete({id:language.id})"
+                                    class="btn btn-danger btn-sm">
+                                <span class="glyphicon glyphicon-remove-circle"></span>
+                                <span class="hidden-xs hidden-sm" data-translate="entity.action.delete"></span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

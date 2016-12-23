@@ -1,0 +1,43 @@
+<div>
+    <h2>{{vm.project.name}}</h2>
+    <jhi-alert></jhi-alert>
+    <br/>
+    <div class="panel panel-default">
+        <div class="panel-heading" data-translate="translatorApp.translation.filter">Filter</div>
+        <div class="panel-body">
+            <input type="checkbox"
+                   ng-model="vm.onlyShowNotTranslated"
+                   ng-change="vm.onlyShowNotTranslatedChanged()"> Only show not translated entries
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" data-translate="translatorApp.translation.translations">Translations</div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="jh-table table table-striped">
+                    <thead>
+                        <tr>
+                            <th><span>Label</span></th>
+                            <th><span data-translate="translatorApp.translation.english">English</span></th>
+                            <th ng-repeat="lang in vm.project.languages">{{lang.name}}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="definition in vm.definitions" ng-hide="vm.isRowToHide(definition)">
+                            <td>{{definition.label}}</td>
+                            <td>{{definition.text}}</td>
+                            <td ng-repeat="lang in vm.project.languages">
+                                <input id="{{definition.id}}{{lang.name}}" value="{{vm.getTranslation(definition.translations, lang).text}}"
+                                       ng-keydown="vm.markDefinitionAsChanged(definition)"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-primary"
+                    data-translate="entity.action.save"
+                    ng-click="vm.save()"
+                    ng-disabled="vm.changedDefinitionIds.size === 0">Save</button>
+        </div>
+    </div>
+</div>
