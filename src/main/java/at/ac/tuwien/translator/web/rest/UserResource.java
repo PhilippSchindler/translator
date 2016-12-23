@@ -1,16 +1,16 @@
 package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.config.Constants;
-import at.ac.tuwien.translator.web.rest.vm.CreateProjectMember;
-import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.User;
 import at.ac.tuwien.translator.repository.UserRepository;
 import at.ac.tuwien.translator.security.AuthoritiesConstants;
 import at.ac.tuwien.translator.service.MailService;
 import at.ac.tuwien.translator.service.UserService;
-import at.ac.tuwien.translator.web.rest.vm.ManagedUserVM;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
 import at.ac.tuwien.translator.web.rest.util.PaginationUtil;
+import at.ac.tuwien.translator.web.rest.vm.CreateProjectMember;
+import at.ac.tuwien.translator.web.rest.vm.ManagedUserVM;
+import com.codahale.metrics.annotation.Timed;
 import io.swagger.annotations.ApiParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,12 +25,15 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * REST controller for managing users.
- *
+ * <p>
  * <p>This class accesses the User entity, and needs to fetch its collection of authorities.</p>
  * <p>
  * For a normal use-case, it would be better to have an eager relationship between User and Authority,
@@ -98,7 +101,7 @@ public class UserResource {
             User newUser = userService.createUser(managedUserVM);
             mailService.sendCreationEmail(newUser);
             return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
-                .headers(HeaderUtil.createAlert( "userManagement.created", newUser.getLogin()))
+                .headers(HeaderUtil.createAlert("userManagement.created", newUser.getLogin()))
                 .body(newUser);
         }
     }
@@ -122,9 +125,41 @@ public class UserResource {
             User newUser = userService.createProjectMember(projectMember);
             //mailService.sendCreationEmail(newUser);
             return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
-                .headers(HeaderUtil.createAlert( "userManagement.created", newUser.getLogin()))
+                .headers(HeaderUtil.createAlert("userManagement.created", newUser.getLogin()))
                 .body(newUser);
         }
+    }
+
+    @PutMapping("/users/updateProjectMember")
+    @Timed
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.CUSTOMER})
+    public ResponseEntity<?> updateProjectMember(@RequestBody CreateProjectMember projectMember) throws URISyntaxException {
+        log.debug("REST request to save User : {}", projectMember);
+
+        //Lowercase the user login before comparing with database
+        Optional<User> existingUser = userRepository.findOneByEmail(projectMember.getEmail());
+        if (existingUser.isPresent() && (!existingUser.get().getId().equals(projectMember.getId()))) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("userManagement", "emailexists", "E-mail already in use")).body(null);
+        }
+        existingUser = userRepository.findOneByLogin(projectMember.getLogin().toLowerCase());
+        if (existingUser.isPresent() && (!existingUser.get().getId().equals(projectMember.getId()))) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("userManagement", "userexists", "Login already in use")).body(null);
+        }
+        if (!existingUser.isPresent()) {
+            return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("userManagement", "usernotfound", "Did not find user to update")).body(null);
+        }
+        User user = existingUser.get();
+        Set<String> authorities = new HashSet<>();
+        authorities.add(AuthoritiesConstants.USER);
+        if (projectMember.getAuthority() != null) {
+            authorities.add(projectMember.getAuthority());
+        }
+        userService.updateUser(projectMember.getId(), projectMember.getLogin(), projectMember.getFirstName(),
+            projectMember.getLastName(), projectMember.getEmail(), true,
+            user.getLangKey(), authorities);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createAlert("userManagement.updated", projectMember.getLogin()))
+            .body(new ManagedUserVM(userService.getUserWithAuthorities(projectMember.getId())));
     }
 
     /**
@@ -196,9 +231,9 @@ public class UserResource {
     public ResponseEntity<ManagedUserVM> getUser(@PathVariable String login) {
         log.debug("REST request to get User : {}", login);
         return userService.getUserWithAuthoritiesByLogin(login)
-                .map(ManagedUserVM::new)
-                .map(managedUserVM -> new ResponseEntity<>(managedUserVM, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            .map(ManagedUserVM::new)
+            .map(managedUserVM -> new ResponseEntity<>(managedUserVM, HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     /**
@@ -209,10 +244,10 @@ public class UserResource {
      */
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @Timed
-    @Secured(AuthoritiesConstants.ADMIN)
+    @Secured({AuthoritiesConstants.ADMIN, AuthoritiesConstants.CUSTOMER})
     public ResponseEntity<Void> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
         userService.deleteUser(login);
-        return ResponseEntity.ok().headers(HeaderUtil.createAlert( "userManagement.deleted", login)).build();
+        return ResponseEntity.ok().headers(HeaderUtil.createAlert("userManagement.deleted", login)).build();
     }
 }
