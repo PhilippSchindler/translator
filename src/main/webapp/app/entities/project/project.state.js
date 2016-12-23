@@ -48,6 +48,7 @@
             resolve: {
                 translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
                     $translatePartialLoader.addPart('project');
+                    $translatePartialLoader.addPart('language');
                     return $translate.refresh();
                 }],
                 entity: ['$stateParams', 'Project', function($stateParams, Project) {
@@ -88,36 +89,65 @@
                 });
             }]
         })
-            .state('project-detail.newUser', {
-                parent: 'project-detail',
-                url: '/detail/newUser',
-                data: {
-                    authorities: ['ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_USER']
-                },
-                onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
-                    $uibModal.open({
-                        templateUrl: 'app/entities/project/project-user-dialog.html',
-                        controller: 'ProjectUserManagementDialogController',
-                        controllerAs: 'vm',
-                        backdrop: 'static',
-                        size: 'lg',
-                        resolve: {
-                            entity: function () {
-                                return {
-                                    id: null, login: null, firstName: null, lastName: null, email: null,
-                                    activated: true, langKey: null, createdBy: null, createdDate: null,
-                                    lastModifiedBy: null, lastModifiedDate: null, resetDate: null,
-                                    resetKey: null, authorities: null
-                                };
-                            }
+        .state('project-detail.newUser', {
+            parent: 'project-detail',
+            url: '/detail/newUser',
+            data: {
+                authorities: ['ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_USER']
+            },
+            onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/entities/project/project-user-dialog.html',
+                    controller: 'ProjectUserManagementDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: function () {
+                            return {
+                                id: null, login: null, firstName: null, lastName: null, email: null,
+                                activated: true, langKey: null, createdBy: null, createdDate: null,
+                                lastModifiedBy: null, lastModifiedDate: null, resetDate: null,
+                                resetKey: null, authorities: null
+                            };
                         }
-                    }).result.then(function() {
-                        $state.go('^', null, { reload: true });
-                    }, function() {
-                        $state.go('^');
-                    });
-                }]
-            })
+                    }
+                }).result.then(function() {
+                    $state.go('^', null, { reload: true });
+                }, function() {
+                    $state.go('^');
+                });
+            }]
+        })
+        .state('project-detail.newLanguage', {
+            parent: 'project-detail',
+            url: '/detail/newLanguage',
+            data: {
+                authorities: ['ROLE_ADMIN', 'ROLE_CUSTOMER', 'ROLE_USER']
+            },
+            onEnter: ['$stateParams', '$state', '$uibModal', function($stateParams, $state, $uibModal) {
+                $uibModal.open({
+                    templateUrl: 'app/entities/language/language-dialog.html',
+                    controller: 'LanguageDialogController',
+                    controllerAs: 'vm',
+                    backdrop: 'static',
+                    size: 'lg',
+                    resolve: {
+                        entity: function () {
+                            return {
+                                name: null,
+                                shortName: null,
+                                id: null
+                            };
+                        }
+                    }
+                }).result.then(function() {
+                    $state.go('^', null, { reload: true });
+                }, function() {
+                    $state.go('^');
+                });
+            }]
+        })
         .state('project.new', {
             parent: 'project',
             url: '/new',

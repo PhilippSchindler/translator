@@ -20,7 +20,8 @@
                     return data;
                 }
             },
-            'update': { method:'PUT' }
+            'update': { method:'PUT' },
+            'updateProjectAssignment': { method:'PUT', url:'api/languages/updateProjectAssignment/:projectId'}
         });
     }
 })();

@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * REST controller for managing Language.
@@ -89,6 +90,21 @@ public class LanguageResource {
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("language", language.getId().toString()))
             .body(result);
+    }
+
+    @PutMapping("/languages/updateProjectAssignment/{projectId}")
+    @Timed
+    public ResponseEntity<Void> updateProjectAssignment(
+        @PathVariable Long projectId, @Valid @RequestBody Set<Language> languages) throws URISyntaxException {
+
+        Project project = projectRepository.findOne(projectId);
+
+        if(project != null){
+            project.setLanguages(languages);
+            projectRepository.save(project);
+        }
+
+        return ResponseEntity.ok().build();
     }
 
     /**

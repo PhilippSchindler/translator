@@ -48,6 +48,19 @@
         </div>
     </div>
 
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span data-translate="translatorApp.project.detail.languages">Languages</span>
+        </div>
+        <div class="panel-body">
+            <dualmultiselect options="languageSelectOptions"> </dualmultiselect>
+            <br>
+            <button class="btn btn-primary" ui-sref="project-detail.newLanguage">
+                <span class="glyphicon glyphicon-flash"></span>
+                <span data-translate="translatorApp.project.detail.createNewLanguage">Create new language</span>
+            </button>
+        </div>
+    </div>
 
     <!-- USER MANAGEMENT -->
     <div class="panel panel-default">
@@ -96,11 +109,10 @@
                     </tbody>
                 </table>
             </div>
+            <button class="btn btn-primary" ui-sref="project-detail.newUser">
+                <span class="glyphicon glyphicon-flash"></span> <span>Neuen Benutzer erstellen</span>
+            </button>
         </div>
-
-        <button class="btn btn-primary" ui-sref="project-detail.newUser" style="margin: 5px;">
-            <span class="glyphicon glyphicon-flash"></span> <span>Neuen Benutzer erstellen</span>
-        </button>
     </div>
 
     <button type="submit"
