@@ -134,7 +134,8 @@
                     let lang = vm.project.languages[i];
                     translations.push({langId: lang.id, text: $('#' + definitionId + lang.name).val()});
                 }
-                definitionsToUpdate.push({definitionId: definitionId, translations: translations});
+                definitionsToUpdate.push({definitionId: definitionId, definitionText: $('#' + definitionId + "English").val(),
+                                            translations: translations});
             }
             Translation.updateChangedTranslations(definitionsToUpdate,
                 function () {
