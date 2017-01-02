@@ -126,7 +126,9 @@
 
         vm.save = function () {
             let definitionsToUpdate = [];
-            for (let definitionId in vm.changedDefinitionIds) {
+            let changedDefinitionsArray = Array.from(vm.changedDefinitionIds);
+            for (var j = 0; j < changedDefinitionsArray.length; j++) {
+                let definitionId = changedDefinitionsArray[j];
                 let translations = [];
                 for (var i = 0; i < vm.project.languages.length; i++) {
                     let lang = vm.project.languages[i];
