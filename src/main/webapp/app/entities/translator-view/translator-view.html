@@ -58,7 +58,8 @@
                         </tr>
                         <tr ng-repeat="definition in vm.definitions" ng-hide="vm.isRowToHide(definition)">
                             <td>{{definition.label}}</td>
-                            <td>{{definition.text}}</td>
+                            <td><input id="{{definition.id}}English" value="{{definition.text}}"
+                                       ng-keydown="vm.markDefinitionAsChanged(definition)"/></td>
                             <td ng-repeat="lang in vm.project.languages" ng-hide="vm.isLangToHide(lang)">
                                 <input id="{{definition.id}}{{lang.name}}" value="{{vm.getTranslation(definition.translations, lang).text}}"
                                        ng-keydown="vm.markDefinitionAsChanged(definition)"/>
