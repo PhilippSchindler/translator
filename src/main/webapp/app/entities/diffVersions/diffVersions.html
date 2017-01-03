@@ -8,7 +8,13 @@
             <h3 class="panel-title">Auswahl der Versionen</h3>
         </div>
         <div class="panel-body">
-
+            <div class="col-md-3">
+                <select ng-model="vm.version1" ng-options=" item as vm.displayText(item) for item in vm.versions" class="form-control col-md-2"/>
+            </div>
+            <div class="col-md-3">
+                <select ng-model="vm.version2" ng-options=" item as vm.displayText(item) for item in vm.versions" class="form-control col-md-2"/>
+                </select>
+            </div>
         </div>
     </div>
 
