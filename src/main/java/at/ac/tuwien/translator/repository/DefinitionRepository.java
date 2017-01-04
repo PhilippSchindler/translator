@@ -29,4 +29,8 @@ public interface DefinitionRepository extends JpaRepository<Definition,Long> {
 
     @Query("SELECT distinct d.version FROM Definition d where d.project.id = (:projectId) order by d.version")
     List<Integer> listOfVersions(@Param("projectId") Long projectId);
+
+    @Query("select distinct d from Definition d left join fetch d.translations t where d.project.id = (:projectId) and d.version = :version")
+    List<Definition> findDefinitionsWithVersion(@Param("projectId") Long projectId, @Param("version") Integer version);
+
 }

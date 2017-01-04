@@ -10,8 +10,12 @@
         var resourceUrl =  'api/diffVersions/versions/:projectId';
 
         return $resource(resourceUrl, {}, {
-            'listOfAllVersions': { method: 'GET', isArray: true}
-
+            'listOfAllVersions': { method: 'GET', isArray: true},
+            'getDefinitions': {
+                url: 'api/diffVersions/definitions/:projectId/:version',
+                method: 'GET',
+                isArray: true
+            }
         });
     }
 })();
