@@ -16,7 +16,20 @@
         vm.definitions = null;
         vm.definitionsCompare = undefined;
 
-        vm.versions = DiffVersions.listOfAllVersions({'projectId': vm.project.id});
+        vm.versions = DiffVersions.listOfAllVersions({'projectId': vm.project.id}, function (resultDefinition) {
+            vm.versions = resultDefinition;
+
+            if(vm.versions.length > 0) {
+                vm.version1 = vm.versions[0];
+
+                if(vm.versions.length > 2) {
+                    vm.version2 = vm.versions[1];
+                } else {
+                    vm.version2 = vm.versions[0];
+                }
+                vm.loadVersions();
+            }
+        });
 
         vm.displayText = function (version) {
             return "Version " + version;
