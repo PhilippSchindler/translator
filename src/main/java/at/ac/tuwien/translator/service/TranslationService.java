@@ -26,6 +26,9 @@ public class TranslationService {
     @Inject
     private LanguageRepository languageRepository;
 
+    @Inject
+    private ImportExportService importService;
+
     public void updateChangedTranslations(List<DefinitionToUpdate> definitions) {
         for (DefinitionToUpdate definitionToUpdate : definitions) {
             Definition oldDefinition = definitionRepository.findOne(definitionToUpdate.getDefinitionId());
@@ -61,5 +64,12 @@ public class TranslationService {
         newDefinition.setUpdatedAt(ZonedDateTime.now());
         newDefinition.setVersion(oldDefinition.getVersion() + 1);
         return newDefinition;
+    }
+
+    public int importTranslations(String format, Long languageId, String fileContent) {
+        if(format.equals("android"))
+            return importService.importAndroid(languageId, fileContent);
+
+        return 0;
     }
 }

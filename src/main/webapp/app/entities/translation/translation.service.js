@@ -22,7 +22,8 @@
                 }
             },
             'update': { method:'PUT' },
-            'updateChangedTranslations': { method: 'PUT', url: 'api/translations/updateChangedTranslations'}
+            'updateChangedTranslations': { method: 'PUT', url: 'api/translations/updateChangedTranslations'},
+            'import': { method: 'PUT', url: 'api/translations/import/:format/:languageId'}
         });
     }
 })();

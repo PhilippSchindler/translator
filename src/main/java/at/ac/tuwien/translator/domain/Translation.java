@@ -43,6 +43,18 @@ public class Translation implements Serializable {
     @JsonIgnore
     private Definition definition;
 
+    public Translation() {
+
+    }
+
+    public Translation(Translation old) {
+        this.text = old.text;
+        this.deleted = old.deleted;
+        this.updatedAt = old.updatedAt;
+        this.language = old.language;
+        this.definition = old.definition;
+    }
+
     public Long getId() {
         return id;
     }
