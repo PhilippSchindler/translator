@@ -1,0 +1,67 @@
+<div>
+    <h2>{{vm.project.name}}</h2>
+    <hr>
+
+    <jhi-alert-error></jhi-alert-error>
+    <div class="panel panel-default">
+        <div class="panel-heading">Auswahl der Versionen</div>
+        <div class="panel-body">
+            <div class="col-md-3">
+                <select ng-model="vm.version1" ng-options=" item as vm.displayText(item) for item in vm.versions" class="form-control col-md-2" ng-change="vm.loadVersions()"/>
+            </div>
+            <div class="col-md-3">
+                <select ng-model="vm.version2" ng-options=" item as vm.displayText(item) for item in vm.versions" class="form-control col-md-2" ng-change="vm.loadVersions()"/>
+                </select>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Filter</div>
+        <div class="panel-body">
+            <dualmultiselect options="languageSelectOptions"> </dualmultiselect>
+            <br>
+            <input type="checkbox"
+                   ng-model="vm.onlyShowChanges"
+                   ng-change="vm.loadVersions()"> Nur Änderungen anzeigen
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">Übersetzungen</div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="jh-table table table-striped" >
+                    <thead>
+                    <tr>
+                        <th><span>Label</span></th>
+                        <th><span>English</span></th>
+                        <th ng-repeat="lang in vm.project.languages" ng-hide="vm.isLangToHide(lang)">{{lang.name}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="definition in vm.definitions" ng-init="definitionCompare = vm.getCompareDefinition(definition.label)" ng-hide="vm.isRowToHide(definition)">
+                            <td>{{definition.label}}</td>
+                            <td>
+                                <span ng-style='{color: vm.getColor(definition.text, definitionCompare.text)}'>
+                                    {{definition.version}}: {{definition.text = null ? "-" :  definition.text}}<br>
+                                    {{definitionCompare.text == null ? "-" : definitionCompare.version + ": " + definitionCompare.text}}
+                                </span>
+                            </td>
+                            <td ng-repeat="lang in vm.project.languages" ng-hide="vm.isLangToHide(lang)" ng-init="translation = vm.getTranslation(definition.translations, lang);
+                                    translationCompare = vm.getTranslation(definitionCompare.translations, lang) ">
+                                 <span ng-style='{color: vm.getColor(translation.text, translationCompare.text)}'>
+                                    {{translation.text == null ? "-" : definition.version + ": " + translation.text}}<br>
+                                    {{translationCompare.text == null ? "-" : definitionCompare.version + ": " + translationCompare.text}}
+                                 </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>

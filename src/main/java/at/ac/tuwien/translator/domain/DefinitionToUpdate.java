@@ -4,6 +4,7 @@ import java.util.List;
 
 public class DefinitionToUpdate {
     private Long definitionId;
+    private String definitionText;
     private List<TranslationToUpdate> translations;
 
     public Long getDefinitionId() {
@@ -12,6 +13,14 @@ public class DefinitionToUpdate {
 
     public void setDefinitionId(Long definitionId) {
         this.definitionId = definitionId;
+    }
+
+    public String getDefinitionText() {
+        return definitionText;
+    }
+
+    public void setDefinitionText(String definitionText) {
+        this.definitionText = definitionText;
     }
 
     public List<TranslationToUpdate> getTranslations() {

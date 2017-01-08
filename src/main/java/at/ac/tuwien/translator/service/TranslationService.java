@@ -30,6 +30,7 @@ public class TranslationService {
         for (DefinitionToUpdate definitionToUpdate : definitions) {
             Definition oldDefinition = definitionRepository.findOne(definitionToUpdate.getDefinitionId());
             Definition newDefinition = createNewDefinition(oldDefinition);
+            newDefinition.setText(definitionToUpdate.getDefinitionText());
             Definition savedDefinition = definitionRepository.saveAndFlush(newDefinition);
 
             Set<Translation> translations = new HashSet<>();

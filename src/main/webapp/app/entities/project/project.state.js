@@ -49,6 +49,7 @@
                     translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
                         $translatePartialLoader.addPart('project');
                         $translatePartialLoader.addPart('user-management');
+                        $translatePartialLoader.addPart('language');
                         return $translate.refresh();
                     }],
                     entity: ['$stateParams', 'Project', function ($stateParams, Project) {
