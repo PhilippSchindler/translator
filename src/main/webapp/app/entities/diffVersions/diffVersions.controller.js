@@ -121,11 +121,11 @@
         };
 
         vm.getColor = function (text1, text2) {
-            if(text1 != text2 && text1 == undefined) {
+            if(text1 != text2 && (text1 == undefined || text1 == "")) {
                 return "green";
             }
 
-            if(text1 != text2 && text2 != undefined) {
+            if(text1 != text2 && text2 != undefined && text1 != "") {
                 return "red";
             }
 
