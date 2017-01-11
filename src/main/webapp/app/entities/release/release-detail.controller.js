@@ -20,7 +20,6 @@
 
         Release.getSelectedVersions({'releaseId': vm.release.id}, function (result) {
             var selectedVersions = result.selectedVersions;
-            console.log(selectedVersions);
             for (var index in selectedVersions) {
                 if (selectedVersions.hasOwnProperty(index)) {
                     var selectedVersion = selectedVersions[index];
@@ -35,23 +34,22 @@
 
             Definition.getGroupedForProject({'projectId': vm.project.id}, function (result) {
                 vm.definitions = result;
-                if (Object.keys(vm.selectedVersion).length == 0) {
-                    vm.selectedVersion = [];
-                    for (var key in vm.definitions.definitions) {
-                        if (vm.definitions.definitions.hasOwnProperty(key)) {
+                var selectAll = Object.keys(vm.selectedVersion).length == 0;
+                for (var key in vm.definitions.definitions) {
+                    if (vm.definitions.definitions.hasOwnProperty(key)) {
+                        if (!(vm.selectedVersion[key])) {
                             vm.selectedVersion[key] = vm.getLatestVersion(vm.definitions.definitions[key]);
-                            vm.selectedLabel[key] = true;
+                            vm.selectedLabel[key] = selectAll;
                         }
                     }
                 }
-                console.log(vm.selectedVersion);
             });
         });
 
-        vm.getLatestVersion = function (defs) {
+        vm.getLatestVersion = function (definitions) {
             var version = 0;
             var allLanguagesTranslated = false;
-            defs.forEach(function (definition) {
+            definitions.forEach(function (definition) {
                 if (definition.version > version) {
                     version = definition.version;
                     allLanguagesTranslated = true;
@@ -96,7 +94,6 @@
                     selectedVersions.push({label: label, version: vm.selectedVersion[label]});
                 }
             }
-            console.log(selectedVersions);
             Release.saveSelectedVersions({'releaseId': vm.release.id}, {selectedVersions: selectedVersions});
         }
 
