@@ -233,7 +233,11 @@ public class ImportExportService {
                 androidMessagesFile.strings.add(new AndroidMessagesFileEntry(definition.getLabel(), definition.getText()));
             }
         } else {
-
+            Language language = languageRepository.findOne(languageId);
+            List<Translation> translations = translationRepository.findByLanguageAndDefinitionIn(language, definitions);
+            for (Translation translation : translations) {
+                androidMessagesFile.strings.add(new AndroidMessagesFileEntry(translation.getDefinition().getLabel(), translation.getText()));
+            }
         }
 
         StringWriter stringWriter = new StringWriter();
