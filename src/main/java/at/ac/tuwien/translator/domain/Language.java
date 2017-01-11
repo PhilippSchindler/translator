@@ -1,9 +1,7 @@
 package at.ac.tuwien.translator.domain;
 
-import org.apache.commons.codec.language.bm.Lang;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
