@@ -70,6 +70,9 @@ public class TranslationService {
         if(format.equals("android"))
             return importService.importAndroid(languageId, fileContent);
 
+        else if (format.equals("globalize"))
+            return importService.importGlobalize(fileContent);
+
         return 0;
     }
 }

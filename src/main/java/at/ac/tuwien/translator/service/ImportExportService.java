@@ -9,7 +9,10 @@ import at.ac.tuwien.translator.repository.LanguageRepository;
 import at.ac.tuwien.translator.repository.ProjectRepository;
 import at.ac.tuwien.translator.repository.TranslationRepository;
 import at.ac.tuwien.translator.security.SecurityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.oxm.xstream.XStreamMarshaller;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -17,8 +20,9 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.StringReader;
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+
 
 @Service
 public class ImportExportService {
@@ -131,5 +135,57 @@ public class ImportExportService {
             translationRepository.save(newTranslation);
 
         }
+    }
+
+
+    public int importGlobalize(String fileContent)
+    {
+        JSONObject obj;
+        List<String> importedLanguages = new ArrayList<>();
+        List<String> importedKeys = new ArrayList<>();
+        List<String> importedValues = new ArrayList<>();
+
+        Project project = projectRepository.findSingleProjectByUserLogin(SecurityUtils.getCurrentUserLogin());
+        Map<String, Language> languageMap = new HashMap<String, Language>(); // maps from imported langcode to Language obj
+        Set<Language> validLanguages = new HashSet<>(project.getLanguages());
+        validLanguages.add(Language.EN);
+
+        // read json file, abort on syntax error in json file
+        // store contents in imported lists
+        // check of languages, abort if languages are present in the file but not assign to the existing project
+        try {
+            obj = new JSONObject(fileContent);
+            Iterator<?> langIt = obj.keys();
+            while( langIt.hasNext() ) {
+                String importedLanguage = (String) langIt.next();
+
+                boolean valid = false;
+                for (Language validLanguage : validLanguages)
+                    if (importedLanguage.equalsIgnoreCase(validLanguage.getShortName()))
+                    {
+                        valid = true;
+                        languageMap.put(importedLanguage, validLanguage);
+                        break;
+                    }
+
+                if (!valid)     // TODO error message, invalid language code...
+                    return 0;
+
+                JSONObject langObj = obj.getJSONObject(importedLanguage);
+                Iterator<?> labelIt = langObj.keys();
+                while( labelIt.hasNext() ) {
+                    String label = (String) labelIt.next();
+                    String value = langObj.getString(label);
+                    importedLanguages.add(importedLanguage);
+                    importedKeys.add(label);
+                    importedValues.add(value);
+                }
+            }
+        } catch (JSONException e) {
+            return 0;
+        }
+
+
+        return importedValues.size();
     }
 }
