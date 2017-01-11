@@ -68,6 +68,21 @@ public class ExceptionTranslator {
         return new ErrorVM(ErrorConstants.ERR_METHOD_NOT_SUPPORTED, exception.getMessage());
     }
 
+    @ExceptionHandler(TranslatorException.class)
+    public ResponseEntity<ErrorVM> processTranslatorException(TranslatorException ex) {
+        BodyBuilder builder;
+        ErrorVM errorVM;
+        ResponseStatus responseStatus = AnnotationUtils.findAnnotation(ex.getClass(), ResponseStatus.class);
+        if (responseStatus != null) {
+            builder = ResponseEntity.status(responseStatus.value());
+        }
+        else {
+            builder = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        errorVM = new ErrorVM(ex.getMessage(), ex.getMessage());
+        return builder.body(errorVM);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorVM> processRuntimeException(Exception ex) {
         BodyBuilder builder;

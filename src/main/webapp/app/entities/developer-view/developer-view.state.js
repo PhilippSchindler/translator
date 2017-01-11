@@ -36,6 +36,9 @@
                     }],
                     definitions: ['$stateParams', 'Definition', function ($stateParams, Definition) {
                         return Definition.getForProject({projectId: $stateParams.projectId}).$promise;
+                    }],
+                    releases: ['$stateParams', 'Release', function ($stateParams, Release) {
+                        return Release.getByProject({projectId: $stateParams.projectId}).$promise;
                     }]
                 }
             })

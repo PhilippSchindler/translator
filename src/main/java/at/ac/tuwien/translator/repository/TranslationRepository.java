@@ -1,12 +1,14 @@
 package at.ac.tuwien.translator.repository;
 
 import at.ac.tuwien.translator.domain.Definition;
+import at.ac.tuwien.translator.domain.Language;
 import at.ac.tuwien.translator.domain.Translation;
 
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Spring Data JPA repository for the Translation entity.
@@ -21,4 +23,6 @@ public interface TranslationRepository extends JpaRepository<Translation,Long> {
     Translation findOneWithEagerRelationships(@Param("id") Long id);
 
     List<Translation> findByDefinition(Definition definition);
+
+    List<Translation> findByLanguageAndDefinitionIn(Language language, Set<Definition> definitions);
 }

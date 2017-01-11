@@ -22,9 +22,13 @@
                     <div class="col-md-2">
                         <label class="control-label" data-translate="translatorApp.developerView.format" for="field_format">Format</label>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2" ng-hide="vm.format != 'android'">
                         <label class="control-label" data-translate="translatorApp.developerView.language"
                                for="field_language">Sprache</label>
+                    </div>
+                    <div class="col-md-2" ng-hide="vm.importOrExport == 'import'">
+                        <label class="control-label"
+                               for="field_release">Release</label>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -46,8 +50,14 @@
                                 ng-options="lang.name for lang in vm.importLanguages track by lang.id">
                         </select>
                     </div>
-                    <div class="col-md-2" ng-hide="vm.importExport === 'export'">
+                    <div class="col-md-2" ng-hide="vm.importOrExport == 'export'">
                         <input type="file" id="file" style="margin-top:5px">
+                    </div>
+                    <div class="col-md-2" ng-hide="vm.importOrExport == 'import'">
+                        <select class="form-control" id="field_release"
+                                ng-model="vm.release"
+                                ng-options="rel.name for rel in vm.releases track by rel.id">
+                        </select>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -59,18 +69,18 @@
                         </button>
                     </div>
                 </div>
-                <div class="row" ng-hide="vm.numberOfImportedTranslations == null">
+                <div class="row" ng-hide="vm.importExportSuccessMessage == null">
                     <div class="col-md-6">
-                        <div class="alert alert-success"
-                             data-translate="translatorApp.developerView.importMsg"
-                            translate-value-imported="{{vm.numberOfImportedTranslations}}">Import successful!</div>
+                        <div class="alert alert-success">{{vm.importExportSuccessMessage}}</div>
                     </div>
+                </div>
+                <div class="row">
+                    <jhi-alert-error class="col-md-6"></jhi-alert-error>
                 </div>
             </form>
         </div>
     </div>
 
-    <jhi-alert-error></jhi-alert-error>
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title" data-translate="translatorApp.developerView.newDefinition">Neue Definition</h3>
