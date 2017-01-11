@@ -6,8 +6,11 @@ import at.ac.tuwien.translator.domain.Project;
 import at.ac.tuwien.translator.domain.Translation;
 import at.ac.tuwien.translator.repository.*;
 import at.ac.tuwien.translator.security.SecurityUtils;
+import at.ac.tuwien.translator.web.rest.errors.TranslatorException;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,9 @@ import java.util.stream.Collectors;
 
 @Service
 public class ImportExportService {
+
+
+    private final Logger log = LoggerFactory.getLogger(ImportExportService.class);
 
     @Inject
     private XStreamMarshaller xstream;
@@ -45,7 +51,8 @@ public class ImportExportService {
         try {
              messages = (AndroidMessagesFile) xstream.unmarshal(new StreamSource(new StringReader(fileContent)));
         } catch (IOException e) {
-            return 0;
+            throw new TranslatorException(String.format(
+                "Android-Import Fehler: XML-Dateiformat fehlerhaft."));
         }
 
         Project project = projectRepository.findSingleProjectByUserLogin(SecurityUtils.getCurrentUserLogin());
@@ -67,7 +74,6 @@ public class ImportExportService {
 
             counterSaved++;
         }
-
 
         return counterSaved;
     }
@@ -169,8 +175,9 @@ public class ImportExportService {
                         break;
                     }
 
-                if (!valid)     // TODO error message, invalid language code...
-                    return 0;
+                if (!valid)
+                    throw new TranslatorException(String.format(
+                        "Globalize-Import Fehler: Sprache %s ist im Projekt nicht vorhanden."));
 
                 JSONObject langObj = obj.getJSONObject(importedLanguage);
                 Iterator<?> labelIt = langObj.keys();
@@ -183,7 +190,8 @@ public class ImportExportService {
                 }
             }
         } catch (JSONException e) {
-            return 0;
+            throw new TranslatorException(String.format(
+                "Globalize-Import Fehler: JSON-Dateiformat fehlerhaft."));
         }
 
         // parsed data is looking good
@@ -245,9 +253,9 @@ public class ImportExportService {
             xstream.marshal(androidMessagesFile, new StreamResult(stringWriter));
             return stringWriter.toString();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(e.getMessage(), e);
+            throw new TranslatorException("Android-Export Fehler");
         }
-        return "";
     }
 
     public String exportGlobalize(Long releaseId) {
@@ -281,9 +289,8 @@ public class ImportExportService {
         }
 
         catch (JSONException e) {
-            // should never happen :) TODO
+            throw new TranslatorException("Globalize-Export Fehler");
         }
-        return "{ \"export-error\": \"true\" }";
     }
 
     private Set<Definition> getDefinitionsOfRelease(Long releaseId){

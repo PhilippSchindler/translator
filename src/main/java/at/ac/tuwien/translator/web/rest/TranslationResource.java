@@ -2,6 +2,7 @@ package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.domain.DefinitionToUpdate;
 import at.ac.tuwien.translator.service.TranslationService;
+import at.ac.tuwien.translator.web.rest.errors.TranslatorException;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Translation;
 

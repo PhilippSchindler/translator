@@ -4,6 +4,9 @@ import at.ac.tuwien.translator.domain.*;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
 import at.ac.tuwien.translator.repository.LanguageRepository;
 import at.ac.tuwien.translator.repository.TranslationRepository;
+import at.ac.tuwien.translator.web.rest.errors.TranslatorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -73,7 +76,7 @@ public class TranslationService {
         else if (format.equals("globalize"))
             return importService.importGlobalize(fileContent);
 
-        return 0;
+        throw new TranslatorException("Import Fehler: ungültiges Import-Format!");
     }
 
     public String exportTranslations(String format, Long languageId, Long releaseId) {
@@ -84,6 +87,6 @@ public class TranslationService {
         else if (format.equals("globalize"))
             return importService.exportGlobalize(releaseId);
 
-        return "";
+        throw new TranslatorException("Export Fehler: ungültiges Export-Format!");
     }
 }

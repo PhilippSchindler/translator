@@ -5,9 +5,9 @@
         .module('translatorApp')
         .controller('DeveloperViewController', DeveloperViewController);
 
-    DeveloperViewController.$inject = ['$scope', '$rootScope', '$stateParams', 'project', 'definitions', 'releases', 'Project', 'Definition', 'Release', 'User', 'Platform', 'Language', 'Translation'];
+    DeveloperViewController.$inject = ['$scope', '$rootScope', '$stateParams', '$timeout', 'project', 'definitions', 'releases', 'Project', 'Definition', 'Release', 'User', 'Platform', 'Language', 'Translation'];
 
-    function DeveloperViewController($scope, $rootScope, $stateParams, project, definitions, releases, Project, Definition, Release, User, Platform, Language, Translation) {
+    function DeveloperViewController($scope, $rootScope, $stateParams, $timeout, project, definitions, releases, Project, Definition, Release, User, Platform, Language, Translation) {
         var vm = this;
 
         var importEnglish = {id: 0, name: "English"};
@@ -45,13 +45,16 @@
 
         vm.importExport = function() {
             if(vm.importOrExport == 'export'){
-                Translation.export({format: vm.format, languageId: vm.language.id, releaseId: vm.release.id}, function (response) {
-                    var blob=new Blob([response.content]);
-                    var link=document.createElement('a');
-                    link.href=window.URL.createObjectURL(blob);
-                    link.download="export." + (vm.format == 'android' ? "xml" : "json");
-                    link.click();
-                });
+                Translation.export({format: vm.format, languageId: vm.language.id, releaseId: vm.release.id},
+                    function (response) {
+                        vm.importExportSuccessMessage = "Export durchgeführt!";
+                        $timeout(function () { vm.importExportSuccessMessage = null; }, 5000);
+                        var blob=new Blob([response.content]);
+                        var link=document.createElement('a');
+                        link.href=window.URL.createObjectURL(blob);
+                        link.download="export." + (vm.format == 'android' ? "xml" : "json");
+                        link.click();
+                    });
             } else {
                 var file = $('#file')[0].files[0];
                 if(file == undefined)
@@ -61,13 +64,17 @@
                 reader.readAsText(file);
                 reader.onload = function(){
                     var fileContent = reader.result;
-                    Translation.import({format: vm.format, languageId: vm.language.id}, fileContent,
-                    function (response) {
-                        vm.numberOfImportedTranslations = response.numberOfImportedTranslations;
-                        Definition.getForProject({projectId: vm.project.id}, function(response){
-                            vm.definitions = response;
+                    Translation.import(
+                        { format: vm.format, languageId: vm.language.id },
+                        fileContent,
+                        function (response) {
+                            vm.importExportSuccessMessage =
+                                "Es wurden " + response.numberOfImportedTranslations + " Übersetzungen importiert!";
+                            $timeout(function () { vm.importExportSuccessMessage = null; }, 5000);
+                            Definition.getForProject({projectId: vm.project.id}, function(response){
+                                vm.definitions = response;
+                            });
                         });
-                    });
                 }
             }
         }
