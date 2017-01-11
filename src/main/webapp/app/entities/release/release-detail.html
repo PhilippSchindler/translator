@@ -33,7 +33,8 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <span>Definitionen auswählen</span>
+            <span ng-show="vm.release.state != 'FINISHED'">Definitionen auswählen</span>
+            <span ng-show="vm.release.state == 'FINISHED'">Definitionen in Release</span>
         </div>
         <div class="panel-body">
             <div class="table-responsive">
@@ -47,7 +48,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="(label, defs) in vm.definitions.definitions">
+                    <tr ng-repeat="(label, defs) in vm.definitions.definitions" ng-show="vm.selectedLabel[label] || vm.release.state != 'FINISHED'">
                         <td><input type="checkbox" ng-model="vm.selectedLabel[label]" ng-disabled="vm.release.state == 'FINISHED'"></td>
                         <td>{{label}}</td>
                         <td><select ng-model="vm.selectedVersion[label]" ng-disabled="vm.release.state == 'FINISHED'">

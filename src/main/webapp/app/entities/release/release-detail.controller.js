@@ -14,37 +14,40 @@
         vm.previousState = previousState.name;
         vm.project = project;
 
-        vm.definitions = [];
-        vm.selectedVersion = [];
-        vm.selectedLabel = [];
+        vm.loadData = function () {
+            vm.definitions = [];
+            vm.selectedVersion = [];
+            vm.selectedLabel = [];
 
-        Release.getSelectedVersions({'releaseId': vm.release.id}, function (result) {
-            var selectedVersions = result.selectedVersions;
-            for (var index in selectedVersions) {
-                if (selectedVersions.hasOwnProperty(index)) {
-                    var selectedVersion = selectedVersions[index];
-                    vm.selectedVersion[selectedVersion.label] = selectedVersion.version + "";
-                }
-            }
-            for (var label in vm.selectedVersion) {
-                if (vm.selectedVersion.hasOwnProperty(label)) {
-                    vm.selectedLabel[label] = true;
-                }
-            }
-
-            Definition.getGroupedForProject({'projectId': vm.project.id}, function (result) {
-                vm.definitions = result;
-                var selectAll = Object.keys(vm.selectedVersion).length == 0;
-                for (var key in vm.definitions.definitions) {
-                    if (vm.definitions.definitions.hasOwnProperty(key)) {
-                        if (!(vm.selectedVersion[key])) {
-                            vm.selectedVersion[key] = vm.getLatestVersion(vm.definitions.definitions[key]);
-                            vm.selectedLabel[key] = selectAll;
-                        }
+            Release.getSelectedVersions({'releaseId': vm.release.id}, function (result) {
+                var selectedVersions = result.selectedVersions;
+                for (var index in selectedVersions) {
+                    if (selectedVersions.hasOwnProperty(index)) {
+                        var selectedVersion = selectedVersions[index];
+                        vm.selectedVersion[selectedVersion.label] = selectedVersion.version + "";
                     }
                 }
+                for (var label in vm.selectedVersion) {
+                    if (vm.selectedVersion.hasOwnProperty(label)) {
+                        vm.selectedLabel[label] = true;
+                    }
+                }
+
+                Definition.getGroupedForProject({'projectId': vm.project.id}, function (result) {
+                    vm.definitions = result;
+                    var selectAll = Object.keys(vm.selectedVersion).length == 0;
+                    for (var key in vm.definitions.definitions) {
+                        if (vm.definitions.definitions.hasOwnProperty(key)) {
+                            if (!(vm.selectedVersion[key])) {
+                                vm.selectedVersion[key] = vm.getLatestVersion(vm.definitions.definitions[key]);
+                                vm.selectedLabel[key] = selectAll;
+                            }
+                        }
+                    }
+                });
             });
-        });
+        };
+        vm.loadData();
 
         vm.getLatestVersion = function (definitions) {
             var version = 0;
@@ -94,7 +97,11 @@
                     selectedVersions.push({label: label, version: vm.selectedVersion[label]});
                 }
             }
-            Release.saveSelectedVersions({'releaseId': vm.release.id}, {selectedVersions: selectedVersions});
+            Release.saveSelectedVersions({'releaseId': vm.release.id}, {selectedVersions: selectedVersions}, function () {
+                vm.release = Release.get({'id': vm.release.id}, function () {
+                    vm.loadData();
+                });
+            });
         }
 
     }

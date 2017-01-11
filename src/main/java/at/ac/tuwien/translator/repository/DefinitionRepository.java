@@ -19,12 +19,12 @@ public interface DefinitionRepository extends JpaRepository<Definition,Long> {
     @Query("SELECT DISTINCT d " +
         "FROM Definition d " +
         "LEFT JOIN Definition d2 " +
-        "ON d.label = d2.label AND d.version < d2.version " +
+        "ON d.label = d2.label AND d.project.id = d2.project.id AND d.version < d2.version " +
         "LEFT JOIN FETCH d.translations t " +
         "WHERE d2.version IS NULL AND d.project.id = (:projectId)")
     List<Definition> findLatestByProject(@Param("projectId") Long projectId);
 
-    @Query("SELECT d1 FROM Definition d1 WHERE d1.project.id = :projectId AND d1.version = (SELECT MAX(d2.version) FROM Definition d2 WHERE d1.label = d2.label)")
+    @Query("SELECT d1 FROM Definition d1 WHERE d1.project.id = :projectId AND d1.version = (SELECT MAX(d2.version) FROM Definition d2 WHERE d1.label = d2.label AND d1.project.id = d2.project.id)")
     List<Definition> findForProject(@Param("projectId") Long projectId);
 
     List<Definition> findByLabel(String label);
@@ -40,4 +40,8 @@ public interface DefinitionRepository extends JpaRepository<Definition,Long> {
     Definition findByProject_idAndLabelAndVersion(Long projectId, String key, Integer value);
 
     Definition findByLabelAndVersion(String label, int version);
+
+
+    @Query("SELECT d1 FROM Definition d1 LEFT JOIN FETCH d1.translations t WHERE d1.project.id = :projectId AND d1.label = :label AND d1.version = (SELECT MAX(d2.version) FROM Definition d2 WHERE d1.label = d2.label AND d1.project.id = d2.project.id)")
+    Definition findLatestByProjectAndLabel(@Param("projectId") Long projectId, @Param("label") String label);
 }
