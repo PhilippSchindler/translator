@@ -4,21 +4,19 @@ import at.ac.tuwien.translator.domain.Definition;
 import at.ac.tuwien.translator.domain.Language;
 import at.ac.tuwien.translator.domain.Project;
 import at.ac.tuwien.translator.domain.Translation;
-import at.ac.tuwien.translator.repository.DefinitionRepository;
-import at.ac.tuwien.translator.repository.LanguageRepository;
-import at.ac.tuwien.translator.repository.ProjectRepository;
-import at.ac.tuwien.translator.repository.TranslationRepository;
+import at.ac.tuwien.translator.repository.*;
 import at.ac.tuwien.translator.security.SecurityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.oxm.xstream.XStreamMarshaller;
-import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.IOException;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,6 +36,8 @@ public class ImportExportService {
     private LanguageRepository languageRepository;
     @Inject
     private ProjectRepository projectRepository;
+    @Inject
+    private ReleaseRepository releaseRepository;
 
 
     public int importAndroid(Long languageId, String fileContent) {
@@ -223,10 +223,34 @@ public class ImportExportService {
     }
 
     public String exportAndroid(Long languageId, Long releaseId) {
-        return "<xml/>";
+        Set<Definition> definitions = getDefinitionsOfRelease(releaseId);
+
+        AndroidMessagesFile androidMessagesFile = new AndroidMessagesFile();
+        androidMessagesFile.strings = new ArrayList<>();
+
+        if(languageId == 0) {//English
+            for (Definition definition : definitions) {
+                androidMessagesFile.strings.add(new AndroidMessagesFileEntry(definition.getLabel(), definition.getText()));
+            }
+        } else {
+
+        }
+
+        StringWriter stringWriter = new StringWriter();
+        try {
+            xstream.marshal(androidMessagesFile, new StreamResult(stringWriter));
+            return stringWriter.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     public String exportGlobalize(Long releaseId) {
         return "{\"is\": \"awesome\"}";
+    }
+
+    private Set<Definition> getDefinitionsOfRelease(Long releaseId){
+        return releaseRepository.findOne(releaseId).getDefinitions();
     }
 }
