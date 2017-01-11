@@ -33,4 +33,6 @@ public interface DefinitionRepository extends JpaRepository<Definition,Long> {
     @Query("SELECT DISTINCT d FROM Definition d LEFT JOIN FETCH d.translations t WHERE d.project.id = :projectId AND d.version = (select max(d2.version) from Definition d2 where d2.project.id = :projectId and d2.label = d.label and d2.version <= :version group by d2.project.id, d2.label)")
     List<Definition> findDefinitionsWithVersion(@Param("projectId") Long projectId, @Param("version") Integer version);
 
+    List<Definition> findByProject_id(Long projectId);
+
 }

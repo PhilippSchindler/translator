@@ -36,6 +36,10 @@
                     }
                     return data;
                 }
+            },
+            'getGroupedForProject': {
+                url: 'api/project/:projectId/groupedDefinitions',
+                method: 'GET'
             }
         });
     }

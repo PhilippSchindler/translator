@@ -1,4 +1,3 @@
-
 <div>
     <h2>{{vm.release.name}}</h2>
     <hr>
@@ -26,6 +25,47 @@
             </div>
         </div>
     </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <span>Users</span>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Select</th>
+                        <th>Label</th>
+                        <th>English</th>
+                        <th ng-repeat="lang in vm.project.languages">{{lang.name}}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="(label, defs) in vm.definitions.definitions">
+                        <td><input type="checkbox" ng-model="vm.selectedLabel[label]"></td>
+                        <td>{{label}}</td>
+                        <td><select ng-model="vm.selectedVersion[label]">
+                            <option ng-repeat="definition in defs | orderBy : definition.version" value="{{definition.version}}">{{definition.text}}</option>
+                            <option value="-1">&lt;Newest Version when finished&gt;</option>
+                        </select></td>
+                        <td ng-repeat="lang in vm.project.languages">
+                            <select ng-model="vm.selectedVersion[label]">
+                                <option
+                                    ng-repeat="definition in defs | orderBy : definition.version" value="{{definition.version}}">
+                                    {{vm.getTranslationText(definition,lang)}}
+                                </option>
+                                <option value="-1">&lt;Newest Version when finished&gt;</option>
+                            </select>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <button type="submit" ng-click="vm.save()" class="btn btn-primary">Save</button>
 
     <button type="submit"
             ui-sref="release({projectId: vm.release.project.id})"
