@@ -85,6 +85,13 @@ public class TranslationResource {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/translations/import/{format}/{languageId}")
+    @Timed
+    public ResponseEntity<String> importTranslations(@PathVariable String format, @PathVariable Long languageId, @RequestBody String fileContent) throws URISyntaxException {
+        int saved = translationService.importTranslations(format, languageId, fileContent);
+        return ResponseEntity.ok().body("{\"numberOfImportedTranslations\": " + saved + "}");
+    }
+
     /**
      * GET  /translations : get all the translations.
      *
