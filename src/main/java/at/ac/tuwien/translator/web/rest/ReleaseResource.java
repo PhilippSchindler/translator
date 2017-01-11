@@ -1,15 +1,13 @@
 package at.ac.tuwien.translator.web.rest;
 
-import at.ac.tuwien.translator.domain.Project;
-import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Release;
-
+import at.ac.tuwien.translator.dto.SelectedVersions;
 import at.ac.tuwien.translator.repository.ReleaseRepository;
+import at.ac.tuwien.translator.service.ReleaseService;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
-
+import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,6 +30,9 @@ public class ReleaseResource {
 
     @Inject
     private ReleaseRepository releaseRepository;
+
+    @Inject
+    private ReleaseService releaseService;
 
     /**
      * POST  /releases : Create a new release.
@@ -124,8 +125,26 @@ public class ReleaseResource {
     @Timed
     public List<Release> getReleasesByProject(@PathVariable Long projectId) {
         log.debug("REST request to get releases by project");
-        List<Release> releases = releaseRepository.findByProjectId(projectId);
-        return releases;
+        return releaseRepository.findByProjectId(projectId);
+    }
+
+    @PostMapping("/releases/{releaseId}/selectedVersions")
+    @Timed
+    public ResponseEntity<Void> updateDefinitions(@PathVariable Long releaseId, @RequestBody SelectedVersions selectedVersions) throws URISyntaxException {
+        log.debug("REST request to update definitions for Release : {}, selectedVersions : {}", releaseId, selectedVersions);
+        try {
+            releaseService.updateDefinitions(releaseId, selectedVersions);
+        } catch (Exception e) {
+            return new ResponseEntity<Void>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<Void>(HttpStatus.OK);
+    }
+
+    @GetMapping("/releases/{id}/selectedVersions")
+    @Timed
+    public SelectedVersions get(@PathVariable Long id) {
+        log.debug("REST request to get selectedVersions for Release : {}" , id);
+        return releaseService.loadAndTransformDefinitionsFor(id);
     }
 
 }

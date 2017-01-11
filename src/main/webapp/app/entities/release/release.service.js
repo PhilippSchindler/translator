@@ -42,6 +42,14 @@
                 url:  'api/releases/project/:projectId',
                 isArray: true
             },
+            'getSelectedVersions': {
+                method: 'GET',
+                url: 'api/releases/:releaseId/selectedVersions'
+            },
+            'saveSelectedVersions': {
+                method: 'POST',
+                url: 'api/releases/:releaseId/selectedVersions'
+            }
         });
     }
 })();

@@ -18,17 +18,28 @@
         vm.selectedVersion = [];
         vm.selectedLabel = [];
 
-        Definition.getGroupedForProject({'projectId': vm.project.id}, function (result) {
-            vm.definitions = result;
-            if (vm.selectedVersion.length == 0) {
-                for (var key in vm.definitions.definitions) {
-                    if (vm.definitions.definitions.hasOwnProperty(key)) {
-                        vm.selectedVersion[key] = vm.getLatestVersion(vm.definitions.definitions[key]);
-                        vm.selectedLabel[key] = true;
-                    }
+        Release.getSelectedVersions({'releaseId': vm.release.id}, function (result) {
+            vm.selectedVersion = result.selectedVersions;
+            console.log(vm.selectedVersion);
+            for (var label in vm.selectedVersion) {
+                if (vm.selectedVersion.hasOwnProperty(label)) {
+                    vm.selectedVersion[label] = true;
                 }
             }
-            console.log(vm.selectedVersion);
+
+            Definition.getGroupedForProject({'projectId': vm.project.id}, function (result) {
+                vm.definitions = result;
+                if (vm.selectedVersion == undefined || vm.selectedVersion.length == 0) {
+                    vm.selectedVersion = [];
+                    for (var key in vm.definitions.definitions) {
+                        if (vm.definitions.definitions.hasOwnProperty(key)) {
+                            vm.selectedVersion[key] = vm.getLatestVersion(vm.definitions.definitions[key]);
+                            vm.selectedLabel[key] = true;
+                        }
+                    }
+                }
+                console.log(vm.selectedVersion);
+            });
         });
 
         vm.getLatestVersion = function (defs) {
@@ -73,13 +84,14 @@
         };
 
         vm.save = function () {
+            var selectedVersions = [];
             for (var label in vm.selectedLabel) {
-                if (vm.selectedLabel.hasOwnProperty(label) && !vm.selectedLabel[label]) {
-                    vm.selectedVersion[label] = null;
+                if (vm.selectedLabel.hasOwnProperty(label) && vm.selectedLabel[label]) {
+                    selectedVersions[label] = vm.selectedVersion[label];
                 }
             }
-            console.log(vm.selectedVersion);
-            console.log(vm.selectedLabel);
+            console.log(selectedVersions);
+            Release.saveSelectedVersions({'releaseId': vm.release.id}, {selectedVersions: selectedVersions});
         }
 
     }

@@ -35,4 +35,5 @@ public interface DefinitionRepository extends JpaRepository<Definition,Long> {
 
     List<Definition> findByProject_id(Long projectId);
 
+    Definition findByProject_idAndLabelAndVersion(Long projectId, String key, Integer value);
 }

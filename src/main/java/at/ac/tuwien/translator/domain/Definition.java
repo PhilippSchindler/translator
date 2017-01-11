@@ -192,4 +192,14 @@ public class Definition implements Serializable {
             ", projectId='" + (project == null ? "null" : project.getId()) + "'" +
             '}';
     }
+
+    public static Definition getNewestVersionPlaceholder(String label) {
+        Definition definition = new Definition();
+        definition.setLabel(label);
+        definition.setText("NEWEST_VERSION_PLACEHOLDER");
+        definition.setVersion(-1);
+        definition.setCreatedAt(ZonedDateTime.now());
+        definition.setUpdatedAt(ZonedDateTime.now());
+        return definition;
+    }
 }
