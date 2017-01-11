@@ -1,20 +1,30 @@
 package at.ac.tuwien.translator.dto;
 
-import java.util.Map;
+import at.ac.tuwien.translator.domain.Definition;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class SelectedVersions {
 
-    private Map<String, Integer> selectedVersions;
+    private List<SelectedVersion> selectedVersions;
 
-    public SelectedVersions(Map<String, Integer> selectedVersions) {
-        this.selectedVersions = selectedVersions;
+    public SelectedVersions() {
     }
 
-    public Map<String, Integer> getSelectedVersions() {
+    public SelectedVersions(Set<Definition> definitions) {
+        selectedVersions = new ArrayList<>();
+        for(Definition definition : definitions) {
+            selectedVersions.add(new SelectedVersion(definition));
+        }
+    }
+
+    public List<SelectedVersion> getSelectedVersions() {
         return selectedVersions;
     }
 
-    public void setSelectedVersions(Map<String, Integer> selectedVersions) {
+    public void setSelectedVersions(List<SelectedVersion> selectedVersions) {
         this.selectedVersions = selectedVersions;
     }
 }

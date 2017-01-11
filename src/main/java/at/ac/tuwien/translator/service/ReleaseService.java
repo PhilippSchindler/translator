@@ -2,15 +2,14 @@ package at.ac.tuwien.translator.service;
 
 import at.ac.tuwien.translator.domain.Definition;
 import at.ac.tuwien.translator.domain.Release;
+import at.ac.tuwien.translator.dto.SelectedVersion;
 import at.ac.tuwien.translator.dto.SelectedVersions;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
 import at.ac.tuwien.translator.repository.ReleaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -28,15 +27,20 @@ public class ReleaseService {
             throw new IllegalStateException("Did not find release for id=" + releaseId);
         }
         Set<Definition> definitions = new HashSet<>();
-        for (Map.Entry<String, Integer> entry : selectedVersions.getSelectedVersions().entrySet()) {
+        for (SelectedVersion selectedVersion : selectedVersions.getSelectedVersions()) {
+            String label = selectedVersion.getLabel();
+            Integer version = selectedVersion.getVersion();
             Definition definition;
-            if (entry.getValue() == -1) {
-                definition = definitionRepository.save(Definition.getNewestVersionPlaceholder(entry.getKey()));
+            if (version == -1) {
+                definition = definitionRepository.findByLabelAndVersion(label, -1);
+                if(definition == null) {
+                    definition = definitionRepository.save(Definition.getNewestVersionPlaceholder(label));
+                }
             } else {
-                definition = definitionRepository.findByProject_idAndLabelAndVersion(release.getProject().getId(), entry.getKey(), entry.getValue());
+                definition = definitionRepository.findByProject_idAndLabelAndVersion(release.getProject().getId(), label, version);
             }
             if (definition == null) {
-                throw new IllegalStateException("Did not find definition for projectId=" + release.getProject().getId() + ", label=" + entry.getKey() + ", version=" + entry.getValue());
+                throw new IllegalStateException("Did not find definition for projectId=" + release.getProject().getId() + ", label=" + label + ", version=" + version);
             }
             definitions.add(definition);
         }
@@ -49,11 +53,7 @@ public class ReleaseService {
         if (release == null) {
             throw new IllegalStateException("Did not find release for id=" + releaseId);
         }
-        Map<String, Integer> definitions = new HashMap<>();
-        for(Definition definition : release.getDefinitions()) {
-            definitions.put(definition.getLabel(), definition.getVersion());
-        }
-        return new SelectedVersions(definitions.size() > 0 ? definitions : null);
+        return new SelectedVersions(release.getDefinitions());
     }
 
 }

@@ -19,17 +19,23 @@
         vm.selectedLabel = [];
 
         Release.getSelectedVersions({'releaseId': vm.release.id}, function (result) {
-            vm.selectedVersion = result.selectedVersions;
-            console.log(vm.selectedVersion);
+            var selectedVersions = result.selectedVersions;
+            console.log(selectedVersions);
+            for (var index in selectedVersions) {
+                if (selectedVersions.hasOwnProperty(index)) {
+                    var selectedVersion = selectedVersions[index];
+                    vm.selectedVersion[selectedVersion.label] = selectedVersion.version + "";
+                }
+            }
             for (var label in vm.selectedVersion) {
                 if (vm.selectedVersion.hasOwnProperty(label)) {
-                    vm.selectedVersion[label] = true;
+                    vm.selectedLabel[label] = true;
                 }
             }
 
             Definition.getGroupedForProject({'projectId': vm.project.id}, function (result) {
                 vm.definitions = result;
-                if (vm.selectedVersion == undefined || vm.selectedVersion.length == 0) {
+                if (Object.keys(vm.selectedVersion).length == 0) {
                     vm.selectedVersion = [];
                     for (var key in vm.definitions.definitions) {
                         if (vm.definitions.definitions.hasOwnProperty(key)) {
@@ -87,7 +93,7 @@
             var selectedVersions = [];
             for (var label in vm.selectedLabel) {
                 if (vm.selectedLabel.hasOwnProperty(label) && vm.selectedLabel[label]) {
-                    selectedVersions[label] = vm.selectedVersion[label];
+                    selectedVersions.push({label: label, version: vm.selectedVersion[label]});
                 }
             }
             console.log(selectedVersions);
