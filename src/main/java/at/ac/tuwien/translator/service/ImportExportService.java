@@ -61,9 +61,9 @@ public class ImportExportService {
             List<Definition> possibleDefinition =
                 existingDefinitions.stream().filter(definition -> definition.getLabel().equals(entry.name)).collect(Collectors.toList());
             if(possibleDefinition.isEmpty())
-                createDefinition(project, language, entry);
+                createDefinition(project, language, entry.name, entry.text);
             else
-                updateDefinition(possibleDefinition.get(0), language, entry);
+                updateDefinition(possibleDefinition.get(0), language, entry.text);
 
             counterSaved++;
         }
@@ -72,33 +72,34 @@ public class ImportExportService {
         return counterSaved;
     }
 
-    private void createDefinition(Project project, Language language, AndroidMessagesFileEntry entry) {
+    private Definition createDefinition(Project project, Language language, String label, String text) {
         Definition definition = new Definition();
         ZonedDateTime now = ZonedDateTime.now();
         definition.setCreatedAt(now);
         definition.setUpdatedAt(now);
-        definition.setLabel(entry.name);
+        definition.setLabel(label);
         definition.setProject(project);
 
-        if(language == null){
+        if(language == null || language == Language.EN){
             definition.setVersion(0);
-            definition.setText(entry.text);
+            definition.setText(text);
             definitionRepository.save(definition);
         } else {
             definition.setVersion(1);
             definition.setText("");
             Definition savedDefinition = definitionRepository.save(definition);
             Translation translation = new Translation();
-            translation.setText(entry.text);
+            translation.setText(text);
             translation.setUpdatedAt(now);
             translation.setLanguage(language);
             translation.setDeleted(false);
             translation.setDefinition(savedDefinition);
             translationRepository.save(translation);
         }
-    }
 
-    private void updateDefinition(Definition original, Language language, AndroidMessagesFileEntry entry) {
+        return definition;
+    }
+    private void updateDefinition(Definition original, Language language, String text) {
         Definition newVersion = new Definition()
             .createdAt(original.getCreatedAt())
             .label(original.getLabel())
@@ -107,8 +108,8 @@ public class ImportExportService {
             .updatedAt(ZonedDateTime.now());
 
         //If english
-        if(language == null){
-            newVersion.text(entry.text);
+        if(language == null || language == Language.EN){
+            newVersion.text(text);
             definitionRepository.save(newVersion);
         } else {
             newVersion.text(original.getText());
@@ -131,7 +132,7 @@ public class ImportExportService {
             newTranslation.setLanguage(language);
             newTranslation.setUpdatedAt(ZonedDateTime.now());
             newTranslation.setDefinition(newSavedDefinition);
-            newTranslation.setText(entry.text);
+            newTranslation.setText(text);
             translationRepository.save(newTranslation);
 
         }
@@ -142,11 +143,11 @@ public class ImportExportService {
     {
         JSONObject obj;
         List<String> importedLanguages = new ArrayList<>();
-        List<String> importedKeys = new ArrayList<>();
+        List<String> importedLabels = new ArrayList<>();
         List<String> importedValues = new ArrayList<>();
 
         Project project = projectRepository.findSingleProjectByUserLogin(SecurityUtils.getCurrentUserLogin());
-        Map<String, Language> languageMap = new HashMap<String, Language>(); // maps from imported langcode to Language obj
+        Map<String, Language> languageMap = new HashMap<>(); // maps from imported langcode to Language obj
         Set<Language> validLanguages = new HashSet<>(project.getLanguages());
         validLanguages.add(Language.EN);
 
@@ -177,7 +178,7 @@ public class ImportExportService {
                     String label = (String) labelIt.next();
                     String value = langObj.getString(label);
                     importedLanguages.add(importedLanguage);
-                    importedKeys.add(label);
+                    importedLabels.add(label);
                     importedValues.add(value);
                 }
             }
@@ -185,6 +186,38 @@ public class ImportExportService {
             return 0;
         }
 
+        // parsed data is looking good
+        // now create/update definitions
+
+        List<Definition> existingDefinitions = new ArrayList<>(definitionRepository.findLatestByProject(project.getId()));
+
+        for (int L = 0; L < 2; L++) {
+
+            for (int i = 0; i < importedValues.size(); i++) {
+                Language importedLanguage = languageMap.get(importedLanguages.get(i));
+
+                // make sure english is imported first
+                if (L == 0 && importedLanguage != Language.EN) continue;
+                if (L == 1 && importedLanguage == Language.EN) continue;
+
+                String importedLabel = importedLabels.get(i);
+                String importedValue = importedValues.get(i);
+
+                Definition existingDefinition = null;
+                for (Definition d : existingDefinitions)
+                    if (d.getLabel().equals(importedLabel)) {
+                        existingDefinition = d;
+                        break;
+                    }
+
+                if (existingDefinition == null)
+                    existingDefinitions.add(
+                        createDefinition(project, importedLanguage, importedLabel, importedValue)
+                    );
+                else
+                    updateDefinition(existingDefinition, importedLanguage, importedValue);
+            }
+        }
 
         return importedValues.size();
     }
