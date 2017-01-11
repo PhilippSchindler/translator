@@ -221,4 +221,12 @@ public class ImportExportService {
 
         return importedValues.size();
     }
+
+    public String exportAndroid(Long languageId, Long releaseId) {
+        return "<xml/>";
+    }
+
+    public String exportGlobalize(Long releaseId) {
+        return "{\"is\": \"awesome\"}";
+    }
 }

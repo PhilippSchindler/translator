@@ -75,4 +75,15 @@ public class TranslationService {
 
         return 0;
     }
+
+    public String exportTranslations(String format, Long languageId, Long releaseId) {
+
+        if(format.equals("android"))
+            return importService.exportAndroid(languageId, releaseId);
+
+        else if (format.equals("globalize"))
+            return importService.exportGlobalize(releaseId);
+
+        return "";
+    }
 }

@@ -15,7 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
@@ -90,6 +93,13 @@ public class TranslationResource {
     public ResponseEntity<String> importTranslations(@PathVariable String format, @PathVariable Long languageId, @RequestBody String fileContent) throws URISyntaxException {
         int saved = translationService.importTranslations(format, languageId, fileContent);
         return ResponseEntity.ok().body("{\"numberOfImportedTranslations\": " + saved + "}");
+    }
+
+    @GetMapping("translations/export/{format}/{languageId}/{releaseId}")
+    public ResponseEntity<String> exportTranslations(@PathVariable String format, @PathVariable Long languageId,
+                                                     @PathVariable Long releaseId, HttpServletResponse response){
+        String fileContent = translationService.exportTranslations(format, languageId, releaseId);
+        return ResponseEntity.ok().body(fileContent);
     }
 
     /**

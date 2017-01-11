@@ -23,7 +23,14 @@
             },
             'update': { method:'PUT' },
             'updateChangedTranslations': { method: 'PUT', url: 'api/translations/updateChangedTranslations'},
-            'import': { method: 'PUT', url: 'api/translations/import/:format/:languageId'}
+            'import': { method: 'PUT', url: 'api/translations/import/:format/:languageId'},
+            'export': {
+                method: 'GET',
+                url: 'api/translations/export/:format/:languageId/:releaseId',
+                transformResponse: function (data) {
+                    return {content: data};
+                }
+            }
         });
     }
 })();

@@ -22,9 +22,13 @@
                     <div class="col-md-2">
                         <label class="control-label" data-translate="translatorApp.developerView.format" for="field_format">Format</label>
                     </div>
-                    <div class="col-md-2">
+                    <div class="col-md-2" ng-hide="vm.format != 'android'">
                         <label class="control-label" data-translate="translatorApp.developerView.language"
                                for="field_language">Sprache</label>
+                    </div>
+                    <div class="col-md-2" ng-hide="vm.importOrExport == 'import'">
+                        <label class="control-label"
+                               for="field_release">Release</label>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -46,8 +50,14 @@
                                 ng-options="lang.name for lang in vm.importLanguages track by lang.id">
                         </select>
                     </div>
-                    <div class="col-md-2" ng-hide="vm.importExport === 'export'">
+                    <div class="col-md-2" ng-hide="vm.importOrExport == 'export'">
                         <input type="file" id="file" style="margin-top:5px">
+                    </div>
+                    <div class="col-md-2" ng-hide="vm.importOrExport == 'import'">
+                        <select class="form-control" id="field_release"
+                                ng-model="vm.release"
+                                ng-options="rel.name for rel in vm.releases track by rel.id">
+                        </select>
                     </div>
                 </div>
                 <div class="row form-group">
