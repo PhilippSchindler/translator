@@ -1,6 +1,7 @@
 package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.domain.Release;
+import at.ac.tuwien.translator.domain.ReleaseState;
 import at.ac.tuwien.translator.dto.SelectedVersions;
 import at.ac.tuwien.translator.repository.ReleaseRepository;
 import at.ac.tuwien.translator.service.ReleaseService;
@@ -48,6 +49,7 @@ public class ReleaseResource {
         if (release.getId() != null) {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("release", "idexists", "A new release cannot already have an ID")).body(null);
         }
+        release.setState(ReleaseState.CREATED);
         Release result = releaseRepository.save(release);
         return ResponseEntity.created(new URI("/api/releases/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("release", result.getId().toString()))

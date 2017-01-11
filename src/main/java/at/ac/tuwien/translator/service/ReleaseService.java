@@ -2,6 +2,7 @@ package at.ac.tuwien.translator.service;
 
 import at.ac.tuwien.translator.domain.Definition;
 import at.ac.tuwien.translator.domain.Release;
+import at.ac.tuwien.translator.domain.ReleaseState;
 import at.ac.tuwien.translator.dto.SelectedVersion;
 import at.ac.tuwien.translator.dto.SelectedVersions;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
@@ -26,6 +27,9 @@ public class ReleaseService {
         if (release == null) {
             throw new IllegalStateException("Did not find release for id=" + releaseId);
         }
+        if (ReleaseState.FINISHED.equals(release.getState())) {
+            throw new IllegalStateException("Release already finished!");
+        }
         Set<Definition> definitions = new HashSet<>();
         for (SelectedVersion selectedVersion : selectedVersions.getSelectedVersions()) {
             String label = selectedVersion.getLabel();
@@ -33,7 +37,7 @@ public class ReleaseService {
             Definition definition;
             if (version == -1) {
                 definition = definitionRepository.findByLabelAndVersion(label, -1);
-                if(definition == null) {
+                if (definition == null) {
                     definition = definitionRepository.save(Definition.getNewestVersionPlaceholder(label));
                 }
             } else {
@@ -45,6 +49,7 @@ public class ReleaseService {
             definitions.add(definition);
         }
         release.setDefinitions(definitions);
+        release.setState(ReleaseState.DEFINITIONS_ASSIGNED);
         releaseRepository.save(release);
     }
 

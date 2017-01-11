@@ -13,13 +13,18 @@
                         {{vm.release.name}}
                     </div>
                 </div>
-
                 <div class="row">
                     <strong class="col-md-2">
                         <span data-translate="translatorApp.release.deadline">Deadline</span>:
                     </strong>
                     <div class="col-md-7 ">
                         <span>{{vm.release.deadline | date:'mediumDate'}}</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <strong class="col-md-2">Status:</strong>
+                    <div class="col-md-10">
+                        {{vm.release.state}}
                     </div>
                 </div>
             </div>
@@ -43,14 +48,14 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="(label, defs) in vm.definitions.definitions">
-                        <td><input type="checkbox" ng-model="vm.selectedLabel[label]"></td>
+                        <td><input type="checkbox" ng-model="vm.selectedLabel[label]" ng-disabled="vm.release.state == 'FINISHED'"></td>
                         <td>{{label}}</td>
-                        <td><select ng-model="vm.selectedVersion[label]">
+                        <td><select ng-model="vm.selectedVersion[label]" ng-disabled="vm.release.state == 'FINISHED'">
                             <option ng-repeat="definition in defs | orderBy : definition.version" value="{{definition.version}}">{{definition.text}}</option>
                             <option value="-1">&lt;Neueste Version wenn fertig&gt;</option>
                         </select></td>
                         <td ng-repeat="lang in vm.project.languages">
-                            <select ng-model="vm.selectedVersion[label]">
+                            <select ng-model="vm.selectedVersion[label]" ng-disabled="vm.release.state == 'FINISHED'">
                                 <option
                                     ng-repeat="definition in defs | orderBy : definition.version" value="{{definition.version}}">
                                     {{vm.getTranslationText(definition,lang)}}
