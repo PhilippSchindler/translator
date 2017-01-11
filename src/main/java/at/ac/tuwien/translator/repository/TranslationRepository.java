@@ -21,5 +21,5 @@ public interface TranslationRepository extends JpaRepository<Translation,Long> {
     @Query("select translation from Translation translation where translation.id =:id")
     Translation findOneWithEagerRelationships(@Param("id") Long id);
 
-    Set<Translation> findByDefinition(Definition definition);
+    List<Translation> findByDefinition(Definition definition);
 }

@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing Definition.
@@ -179,7 +180,7 @@ public class DefinitionResource {
     }
 
     private void loadTranslations(Definition definition) {
-        definition.setTranslations(translationRepository.findByDefinition(definition));
+        definition.setTranslations(translationRepository.findByDefinition(definition).stream().collect(Collectors.toSet()));
     }
 
 }
