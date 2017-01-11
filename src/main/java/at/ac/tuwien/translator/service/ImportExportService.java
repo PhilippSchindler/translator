@@ -251,7 +251,39 @@ public class ImportExportService {
     }
 
     public String exportGlobalize(Long releaseId) {
-        return "{\"is\": \"awesome\"}";
+        try {
+            JSONObject jsonObj = new JSONObject();
+
+            for (Definition definition : getDefinitionsOfRelease(releaseId)) {
+
+                Set<Translation> translations = new HashSet<>(definition.getTranslations());
+                Translation tEnglish = new Translation();
+                tEnglish.setLanguage(Language.EN);
+                tEnglish.setText(definition.getLabel());
+
+                for (Translation translation : translations) {
+
+                    String languageCode = translation.getLanguage().getShortName();
+                    JSONObject jsonLanguageObj;
+
+
+                    if (jsonObj.has(languageCode))
+                        jsonLanguageObj = jsonObj.getJSONObject(languageCode);
+                    else {
+                        jsonLanguageObj = new JSONObject();
+                        jsonObj.put(languageCode, jsonLanguageObj);
+                    }
+
+                    jsonLanguageObj.put(definition.getLabel(), translation.getText());
+                }
+            }
+            return jsonObj.toString(4);
+        }
+
+        catch (JSONException e) {
+            // should never happen :) TODO
+        }
+        return "{ \"export-error\": \"true\" }";
     }
 
     private Set<Definition> getDefinitionsOfRelease(Long releaseId){
