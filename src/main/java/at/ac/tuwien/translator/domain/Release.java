@@ -43,6 +43,17 @@ public class Release implements Serializable {
     @ManyToOne
     private Project project;
 
+    @Enumerated(EnumType.STRING)
+    private ReleaseState state;
+
+    public ReleaseState getState() {
+        return state;
+    }
+
+    public void setState(ReleaseState state) {
+        this.state = state;
+    }
+
     public Long getId() {
         return id;
     }

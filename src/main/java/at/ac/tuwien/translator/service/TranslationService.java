@@ -53,9 +53,7 @@ public class TranslationService {
                 translations.add(newTranslation);
             }
             translationRepository.save(translations);
-
         }
-
     }
 
     private Definition createNewDefinition(Definition oldDefinition) {

@@ -1,6 +1,7 @@
 package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.domain.DefinitionToUpdate;
+import at.ac.tuwien.translator.service.ReleaseService;
 import at.ac.tuwien.translator.service.TranslationService;
 import at.ac.tuwien.translator.web.rest.errors.TranslatorException;
 import com.codahale.metrics.annotation.Timed;
@@ -39,6 +40,9 @@ public class TranslationResource {
 
     @Inject
     private TranslationService translationService;
+
+    @Inject
+    private ReleaseService releaseService;
 
     /**
      * POST  /translations : Create a new translation.
@@ -86,6 +90,7 @@ public class TranslationResource {
     @Timed
     public ResponseEntity<Void> updateChangedTranslations(@RequestBody List<DefinitionToUpdate> definitions) throws URISyntaxException {
         translationService.updateChangedTranslations(definitions);
+        releaseService.tryToFinishAllOpenReleases();
         return ResponseEntity.ok().build();
     }
 
