@@ -3,10 +3,7 @@ package at.ac.tuwien.translator.service;
 import at.ac.tuwien.translator.domain.*;
 import at.ac.tuwien.translator.dto.SelectedVersion;
 import at.ac.tuwien.translator.dto.SelectedVersions;
-import at.ac.tuwien.translator.repository.DefinitionRepository;
-import at.ac.tuwien.translator.repository.LanguageRepository;
-import at.ac.tuwien.translator.repository.LogEntryRepository;
-import at.ac.tuwien.translator.repository.ReleaseRepository;
+import at.ac.tuwien.translator.repository.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +21,9 @@ import java.util.stream.Collectors;
 public class ReleaseService {
 
     private static final Logger log = LoggerFactory.getLogger(ReleaseService.class);
+    private static final String SUBJECT_RELEASE_FINISHED = "Release '%s' ist abgeschlossen";
+    private static final String MESSAGE_RELEASE_FINISHED = "Hallo %s,\n\ndie Übersetzungsarbeiten für den Release '%s' wurden abgeschlossen.\n" +
+        "Damit ist dieser Release nun fertig.\n\nMit freundlichen Grüßen,\ndas Translator-Team";
 
     @Autowired
     private ReleaseRepository releaseRepository;
@@ -38,7 +38,13 @@ public class ReleaseService {
     private LogEntryRepository logEntryRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private UserService userService;
+
+    @Autowired
+    private NotificationService notificationService;
 
     public void updateDefinitions(Long releaseId, SelectedVersions selectedVersions) {
         Release release = releaseRepository.findOne(releaseId);
@@ -66,8 +72,8 @@ public class ReleaseService {
             }
             definitions.add(definition);
         }
-        if(definitions.size() > 0) {
-            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Release " + release.getName() + " wurde geändert.", "erfolgreich" ,userService.getUserWithAuthorities(), release.getProject());
+        if (definitions.size() > 0) {
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Release " + release.getName() + " wurde geändert.", "erfolgreich", userService.getUserWithAuthorities(), release.getProject());
             logEntryRepository.save(logEntry);
         }
         release.setDefinitions(definitions);
@@ -84,7 +90,7 @@ public class ReleaseService {
         return new SelectedVersions(release.getDefinitions());
     }
 
-    public void finishReleaseIfPossible(Release release) {
+    public void finishReleaseIfPossible(final Release release) {
         try {
             List<Language> languages = languageRepository.findByProjects_id(release.getProject().getId());
             Set<Definition> definitions = release.getDefinitions();
@@ -108,11 +114,24 @@ public class ReleaseService {
             }).collect(Collectors.toSet());
             release.setDefinitions(definitions);
             release.setState(ReleaseState.FINISHED);
-            // TODO send email
-            releaseRepository.save(release);
+            Release savedRelease = releaseRepository.save(release);
+            sendNotificationEmailForFinishedRelease(savedRelease);
         } catch (IllegalStateException e) {
             log.info("Could not finish release : {}", release, e);
         }
+    }
+
+    private void sendNotificationEmailForFinishedRelease(Release release) {
+        List<User> usersToNotify = userRepository.findByProjectIdAndAuthority(release.getProject().getId(), "ROLE_CUSTOMER", "ROLE_RELEASE_MANAGER");
+        for (User user : usersToNotify) {
+            sendEmail(user, release);
+        }
+    }
+
+    private void sendEmail(User user, Release release) {
+        String subject = String.format(SUBJECT_RELEASE_FINISHED, release.getName());
+        String text = String.format(MESSAGE_RELEASE_FINISHED, user.getFirstName() + " " + user.getLastName(), release.getName());
+        notificationService.sendEmail(user.getEmail(), subject, text);
     }
 
     public void tryToFinishAllOpenReleases() {

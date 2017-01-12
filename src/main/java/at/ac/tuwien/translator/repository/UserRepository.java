@@ -1,5 +1,6 @@
 package at.ac.tuwien.translator.repository;
 
+import at.ac.tuwien.translator.domain.Authority;
 import at.ac.tuwien.translator.domain.User;
 
 import java.time.ZonedDateTime;
@@ -33,4 +34,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "select distinct user from User user left join fetch user.authorities",
         countQuery = "select count(user) from User user")
     Page<User> findAllWithAuthorities(Pageable pageable);
+
+    @Query("select distinct user from User user left join fetch user.projects projects left join fetch user.authorities auth where projects.id = :projectId and auth.name in (:authorities)")
+    List<User> findByProjectIdAndAuthority(@Param("projectId") Long projectId, @Param("authorities") String... authorities);
 }
