@@ -51,7 +51,7 @@ public class ImportExportService {
         AndroidMessagesFile messages = null;
         try {
              messages = (AndroidMessagesFile) xstream.unmarshal(new StreamSource(new StringReader(fileContent)));
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new TranslatorException(String.format(
                 "Android-Import Fehler: XML-Dateiformat fehlerhaft."));
         }
@@ -224,12 +224,17 @@ public class ImportExportService {
                         break;
                     }
 
-                if (existingDefinition == null)
+                if (existingDefinition == null) {
                     existingDefinitions.add(
                         createDefinition(project, importedLanguage, importedLabel, importedValue)
                     );
-                else
+                    LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Defintion " + importedLabel + " importiert (Globalize)." , "erfolgreich", userService.getUserWithAuthorities(), project);
+                    logEntryRepository.save(logEntry);
+                } else {
                     updateDefinition(existingDefinition, importedLanguage, importedValue);
+                    LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Defintion " + importedLabel + " durch import geändert (Globalize)." , "erfolgreich", userService.getUserWithAuthorities(), project);
+                    logEntryRepository.save(logEntry);
+                }
             }
         }
 
@@ -257,6 +262,8 @@ public class ImportExportService {
         StringWriter stringWriter = new StringWriter();
         try {
             xstream.marshal(androidMessagesFile, new StreamResult(stringWriter));
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Release " + releaseId + " exportiert (Android)." , "erfolgreich", userService.getUserWithAuthorities(), projectRepository.findSingleProjectByUserLogin(SecurityUtils.getCurrentUserLogin()));
+            logEntryRepository.save(logEntry);
             return stringWriter.toString();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -291,6 +298,8 @@ public class ImportExportService {
                     jsonLanguageObj.put(definition.getLabel(), translation.getText());
                 }
             }
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Release " + releaseId + " exportiert (Globalize)." , "erfolgreich", userService.getUserWithAuthorities(), projectRepository.findSingleProjectByUserLogin(SecurityUtils.getCurrentUserLogin()));
+            logEntryRepository.save(logEntry);
             return jsonObj.toString(4);
         }
 

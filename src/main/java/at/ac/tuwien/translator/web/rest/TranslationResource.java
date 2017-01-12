@@ -5,6 +5,8 @@ import at.ac.tuwien.translator.domain.DefinitionToUpdate;
 import at.ac.tuwien.translator.domain.LogEntry;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
 import at.ac.tuwien.translator.repository.LogEntryRepository;
+import at.ac.tuwien.translator.repository.ProjectRepository;
+import at.ac.tuwien.translator.security.SecurityUtils;
 import at.ac.tuwien.translator.service.ReleaseService;
 import at.ac.tuwien.translator.service.TranslationService;
 import at.ac.tuwien.translator.service.UserService;
@@ -53,6 +55,8 @@ public class TranslationResource {
     private DefinitionRepository definitionRepository;
     @Inject
     private ReleaseService releaseService;
+    @Inject
+    private ProjectRepository projectRepository;
 
     /**
      * POST  /translations : Create a new translation.
@@ -122,15 +126,30 @@ public class TranslationResource {
     @PutMapping("/translations/import/{format}/{languageId}")
     @Timed
     public ResponseEntity<String> importTranslations(@PathVariable String format, @PathVariable Long languageId, @RequestBody String fileContent) throws URISyntaxException {
-        int saved = translationService.importTranslations(format, languageId, fileContent);
-        return ResponseEntity.ok().body("{\"numberOfImportedTranslations\": " + saved + "}");
+        try {
+            int saved = translationService.importTranslations(format, languageId, fileContent);
+            return ResponseEntity.ok().body("{\"numberOfImportedTranslations\": " + saved + "}");
+        }
+        catch (TranslatorException e){
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Import fehlgeschlagen. " + e.getMessage() , "fehlgeschlagen", userService.getUserWithAuthorities(), projectRepository.findSingleProjectByUserLogin(SecurityUtils.getCurrentUserLogin()));
+            logEntryRepository.save(logEntry);
+            throw e;
+        }
     }
 
     @GetMapping("translations/export/{format}/{languageId}/{releaseId}")
     public ResponseEntity<String> exportTranslations(@PathVariable String format, @PathVariable Long languageId,
                                                      @PathVariable Long releaseId, HttpServletResponse response){
-        String fileContent = translationService.exportTranslations(format, languageId, releaseId);
-        return ResponseEntity.ok().body(fileContent);
+        try {
+            String fileContent = translationService.exportTranslations(format, languageId, releaseId);
+            return ResponseEntity.ok().body(fileContent);
+        }
+        catch (TranslatorException e){
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Release " + releaseId + " konnte nicht exportiert werden. " + e.getMessage() , "fehlgeschlagen", userService.getUserWithAuthorities(), projectRepository.findSingleProjectByUserLogin(SecurityUtils.getCurrentUserLogin()));
+            logEntryRepository.save(logEntry);
+            throw e;
+        }
+
     }
 
     /**
