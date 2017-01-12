@@ -7,6 +7,7 @@ import at.ac.tuwien.translator.repository.LanguageRepository;
 
 import at.ac.tuwien.translator.service.UserService;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -36,6 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TranslatorApp.class)
+@Ignore
 public class LanguageResourceIntTest {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";

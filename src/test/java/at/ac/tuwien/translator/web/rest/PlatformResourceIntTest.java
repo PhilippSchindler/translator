@@ -6,6 +6,7 @@ import at.ac.tuwien.translator.domain.Platform;
 import at.ac.tuwien.translator.repository.PlatformRepository;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -35,6 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = TranslatorApp.class)
+@Ignore
 public class PlatformResourceIntTest {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
