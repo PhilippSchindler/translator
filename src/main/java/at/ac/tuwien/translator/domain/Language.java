@@ -2,7 +2,6 @@ package at.ac.tuwien.translator.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -19,6 +18,15 @@ import java.util.Set;
 public class Language implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public static final Language EN = getEN();
+
+    private static Language getEN() {
+        Language en = new Language();
+        en.setName("English");
+        en.setShortName("en");
+        return en;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

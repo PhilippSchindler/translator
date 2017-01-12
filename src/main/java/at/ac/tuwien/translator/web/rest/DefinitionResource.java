@@ -3,9 +3,11 @@ package at.ac.tuwien.translator.web.rest;
 import at.ac.tuwien.translator.domain.Definition;
 import at.ac.tuwien.translator.domain.LogEntry;
 import at.ac.tuwien.translator.domain.User;
+import at.ac.tuwien.translator.dto.GroupedDefinitions;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
 import at.ac.tuwien.translator.repository.LogEntryRepository;
 import at.ac.tuwien.translator.service.UserService;
+import at.ac.tuwien.translator.repository.TranslationRepository;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
 import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing Definition.
@@ -39,6 +42,9 @@ public class DefinitionResource {
     @Inject
     private UserService userService;
 
+
+    @Inject
+    private TranslationRepository translationRepository;
 
     /**
      * POST  /definitions : Create a new definition.
@@ -178,6 +184,23 @@ public class DefinitionResource {
     public List<Definition> getDefinitionsForProject(@PathVariable Long projectId) {
         log.debug("REST request to get all Definitions for project: {]", projectId);
         return definitionRepository.findForProject(projectId);
+    }
+
+    @GetMapping("/project/{projectId}/groupedDefinitions")
+    @Timed
+    public ResponseEntity<GroupedDefinitions> getGroupedDefinitionsFor(@PathVariable Long projectId) {
+        log.debug("REST request to get ALL Versions of all Definitions for project: {]", projectId);
+        List<Definition> definitionList = definitionRepository.findByProject_id(projectId);
+        if (definitionList == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        definitionList.forEach(this::loadTranslations);
+        log.debug("Loaded definitions: {}, detail: {}", definitionList.size(), definitionList);
+        return new ResponseEntity<>(new GroupedDefinitions(definitionList), HttpStatus.OK);
+    }
+
+    private void loadTranslations(Definition definition) {
+        definition.setTranslations(translationRepository.findByDefinition(definition).stream().collect(Collectors.toSet()));
     }
 
 }

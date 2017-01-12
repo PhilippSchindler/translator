@@ -70,6 +70,5 @@ public class TranslatorApp {
             env.getProperty("server.port"),
             InetAddress.getLocalHost().getHostAddress(),
             env.getProperty("server.port"));
-
     }
 }

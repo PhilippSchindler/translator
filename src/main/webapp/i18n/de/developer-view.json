@@ -10,7 +10,6 @@
             "export": "Export",
             "format": "Format",
             "language": "Sprache",
-            "importMsg": "Es wurden {{imported}} Übersetzungen importiert!",
             "definitionsOverview": "Übersicht Definitionen"
         }
     }
