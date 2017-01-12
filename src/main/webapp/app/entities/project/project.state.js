@@ -275,6 +275,31 @@
                         $state.go('^');
                     });
                 }]
+            })
+            .state('project-log', {
+                parent: 'project',
+                url: '/project/{id}/log',
+                data: {
+                    authorities: ['ROLE_USER', 'ROLE_CUSTOMER']
+                },
+                onEnter: ['$stateParams', '$state', '$uibModal', function ($stateParams, $state, $uibModal) {
+                    $uibModal.open({
+                        templateUrl: 'app/entities/project/project-log.html',
+                        controller: 'ProjectLogController',
+                        controllerAs: 'vm',
+                        backdrop: 'static',
+                        size: 'lg',
+                        resolve: {
+                            entity: ['Project', function (Project) {
+                                return Project.get({id: $stateParams.id}).$promise;
+                            }]
+                        }
+                    }).result.then(function () {
+                        $state.go('^', {}, {reload: false});
+                    }, function () {
+                        $state.go('^');
+                    });
+                }]
             });
     }
 

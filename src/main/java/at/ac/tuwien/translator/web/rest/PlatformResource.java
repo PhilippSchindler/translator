@@ -1,5 +1,8 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.LogEntry;
+import at.ac.tuwien.translator.repository.LogEntryRepository;
+import at.ac.tuwien.translator.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Platform;
 
@@ -17,6 +20,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +32,13 @@ import java.util.Optional;
 public class PlatformResource {
 
     private final Logger log = LoggerFactory.getLogger(PlatformResource.class);
-        
+
     @Inject
     private PlatformRepository platformRepository;
+    @Inject
+    private LogEntryRepository logEntryRepository;
+    @Inject
+    private UserService userService;
 
     /**
      * POST  /platforms : Create a new platform.
@@ -47,6 +55,10 @@ public class PlatformResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("platform", "idexists", "A new platform cannot already have an ID")).body(null);
         }
         Platform result = platformRepository.save(platform);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Plattform " + result.getName() + " erstellt.", "erfolgreich", userService.getUserWithAuthorities(), null);
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.created(new URI("/api/platforms/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("platform", result.getId().toString()))
             .body(result);
@@ -69,6 +81,10 @@ public class PlatformResource {
             return createPlatform(platform);
         }
         Platform result = platformRepository.save(platform);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Plattform " + result.getName() + " geändert.", "erfolgreich", userService.getUserWithAuthorities(), null);
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("platform", platform.getId().toString()))
             .body(result);
@@ -115,7 +131,13 @@ public class PlatformResource {
     @Timed
     public ResponseEntity<Void> deletePlatform(@PathVariable Long id) {
         log.debug("REST request to delete Platform : {}", id);
+        Platform platform = platformRepository.findOne(id);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Plattform " + platform.getName() + " gelöscht.", "erfolgreich", userService.getUserWithAuthorities(), null);
+        logEntryRepository.save(logEntry);
+
         platformRepository.delete(id);
+
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("platform", id.toString())).build();
     }
 

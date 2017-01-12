@@ -1,13 +1,7 @@
 package at.ac.tuwien.translator.service;
 
-import at.ac.tuwien.translator.domain.Definition;
-import at.ac.tuwien.translator.domain.Language;
-import at.ac.tuwien.translator.domain.Project;
-import at.ac.tuwien.translator.domain.Translation;
-import at.ac.tuwien.translator.repository.DefinitionRepository;
-import at.ac.tuwien.translator.repository.LanguageRepository;
-import at.ac.tuwien.translator.repository.ProjectRepository;
-import at.ac.tuwien.translator.repository.TranslationRepository;
+import at.ac.tuwien.translator.domain.*;
+import at.ac.tuwien.translator.repository.*;
 import at.ac.tuwien.translator.security.SecurityUtils;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 import org.springframework.stereotype.Service;
@@ -25,7 +19,6 @@ public class ImportExportService {
 
     @Inject
     private XStreamMarshaller xstream;
-
     @Inject
     private DefinitionRepository definitionRepository;
     @Inject
@@ -34,7 +27,10 @@ public class ImportExportService {
     private LanguageRepository languageRepository;
     @Inject
     private ProjectRepository projectRepository;
-
+    @Inject
+    private LogEntryRepository logEntryRepository;
+    @Inject
+    private UserService userService;
 
     public int importAndroid(Long languageId, String fileContent) {
         AndroidMessagesFile messages = null;
@@ -56,11 +52,16 @@ public class ImportExportService {
         for (AndroidMessagesFileEntry entry : messages.strings) {
             List<Definition> possibleDefinition =
                 existingDefinitions.stream().filter(definition -> definition.getLabel().equals(entry.name)).collect(Collectors.toList());
-            if(possibleDefinition.isEmpty())
+            if(possibleDefinition.isEmpty()) {
                 createDefinition(project, language, entry);
-            else
+                LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Defintion " + entry.name + " importiert (Android)." , "erfolgreich", userService.getUserWithAuthorities(), project);
+                logEntryRepository.save(logEntry);
+            }
+            else {
                 updateDefinition(possibleDefinition.get(0), language, entry);
-
+                LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Defintion " + entry.name + " durch import geändert (Android)." , "erfolgreich", userService.getUserWithAuthorities(), project);
+                logEntryRepository.save(logEntry);
+            }
             counterSaved++;
         }
 

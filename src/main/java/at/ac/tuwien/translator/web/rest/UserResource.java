@@ -1,7 +1,11 @@
 package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.config.Constants;
+import at.ac.tuwien.translator.domain.LogEntry;
+import at.ac.tuwien.translator.domain.Project;
 import at.ac.tuwien.translator.domain.User;
+import at.ac.tuwien.translator.repository.LogEntryRepository;
+import at.ac.tuwien.translator.repository.ProjectRepository;
 import at.ac.tuwien.translator.repository.UserRepository;
 import at.ac.tuwien.translator.security.AuthoritiesConstants;
 import at.ac.tuwien.translator.service.MailService;
@@ -25,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -63,12 +68,14 @@ public class UserResource {
 
     @Inject
     private UserRepository userRepository;
-
     @Inject
     private MailService mailService;
-
     @Inject
     private UserService userService;
+    @Inject
+    private LogEntryRepository logEntryRepository;
+    @Inject
+    private ProjectRepository projectRepository;
 
     /**
      * POST  /users  : Creates a new user.
@@ -112,17 +119,27 @@ public class UserResource {
     public ResponseEntity<?> createProjectMember(@RequestBody CreateProjectMember projectMember) throws URISyntaxException {
         log.debug("REST request to save User : {}", projectMember);
 
+        Project project = projectRepository.findOne(projectMember.getProjectId());
         //Lowercase the user login before comparing with database
         if (userRepository.findOneByLogin(projectMember.getLogin().toLowerCase()).isPresent()) {
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "User " + projectMember.getLogin() + " wird bereits verwendet." , "fehlgeschlagen", userService.getUserWithAuthorities(), project);
+            logEntryRepository.save(logEntry);
+
             return ResponseEntity.badRequest()
                 .headers(HeaderUtil.createFailureAlert("userManagement", "userexists", "Login already in use"))
                 .body(null);
         } else if (userRepository.findOneByEmail(projectMember.getEmail()).isPresent()) {
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Email " + projectMember.getEmail() + " wird bereits verwendet." , "fehlgeschlagen", userService.getUserWithAuthorities(), project);
+            logEntryRepository.save(logEntry);
+
             return ResponseEntity.badRequest()
                 .headers(HeaderUtil.createFailureAlert("userManagement", "emailexists", "Email already in use"))
                 .body(null);
         } else {
             User newUser = userService.createProjectMember(projectMember);
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "User " + projectMember.getLogin() + " erstellt." , "erfolgreich", userService.getUserWithAuthorities(), project);
+            logEntryRepository.save(logEntry);
+
             //mailService.sendCreationEmail(newUser);
             return ResponseEntity.created(new URI("/api/users/" + newUser.getLogin()))
                 .headers(HeaderUtil.createAlert("userManagement.created", newUser.getLogin()))
@@ -138,14 +155,24 @@ public class UserResource {
 
         //Lowercase the user login before comparing with database
         Optional<User> existingUser = userRepository.findOneByEmail(projectMember.getEmail());
+        Project project = projectRepository.findOne(projectMember.getProjectId());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(projectMember.getId()))) {
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "E-Mail " + projectMember.getEmail() + " erstellt." , "fehlgeschlagen", userService.getUserWithAuthorities(), project);
+            logEntryRepository.save(logEntry);
+
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("userManagement", "emailexists", "E-mail already in use")).body(null);
         }
         existingUser = userRepository.findOneByLogin(projectMember.getLogin().toLowerCase());
         if (existingUser.isPresent() && (!existingUser.get().getId().equals(projectMember.getId()))) {
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Login " + projectMember.getLogin() + " existiert bereits." , "fehlgeschlagen", userService.getUserWithAuthorities(), project);
+            logEntryRepository.save(logEntry);
+
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("userManagement", "userexists", "Login already in use")).body(null);
         }
         if (!existingUser.isPresent()) {
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "User " + projectMember.getLogin() + " konnte nicht gefunden werden." , "fehlgeschlagen", userService.getUserWithAuthorities(), project);
+            logEntryRepository.save(logEntry);
+
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("userManagement", "usernotfound", "Did not find user to update")).body(null);
         }
         User user = existingUser.get();
@@ -157,6 +184,10 @@ public class UserResource {
         userService.updateUser(projectMember.getId(), projectMember.getLogin(), projectMember.getFirstName(),
             projectMember.getLastName(), projectMember.getEmail(), true,
             user.getLangKey(), authorities);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "User " + projectMember.getLogin() + " geändert." , "erfolgreich", userService.getUserWithAuthorities(), project);
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createAlert("userManagement.updated", projectMember.getLogin()))
             .body(new ManagedUserVM(userService.getUserWithAuthorities(projectMember.getId())));

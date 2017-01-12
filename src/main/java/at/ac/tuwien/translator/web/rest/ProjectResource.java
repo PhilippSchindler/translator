@@ -1,6 +1,8 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.LogEntry;
 import at.ac.tuwien.translator.domain.User;
+import at.ac.tuwien.translator.repository.LogEntryRepository;
 import at.ac.tuwien.translator.repository.UserRepository;
 import at.ac.tuwien.translator.security.SecurityUtils;
 import at.ac.tuwien.translator.service.UserService;
@@ -21,6 +23,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,10 +40,10 @@ public class ProjectResource {
     private ProjectRepository projectRepository;
     @Inject
     private UserRepository userRepository;
-
-
     @Inject
     private UserService userService;
+    @Inject
+    private LogEntryRepository logEntryRepository;
 
     /**
      * POST  /projects : Create a new project.
@@ -61,6 +64,9 @@ public class ProjectResource {
             project.addUser(userOptional.get());
         }
         Project result = projectRepository.save(project);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Projekt " + result.getName() + " erstellt." , "erfolgreich", userService.getUserWithAuthorities(), result);
+        logEntryRepository.save(logEntry);
 
         return ResponseEntity.created(new URI("/api/projects/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("project", result.getId().toString()))
@@ -84,6 +90,10 @@ public class ProjectResource {
             return createProject(project);
         }
         Project result = projectRepository.save(project);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Projekt " + result.getName() + " geändert." , "erfolgreich", userService.getUserWithAuthorities(), result);
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("project", project.getId().toString()))
             .body(result);
@@ -149,6 +159,12 @@ public class ProjectResource {
     @Timed
     public ResponseEntity<Void> deleteProject(@PathVariable Long id) {
         log.debug("REST request to delete Project : {}", id);
+
+        Project project = projectRepository.findOne(id);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Projekt " + project.getName() + " geändert." , "erfolgreich", userService.getUserWithAuthorities(), project);
+        logEntryRepository.save(logEntry);
+
         projectRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("project", id.toString())).build();
     }

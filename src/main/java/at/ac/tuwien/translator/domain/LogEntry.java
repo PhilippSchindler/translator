@@ -38,6 +38,20 @@ public class LogEntry implements Serializable {
     @ManyToOne
     private User user;
 
+    @ManyToOne
+    private Project project;
+
+    public LogEntry() {
+    }
+
+    public LogEntry(ZonedDateTime timestamp, String message, String result, User user, Project project) {
+        this.timestamp = timestamp;
+        this.message = message;
+        this.result = result;
+        this.user = user;
+        this.project = project;
+    }
+
     public Long getId() {
         return id;
     }
@@ -98,33 +112,50 @@ public class LogEntry implements Serializable {
         this.user = user;
     }
 
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
         LogEntry logEntry = (LogEntry) o;
-        if (logEntry.id == null || id == null) {
-            return false;
-        }
-        return Objects.equals(id, logEntry.id);
+
+        if (id != null ? !id.equals(logEntry.id) : logEntry.id != null) return false;
+        if (timestamp != null ? !timestamp.equals(logEntry.timestamp) : logEntry.timestamp != null) return false;
+        if (message != null ? !message.equals(logEntry.message) : logEntry.message != null) return false;
+        if (result != null ? !result.equals(logEntry.result) : logEntry.result != null) return false;
+        if (user != null ? !user.equals(logEntry.user) : logEntry.user != null) return false;
+        return project != null ? project.equals(logEntry.project) : logEntry.project == null;
+
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        int result1 = id != null ? id.hashCode() : 0;
+        result1 = 31 * result1 + (timestamp != null ? timestamp.hashCode() : 0);
+        result1 = 31 * result1 + (message != null ? message.hashCode() : 0);
+        result1 = 31 * result1 + (result != null ? result.hashCode() : 0);
+        result1 = 31 * result1 + (user != null ? user.hashCode() : 0);
+        result1 = 31 * result1 + (project != null ? project.hashCode() : 0);
+        return result1;
     }
 
     @Override
     public String toString() {
         return "LogEntry{" +
             "id=" + id +
-            ", timestamp='" + timestamp + "'" +
-            ", message='" + message + "'" +
-            ", result='" + result + "'" +
+            ", timestamp=" + timestamp +
+            ", message='" + message + '\'' +
+            ", result='" + result + '\'' +
+            ", user=" + user +
+            ", project=" + project +
             '}';
     }
 }

@@ -1,7 +1,11 @@
 package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.domain.Definition;
+import at.ac.tuwien.translator.domain.LogEntry;
+import at.ac.tuwien.translator.domain.User;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
+import at.ac.tuwien.translator.repository.LogEntryRepository;
+import at.ac.tuwien.translator.service.UserService;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
 import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
@@ -30,6 +34,11 @@ public class DefinitionResource {
 
     @Inject
     private DefinitionRepository definitionRepository;
+    @Inject
+    private LogEntryRepository logEntryRepository;
+    @Inject
+    private UserService userService;
+
 
     /**
      * POST  /definitions : Create a new definition.
@@ -57,6 +66,10 @@ public class DefinitionResource {
         definition.setVersion(INITIAL_VERSION);
 
         Definition result = definitionRepository.save(definition);
+
+        LogEntry logEntry = new LogEntry(now, "Definition " + result.getLabel() + " erstellt." , "erfolgreich", userService.getUserWithAuthorities(), result.getProject());
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.created(new URI("/api/definitions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("definition", result.getId().toString()))
             .body(result);
@@ -94,6 +107,10 @@ public class DefinitionResource {
             .text(definition.getText());
 
         Definition result = definitionRepository.save(newVersion);
+
+        LogEntry logEntry = new LogEntry(definition.getUpdatedAt(), "Definition " + result.getLabel() + " geändert." , "erfolgreich", userService.getUserWithAuthorities(), result.getProject());
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.created(new URI("/api/definitions/" + result.getId()))
             .headers(HeaderUtil.createEntityUpdateAlert("definition", result.getId().toString()))
             .body(result);
@@ -150,6 +167,9 @@ public class DefinitionResource {
         for (Definition def : definitions) {
             definitionRepository.delete(def);
         }
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Definition " + definition.getLabel() + " gelöscht." , "erfolgreich", userService.getUserWithAuthorities(), definition.getProject());
+        logEntryRepository.save(logEntry);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("definition", id.toString())).build();
     }
 

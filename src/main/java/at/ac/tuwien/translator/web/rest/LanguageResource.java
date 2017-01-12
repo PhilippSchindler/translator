@@ -1,13 +1,11 @@
 package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.domain.*;
-import at.ac.tuwien.translator.repository.LanguageRepository;
-import at.ac.tuwien.translator.repository.ProjectRepository;
-import at.ac.tuwien.translator.repository.TranslationRepository;
-import at.ac.tuwien.translator.repository.UserRepository;
+import at.ac.tuwien.translator.repository.*;
 import at.ac.tuwien.translator.service.UserService;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
 import com.codahale.metrics.annotation.Timed;
+import org.apache.commons.codec.language.bm.Lang;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -17,6 +15,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -45,6 +44,9 @@ public class LanguageResource {
     @Inject
     private UserService userService;
 
+    @Inject
+    private LogEntryRepository logEntryRepository;
+
     /**
      * POST  /languages : Create a new language.
      *
@@ -65,6 +67,10 @@ public class LanguageResource {
             language.setUser(loggedInUser);
 
         Language result = languageRepository.save(language);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Sprache " + result.getName() + " erstellt." , "erfolgreich", userService.getUserWithAuthorities(), null);
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.created(new URI("/api/languages/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("language", result.getId().toString()))
             .body(result);
@@ -87,6 +93,10 @@ public class LanguageResource {
             return createLanguage(language);
         }
         Language result = languageRepository.save(language);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Sprache " + result.getName() + " geändert." , "erfolgreich", userService.getUserWithAuthorities(), null);
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("language", language.getId().toString()))
             .body(result);
@@ -102,6 +112,11 @@ public class LanguageResource {
         if(project != null){
             project.setLanguages(languages);
             projectRepository.save(project);
+        }
+
+        for(Language lang : languages) {
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Sprache " + lang.getName() + " zum Projekt hinzugefüt.", "erfolgreich", userService.getUserWithAuthorities(), project);
+            logEntryRepository.save(logEntry);
         }
 
         return ResponseEntity.ok().build();

@@ -1,7 +1,12 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.Definition;
 import at.ac.tuwien.translator.domain.DefinitionToUpdate;
+import at.ac.tuwien.translator.domain.LogEntry;
+import at.ac.tuwien.translator.repository.DefinitionRepository;
+import at.ac.tuwien.translator.repository.LogEntryRepository;
 import at.ac.tuwien.translator.service.TranslationService;
+import at.ac.tuwien.translator.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Translation;
 
@@ -18,6 +23,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,9 +38,14 @@ public class TranslationResource {
 
     @Inject
     private TranslationRepository translationRepository;
-
     @Inject
     private TranslationService translationService;
+    @Inject
+    private UserService userService;
+    @Inject
+    private LogEntryRepository logEntryRepository;
+    @Inject
+    private DefinitionRepository definitionRepository;
 
     /**
      * POST  /translations : Create a new translation.
@@ -51,6 +62,10 @@ public class TranslationResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("translation", "idexists", "A new translation cannot already have an ID")).body(null);
         }
         Translation result = translationRepository.save(translation);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Definition " + result.getDefinition().getLabel() + " in die Sprache " + result.getLanguage().getName() + " übersetzt" , "erfolgreich", userService.getUserWithAuthorities(), result.getDefinition().getProject());
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.created(new URI("/api/translations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("translation", result.getId().toString()))
             .body(result);
@@ -73,6 +88,10 @@ public class TranslationResource {
             return createTranslation(translation);
         }
         Translation result = translationRepository.save(translation);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Definition " + result.getDefinition().getLabel() + " für die Sprache " + result.getLanguage().getName() + " geändert" , "erfolgreich", userService.getUserWithAuthorities(), result.getDefinition().getProject());
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("translation", translation.getId().toString()))
             .body(result);
@@ -82,6 +101,13 @@ public class TranslationResource {
     @Timed
     public ResponseEntity<Void> updateChangedTranslations(@RequestBody List<DefinitionToUpdate> definitions) throws URISyntaxException {
         translationService.updateChangedTranslations(definitions);
+
+        for(DefinitionToUpdate def : definitions) {
+            Definition definition = definitionRepository.findOne(def.getDefinitionId());
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Übersetzungen für die Definition " + definition.getText() + "geändert" , "erfolgreich", userService.getUserWithAuthorities(), definition.getProject());
+            logEntryRepository.save(logEntry);
+        }
+
         return ResponseEntity.ok().build();
     }
 
@@ -133,6 +159,12 @@ public class TranslationResource {
     @Timed
     public ResponseEntity<Void> deleteTranslation(@PathVariable Long id) {
         log.debug("REST request to delete Translation : {}", id);
+
+        Translation result = translationRepository.findOne(id);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Definition " + result.getDefinition().getLabel() + " für die Sprache " + result.getLanguage().getName() + " gelöscht" , "erfolgreich", userService.getUserWithAuthorities(), result.getDefinition().getProject());
+        logEntryRepository.save(logEntry);
+
         translationRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("translation", id.toString())).build();
     }

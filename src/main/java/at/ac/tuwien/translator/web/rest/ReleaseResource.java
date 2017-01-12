@@ -1,6 +1,9 @@
 package at.ac.tuwien.translator.web.rest;
 
+import at.ac.tuwien.translator.domain.LogEntry;
 import at.ac.tuwien.translator.domain.Project;
+import at.ac.tuwien.translator.repository.LogEntryRepository;
+import at.ac.tuwien.translator.service.UserService;
 import com.codahale.metrics.annotation.Timed;
 import at.ac.tuwien.translator.domain.Release;
 
@@ -18,6 +21,7 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +36,10 @@ public class ReleaseResource {
 
     @Inject
     private ReleaseRepository releaseRepository;
+    @Inject
+    private UserService userService;
+    @Inject
+    private LogEntryRepository logEntryRepository;
 
     /**
      * POST  /releases : Create a new release.
@@ -48,6 +56,10 @@ public class ReleaseResource {
             return ResponseEntity.badRequest().headers(HeaderUtil.createFailureAlert("release", "idexists", "A new release cannot already have an ID")).body(null);
         }
         Release result = releaseRepository.save(release);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Release " + result.getName() + " erstellt." , "erfolgreich", userService.getUserWithAuthorities(), result.getProject());
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.created(new URI("/api/releases/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("release", result.getId().toString()))
             .body(result);
@@ -70,6 +82,10 @@ public class ReleaseResource {
             return createRelease(release);
         }
         Release result = releaseRepository.save(release);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Release " + result.getName() + " geändert." , "erfolgreich", userService.getUserWithAuthorities(), result.getProject());
+        logEntryRepository.save(logEntry);
+
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert("release", release.getId().toString()))
             .body(result);
@@ -116,6 +132,12 @@ public class ReleaseResource {
     @Timed
     public ResponseEntity<Void> deleteRelease(@PathVariable Long id) {
         log.debug("REST request to delete Release : {}", id);
+
+        Release result = releaseRepository.findOne(id);
+
+        LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Release " + result.getName() + " gelöscht." , "erfolgreich", userService.getUserWithAuthorities(), result.getProject());
+        logEntryRepository.save(logEntry);
+
         releaseRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("release", id.toString())).build();
     }
