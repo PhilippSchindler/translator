@@ -278,28 +278,28 @@
             })
             .state('project-log', {
                 parent: 'project',
-                url: '/project/{id}/log',
+                url: '/{projectId}/log',
                 data: {
-                    authorities: ['ROLE_USER', 'ROLE_CUSTOMER']
+                    authorities: ['ROLE_CUSTOMER', 'ROLE_ADMIN'],
+                    pageTitle: 'Log'
                 },
-                onEnter: ['$stateParams', '$state', '$uibModal', function ($stateParams, $state, $uibModal) {
-                    $uibModal.open({
+                views: {
+                    'content@': {
                         templateUrl: 'app/entities/project/project-log.html',
                         controller: 'ProjectLogController',
-                        controllerAs: 'vm',
-                        backdrop: 'static',
-                        size: 'lg',
-                        resolve: {
-                            entity: ['Project', function (Project) {
-                                return Project.get({id: $stateParams.id}).$promise;
-                            }]
-                        }
-                    }).result.then(function () {
-                        $state.go('^', {}, {reload: false});
-                    }, function () {
-                        $state.go('^');
-                    });
-                }]
+                        controllerAs: 'vm'
+                    }
+                },
+                resolve: {
+                    translatePartialLoader: ['$translate', '$translatePartialLoader', function ($translate, $translatePartialLoader) {
+                        $translatePartialLoader.addPart('release');
+                        $translatePartialLoader.addPart('global');
+                        return $translate.refresh();
+                    }],
+                    project: ['$stateParams', 'Project', function ($stateParams, Project) {
+                        return Project.get({id: $stateParams.projectId}).$promise;
+                    }]
+                }
             });
     }
 

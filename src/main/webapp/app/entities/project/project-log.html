@@ -6,13 +6,29 @@
     <div class="panel panel-default">
         <div class="panel-heading">Aktionen im Projekt</div>
         <div class="panel-body">
-            <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="jh-table table table-striped" >
+                    <thead>
+                    <tr>
+                        <th><span>Datum</span></th>
+                        <th><span>User</span></th>
+                        <th><span>Aktion</span></th>
+                        <th><span>Ergebnis</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
+                    <tr ng-repeat="log in vm.logs">
+                        <td>{{log.timestamp | date:'dd.MM.yyyy HH:mm:ss'}}</td>
+                        <td>{{log.user.login}}</td>
+                        <td>{{log.message}}</td>
+                        <td>{{log.result}}</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-
-
 
 
 </div>

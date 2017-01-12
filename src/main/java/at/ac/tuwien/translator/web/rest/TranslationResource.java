@@ -112,7 +112,7 @@ public class TranslationResource {
 
         for(DefinitionToUpdate def : definitions) {
             Definition definition = definitionRepository.findOne(def.getDefinitionId());
-            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Übersetzungen für die Definition " + definition.getText() + "geändert" , "erfolgreich", userService.getUserWithAuthorities(), definition.getProject());
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Übersetzungen für die Definition " + definition.getText() + " geändert" , "erfolgreich", userService.getUserWithAuthorities(), definition.getProject());
             logEntryRepository.save(logEntry);
         }
 

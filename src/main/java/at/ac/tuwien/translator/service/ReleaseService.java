@@ -5,6 +5,7 @@ import at.ac.tuwien.translator.dto.SelectedVersion;
 import at.ac.tuwien.translator.dto.SelectedVersions;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
 import at.ac.tuwien.translator.repository.LanguageRepository;
+import at.ac.tuwien.translator.repository.LogEntryRepository;
 import at.ac.tuwien.translator.repository.ReleaseRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -31,6 +33,12 @@ public class ReleaseService {
 
     @Autowired
     private LanguageRepository languageRepository;
+
+    @Autowired
+    private LogEntryRepository logEntryRepository;
+
+    @Autowired
+    private UserService userService;
 
     public void updateDefinitions(Long releaseId, SelectedVersions selectedVersions) {
         Release release = releaseRepository.findOne(releaseId);
@@ -57,6 +65,10 @@ public class ReleaseService {
                 throw new IllegalStateException("Did not find definition for projectId=" + release.getProject().getId() + ", label=" + label + ", version=" + version);
             }
             definitions.add(definition);
+        }
+        if(definitions.size() > 0) {
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Release " + release.getName() + " wurde geändert.", "erfolgreich" ,userService.getUserWithAuthorities(), release.getProject());
+            logEntryRepository.save(logEntry);
         }
         release.setDefinitions(definitions);
         release.setState(ReleaseState.DEFINITIONS_ASSIGNED);

@@ -21,7 +21,8 @@
                 }
             },
             'update': { method:'PUT' },
-            'getByUser': {method: 'GET', url: 'api/users/:userLogin/singleproject'}
+            'getByUser': {method: 'GET', url: 'api/users/:userLogin/singleproject'},
+            'getLogByProjectId': {method: 'GET', url: 'api/project/:projectId/log', isArray: true}
         });
     }
 })();

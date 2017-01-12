@@ -169,4 +169,13 @@ public class ProjectResource {
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("project", id.toString())).build();
     }
 
+
+    @GetMapping("/project/{projectId}/log")
+    @Timed
+    public List<LogEntry> getLogEntriesForProject(@PathVariable Long projectId) {
+        log.debug("REST request to get all LogEntries for project with id " + projectId);
+        List<LogEntry> logEntries = logEntryRepository.findByProject(projectId);
+        return logEntries;
+    }
+
 }

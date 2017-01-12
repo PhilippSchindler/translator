@@ -118,13 +118,4 @@ public class LogEntryResource {
         logEntryRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("logEntry", id.toString())).build();
     }
-
-
-    @GetMapping("/log-entries/{projectId}")
-    @Timed
-    public List<LogEntry> getLogEntriesforProject(@PathVariable Long projectId) {
-        log.debug("REST request to get all LogEntries for project with id " + projectId);
-        List<LogEntry> logEntries = logEntryRepository.findByProject(projectId);
-        return logEntries;
-    }
 }

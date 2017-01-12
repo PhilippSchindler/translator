@@ -10,5 +10,7 @@
     function ProjectLogController($scope, $rootScope, $stateParams, project, Project, $filter) {
         var vm = this;
         vm.project = project;
+
+        vm.logs = Project.getLogByProjectId({'projectId': vm.project.id});
     }
 })();

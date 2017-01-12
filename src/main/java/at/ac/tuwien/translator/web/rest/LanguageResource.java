@@ -114,10 +114,10 @@ public class LanguageResource {
             projectRepository.save(project);
         }
 
-        for(Language lang : languages) {
-            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Sprache " + lang.getName() + " zum Projekt hinzugefüt.", "erfolgreich", userService.getUserWithAuthorities(), project);
+       /* for(Language lang : languages) {
+            LogEntry logEntry = new LogEntry(ZonedDateTime.now(), "Sprache " + lang.getName() + " zum Projekt hinzugefügt.", "erfolgreich", userService.getUserWithAuthorities(), project);
             logEntryRepository.save(logEntry);
-        }
+        }*/
 
         return ResponseEntity.ok().build();
     }
