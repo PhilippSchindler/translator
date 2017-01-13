@@ -5,14 +5,24 @@
         .module('translatorApp')
         .controller('ReleaseDetailController', ReleaseDetailController);
 
-    ReleaseDetailController.$inject = ['$scope', '$rootScope', '$stateParams', 'previousState', 'entity', 'Release', 'Definition', 'Project', 'project'];
+    ReleaseDetailController.$inject = ['$scope', '$rootScope', '$stateParams', 'previousState', 'entity', 'Release', 'Definition', 'Project', 'project', 'user'];
 
-    function ReleaseDetailController($scope, $rootScope, $stateParams, previousState, entity, Release, Definition, Project, project) {
+    function ReleaseDetailController($scope, $rootScope, $stateParams, previousState, entity, Release, Definition, Project, project, user) {
         var vm = this;
 
         vm.release = entity;
         vm.previousState = previousState.name;
         vm.project = project;
+
+        vm.containsReleaseManager = function (authorities) {
+            for (var index in authorities) {
+                if (authorities.hasOwnProperty(index) && authorities[index] == 'ROLE_RELEASE_MANAGER') {
+                    return true;
+                }
+            }
+            return false;
+        };
+        vm.isReleaseManager = vm.containsReleaseManager(user.data.authorities);
 
         vm.loadData = function () {
             vm.definitions = [];
@@ -35,7 +45,7 @@
 
                 Definition.getGroupedForProject({'projectId': vm.project.id}, function (result) {
                     vm.definitions = result;
-                    var selectAll = Object.keys(vm.selectedVersion).length == 0;
+                    var selectAll = Object.keys(vm.selectedVersion).length == 0 && vm.isReleaseManager;
                     for (var key in vm.definitions.definitions) {
                         if (vm.definitions.definitions.hasOwnProperty(key)) {
                             if (!(vm.selectedVersion[key])) {

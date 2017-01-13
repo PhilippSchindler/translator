@@ -33,8 +33,8 @@
 
     <div class="panel panel-default">
         <div class="panel-heading">
-            <span ng-show="vm.release.state != 'FINISHED'">Definitionen auswählen</span>
-            <span ng-show="vm.release.state == 'FINISHED'">Definitionen in Release</span>
+            <span ng-show="vm.release.state != 'FINISHED' && vm.isReleaseManager == true">Definitionen auswählen</span>
+            <span ng-show="vm.release.state == 'FINISHED' || vm.isReleaseManager == false">Definitionen in Release</span>
         </div>
         <div class="panel-body">
             <div class="table-responsive">
@@ -48,15 +48,15 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="(label, defs) in vm.definitions.definitions" ng-show="vm.selectedLabel[label] || vm.release.state != 'FINISHED'">
-                        <td><input type="checkbox" ng-model="vm.selectedLabel[label]" ng-disabled="vm.release.state == 'FINISHED'"></td>
+                    <tr ng-repeat="(label, defs) in vm.definitions.definitions" ng-show="vm.selectedLabel[label] || (vm.release.state != 'FINISHED' && vm.isReleaseManager)">
+                        <td><input type="checkbox" ng-model="vm.selectedLabel[label]" ng-disabled="vm.release.state == 'FINISHED' || vm.isReleaseManager == false"></td>
                         <td>{{label}}</td>
-                        <td><select ng-model="vm.selectedVersion[label]" ng-disabled="vm.release.state == 'FINISHED'">
+                        <td><select ng-model="vm.selectedVersion[label]" ng-disabled="vm.release.state == 'FINISHED' || vm.isReleaseManager == false">
                             <option ng-repeat="definition in defs | orderBy : definition.version" value="{{definition.version}}">{{definition.text}}</option>
                             <option value="-1">&lt;Neueste Version wenn fertig&gt;</option>
                         </select></td>
                         <td ng-repeat="lang in vm.project.languages">
-                            <select ng-model="vm.selectedVersion[label]" ng-disabled="vm.release.state == 'FINISHED'">
+                            <select ng-model="vm.selectedVersion[label]" ng-disabled="vm.release.state == 'FINISHED' || vm.isReleaseManager == false">
                                 <option
                                     ng-repeat="definition in defs | orderBy : definition.version" value="{{definition.version}}">
                                     {{vm.getTranslationText(definition,lang)}}
@@ -68,10 +68,10 @@
                     </tbody>
                 </table>
             </div>
+            <button type="submit" ng-click="vm.save()" ng-show="vm.release.state != 'FINISHED' && vm.isReleaseManager == true" class="btn btn-primary">Save</button>
         </div>
     </div>
 
-    <button type="submit" ng-click="vm.save()" class="btn btn-primary">Save</button>
 
     <button type="submit"
             ui-sref="release({projectId: vm.release.project.id})"

@@ -65,6 +65,9 @@
                         params: $state.params,
                         url: $state.href($state.current.name, $state.params)
                     };
+                }],
+                user: ['Account', function (Account) {
+                    return Account.get().$promise;
                 }]
             }
         })
