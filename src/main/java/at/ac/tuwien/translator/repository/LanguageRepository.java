@@ -22,4 +22,6 @@ public interface LanguageRepository extends JpaRepository<Language,Long> {
 
     @Query("select count(t) from Translation t join t.language l where l.id = ?1")
     int findNumOfLanguageUsagesInTranslations(Long languageId);
+
+    Language findByName(String languageName);
 }

@@ -26,4 +26,6 @@ public interface ReleaseRepository extends JpaRepository<Release,Long> {
 
     @Query("select distinct r from Release r left join fetch r.definitions where r.state = :state")
     List<Release> findAllWithEagerRelationshipsInState(@Param("state") ReleaseState state);
+
+    Release findByName(String releaseName);
 }

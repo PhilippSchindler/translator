@@ -1,26 +1,22 @@
 package at.ac.tuwien.translator.web.rest;
 
-import at.ac.tuwien.translator.domain.Definition;
-import at.ac.tuwien.translator.domain.DefinitionToUpdate;
-import at.ac.tuwien.translator.domain.LogEntry;
-import at.ac.tuwien.translator.repository.DefinitionRepository;
-import at.ac.tuwien.translator.repository.LogEntryRepository;
-import at.ac.tuwien.translator.repository.ProjectRepository;
+import at.ac.tuwien.translator.domain.*;
+import at.ac.tuwien.translator.repository.*;
 import at.ac.tuwien.translator.security.SecurityUtils;
 import at.ac.tuwien.translator.service.ReleaseService;
 import at.ac.tuwien.translator.service.TranslationService;
 import at.ac.tuwien.translator.service.UserService;
 import at.ac.tuwien.translator.web.rest.errors.TranslatorException;
 import com.codahale.metrics.annotation.Timed;
-import at.ac.tuwien.translator.domain.Translation;
 
-import at.ac.tuwien.translator.repository.TranslationRepository;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -31,6 +27,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,6 +54,14 @@ public class TranslationResource {
     private ReleaseService releaseService;
     @Inject
     private ProjectRepository projectRepository;
+    @Inject
+    private LanguageRepository languageRepository;
+    @Inject
+    private ReleaseRepository releaseRepository;
+    @Inject
+    private UserRepository userRepository;
+    @Inject
+    private PasswordEncoder passwordEncoder;
 
     /**
      * POST  /translations : Create a new translation.
@@ -150,6 +155,38 @@ public class TranslationResource {
             throw e;
         }
 
+    }
+
+    @GetMapping("translations/exportDirect/{format}/{languageName}/{releaseName}")
+    public ResponseEntity<String> exportTranslationDirectAPI(@PathVariable String format, @PathVariable String languageName,
+                                                             @PathVariable String releaseName,
+                                                             @RequestHeader("Authorization") String authorization,
+                                                             HttpServletResponse response){
+
+        try {
+            String usernamePasswordBase64 = authorization.split(" ")[1];
+            String usernamePassword = new String(Base64.getDecoder().decode(usernamePasswordBase64));
+            String[] splitUsernamePassword = usernamePassword.split(":");
+            Optional<User> user = userRepository.findOneByLogin(splitUsernamePassword[0]);
+            if(!user.isPresent())
+                throw new IllegalArgumentException();
+
+            if(!passwordEncoder.matches(splitUsernamePassword[1], user.get().getPassword()))
+                throw new IllegalArgumentException();
+
+            if(!user.get().getAuthorities().stream().anyMatch(a -> a.getName().equals("ROLE_DEVELOPER")))
+                throw new IllegalArgumentException();
+        }
+        catch (IllegalArgumentException e){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid authorization!");
+        }
+        Language language = languageRepository.findByName(languageName);
+        Release release = releaseRepository.findByName(releaseName);
+
+        if(language == null || release == null)
+            return ResponseEntity.badRequest().body("Language or release invalid");
+
+        return exportTranslations(format, language.getId(), release.getId(), response);
     }
 
     /**
