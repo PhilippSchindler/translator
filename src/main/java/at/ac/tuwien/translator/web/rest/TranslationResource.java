@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
@@ -158,14 +159,20 @@ public class TranslationResource {
     }
 
     @GetMapping("translations/exportDirect/{format}/{languageName}/{releaseName}")
+    @Transactional
     public ResponseEntity<String> exportTranslationDirectAPI(@PathVariable String format, @PathVariable String languageName,
                                                              @PathVariable String releaseName,
                                                              @RequestHeader("Authorization") String authorization,
                                                              HttpServletResponse response){
 
+        User callingUser = null;
         try {
+            if(authorization == null || authorization.isEmpty() || !authorization.matches("Basic \\S+"))
+                throw new IllegalArgumentException();
             String usernamePasswordBase64 = authorization.split(" ")[1];
             String usernamePassword = new String(Base64.getDecoder().decode(usernamePasswordBase64));
+            if(!usernamePassword.matches("\\S+:\\S+"))
+                throw new IllegalArgumentException();
             String[] splitUsernamePassword = usernamePassword.split(":");
             Optional<User> user = userRepository.findOneByLogin(splitUsernamePassword[0]);
             if(!user.isPresent())
@@ -176,17 +183,21 @@ public class TranslationResource {
 
             if(!user.get().getAuthorities().stream().anyMatch(a -> a.getName().equals("ROLE_DEVELOPER")))
                 throw new IllegalArgumentException();
+
+            callingUser = user.get();
         }
         catch (IllegalArgumentException e){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid authorization!");
         }
-        Language language = languageRepository.findByName(languageName);
-        Release release = releaseRepository.findByName(releaseName);
 
-        if(language == null || release == null)
+        Project project = callingUser.getProjects().get(0);
+        Optional<Language> languageOptional = project.getLanguages().stream().filter(l -> l.getName().equals(languageName)).findFirst();
+        Optional<Release> releaseOptional = project.getReleases().stream().filter(r -> r.getName().equals(releaseName)).findFirst();
+
+        if(!languageOptional.isPresent() || !releaseOptional.isPresent())
             return ResponseEntity.badRequest().body("Language or release invalid");
 
-        return exportTranslations(format, language.getId(), release.getId(), response);
+        return exportTranslations(format, languageOptional.get().getId(), releaseOptional.get().getId(), response);
     }
 
     /**
