@@ -2,9 +2,12 @@ package at.ac.tuwien.translator.web.rest;
 
 import at.ac.tuwien.translator.domain.Definition;
 import at.ac.tuwien.translator.domain.Language;
+import at.ac.tuwien.translator.domain.User;
 import at.ac.tuwien.translator.dto.LanguageNotTranslatedDto;
+import at.ac.tuwien.translator.dto.UsersByRole;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
 import at.ac.tuwien.translator.repository.LanguageRepository;
+import at.ac.tuwien.translator.repository.UserRepository;
 import com.codahale.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +37,9 @@ public class StatisticsResource {
 
     @Inject
     private DefinitionRepository definitionRepository;
+
+    @Inject
+    private UserRepository userRepository;
 
     @GetMapping("/notTranslatedTexts")
     @Timed
@@ -73,5 +80,26 @@ public class StatisticsResource {
         return dto;
     }
 
+    @GetMapping("/usersByRole")
+    @Timed
+    public UsersByRole getUsersByRole(@PathVariable Long projectId) {
+        log.debug("REST request to get statistics about users by role for project : {}", projectId);
+
+        List<User> users = userRepository.findAllWithProjectId(projectId);
+        int developers = 0;
+        int translators = 0;
+        int releaseManagers = 0;
+        for (User user : users) {
+            Set<String> authoritiesStrings = user.getAuthorities().stream().map(a -> a.getName()).collect(Collectors.toSet());
+            if (authoritiesStrings.contains("ROLE_DEVELOPER"))
+                developers++;
+            else if (authoritiesStrings.contains("ROLE_TRANSLATOR"))
+                translators++;
+            else if (authoritiesStrings.contains("ROLE_RELEASE_MANAGER"))
+                releaseManagers++;
+        }
+
+        return new UsersByRole(developers, translators, releaseManagers);
+    }
 
 }
