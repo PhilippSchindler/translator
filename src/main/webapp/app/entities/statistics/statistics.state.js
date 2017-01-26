@@ -31,7 +31,10 @@
                     }],
                     notTranslatedTexts: ['$stateParams', 'Statistics', function ($stateParams, Statistics) {
                         return Statistics.getNotTranslatedTexts({projectId: $stateParams.projectId}).$promise;
-                    }]
+                    }],
+                    usersByRole: ['$stateParams', 'Statistics', function ($stateParams, Statistics) {
+                        return Statistics.getUsersByRole({projectId: $stateParams.projectId}).$promise;
+                    }],
                 }
             });
     }

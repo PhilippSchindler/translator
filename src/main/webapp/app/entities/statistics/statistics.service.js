@@ -10,7 +10,8 @@
         var resourceUrl =  'api/projects/:projectId/statistics/';
 
         return $resource(resourceUrl, {}, {
-            'getNotTranslatedTexts': { url: resourceUrl + 'notTranslatedTexts', method: 'GET', isArray: true }
+            'getNotTranslatedTexts': { url: resourceUrl + 'notTranslatedTexts', method: 'GET', isArray: true },
+            'getUsersByRole': {url: resourceUrl + 'usersByRole', method: 'GET'}
         });
     }
 })();

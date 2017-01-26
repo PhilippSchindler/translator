@@ -1,3 +1,12 @@
 <div>
-    <div google-chart chart="vm.notTranslatedTexts" style="height:600px; width:100%;"></div>
+    <uib-tabset>
+        <uib-tab index="0" select="vm.googleChartSizeFix()">
+            <uib-tab-heading data-translate="translatorApp.statistics.notTranslated">Not translated</uib-tab-heading>
+            <div name="chart" google-chart chart="vm.notTranslatedTexts" agc-on-ready="displayGoogleCharts()" style="height:600px; width:100%;"></div>
+        </uib-tab>
+        <uib-tab index="1" select="vm.googleChartSizeFix()">
+            <uib-tab-heading data-translate="translatorApp.statistics.users">Users</uib-tab-heading>
+            <div name="chart" google-chart chart="vm.usersByRole" agc-on-ready="displayGoogleCharts()" style="height:600px; width:100%;"></div>
+        </uib-tab>
+    </uib-tabset>
 </div>

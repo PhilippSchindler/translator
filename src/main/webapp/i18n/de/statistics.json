@@ -3,7 +3,9 @@
         "statistics" : {
             "home": {
                 "title": "Statistiken"
-            }
+            },
+            "notTranslated": "Nicht übersetzt",
+            "users": "Benutzer"
         }
     }
 }
