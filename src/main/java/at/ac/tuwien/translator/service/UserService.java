@@ -113,10 +113,10 @@ public class UserService {
         }
 
         Authority authorityCustomer = authorityRepository.findOne(AuthoritiesConstants.CUSTOMER);
-        //Authority authorityUser = authorityRepository.findOne(AuthoritiesConstants.USER);
+        Authority authorityUser = authorityRepository.findOne(AuthoritiesConstants.USER);
         Set<Authority> authorities = new HashSet<>();
         authorities.add(authorityCustomer);
-        //authorities.add(authorityUser);
+        authorities.add(authorityUser);
 
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
