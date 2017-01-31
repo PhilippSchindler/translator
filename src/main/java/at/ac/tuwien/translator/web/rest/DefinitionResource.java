@@ -6,6 +6,9 @@ import at.ac.tuwien.translator.domain.User;
 import at.ac.tuwien.translator.dto.GroupedDefinitions;
 import at.ac.tuwien.translator.repository.DefinitionRepository;
 import at.ac.tuwien.translator.repository.LogEntryRepository;
+import at.ac.tuwien.translator.repository.UserRepository;
+import at.ac.tuwien.translator.service.DefinitionService;
+import at.ac.tuwien.translator.service.NotificationService;
 import at.ac.tuwien.translator.service.UserService;
 import at.ac.tuwien.translator.repository.TranslationRepository;
 import at.ac.tuwien.translator.web.rest.util.HeaderUtil;
@@ -41,10 +44,10 @@ public class DefinitionResource {
     private LogEntryRepository logEntryRepository;
     @Inject
     private UserService userService;
-
-
     @Inject
     private TranslationRepository translationRepository;
+    @Inject
+    private DefinitionService definitionService;
 
     /**
      * POST  /definitions : Create a new definition.
@@ -75,6 +78,8 @@ public class DefinitionResource {
 
         LogEntry logEntry = new LogEntry(now, "Definition " + result.getLabel() + " erstellt." , "erfolgreich", userService.getUserWithAuthorities(), result.getProject());
         logEntryRepository.save(logEntry);
+
+        definitionService.sendMailToTranslatorForNewDefinition(definition.getProject());
 
         return ResponseEntity.created(new URI("/api/definitions/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert("definition", result.getId().toString()))
