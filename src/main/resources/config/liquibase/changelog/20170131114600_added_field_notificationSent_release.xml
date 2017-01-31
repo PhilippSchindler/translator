@@ -4,9 +4,9 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet id="20170131114600" author="Philipp Schindler">
+    <changeSet id="20170131114600" author="ps">
         <addColumn tableName="release">
-            <column name="notification_sent" type="boolean" defaultValue="0" />
+            <column name="notification_sent" type="boolean" defaultValue="false"/>
         </addColumn>
     </changeSet>
 
