@@ -8,13 +8,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -139,4 +137,19 @@ public class ReleaseService {
         releases.forEach(this::finishReleaseIfPossible);
     }
 
+
+    @Scheduled(cron="*/5 * * * * ?")
+    public void sendNotificationForMissingTranslations()
+    {
+        List<Release> releases = releaseRepository.findAll();
+        for (Release r : releases) {
+            if (!r.isNotificationSent() /* and TODO */) {
+                System.out.println("Method executed at every 5 seconds. Current time is :: " + new Date());
+
+                r.setNotificationSent(true);
+                releaseRepository.save(r);
+            }
+        }
+
+    }
 }
