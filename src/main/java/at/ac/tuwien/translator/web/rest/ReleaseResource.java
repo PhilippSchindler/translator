@@ -1,12 +1,9 @@
 package at.ac.tuwien.translator.web.rest;
 
-import at.ac.tuwien.translator.domain.LogEntry;
-import at.ac.tuwien.translator.domain.Project;
+import at.ac.tuwien.translator.domain.*;
 import at.ac.tuwien.translator.repository.LogEntryRepository;
 import at.ac.tuwien.translator.service.UserService;
 import com.codahale.metrics.annotation.Timed;
-import at.ac.tuwien.translator.domain.Release;
-import at.ac.tuwien.translator.domain.ReleaseState;
 import at.ac.tuwien.translator.dto.SelectedVersions;
 import at.ac.tuwien.translator.repository.ReleaseRepository;
 import at.ac.tuwien.translator.service.ReleaseService;
@@ -16,13 +13,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
@@ -172,5 +172,4 @@ public class ReleaseResource {
         log.debug("REST request to get selectedVersions for Release : {}" , id);
         return releaseService.loadAndTransformDefinitionsFor(id);
     }
-
 }
