@@ -46,6 +46,10 @@ public class Release implements Serializable {
     @Enumerated(EnumType.STRING)
     private ReleaseState state;
 
+    @NotNull
+    @Column(name = "notificationSent", nullable=false)
+    private boolean notificationSent;
+
     public ReleaseState getState() {
         return state;
     }
@@ -77,6 +81,13 @@ public class Release implements Serializable {
 
     public LocalDate getDeadline() {
         return deadline;
+    }
+
+    public boolean isNotificationSent() {
+        return this.notificationSent;
+    }
+    public void setNotificationSent(boolean value) {
+        this.notificationSent = value;
     }
 
     public Release deadline(LocalDate deadline) {
